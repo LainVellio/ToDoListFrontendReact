@@ -44,11 +44,7 @@ const CardContainer = styled.div`
 `;
 
 function App() {
-  const initialTasks: Array<Category> = [
-    { id: 0, title: '', todos: [{ id: 0, text: '', isCompleted: false }] },
-  ];
-
-  const [categories, setCategories] = useState<Array<Category>>(initialTasks);
+  const [categories, setCategories] = useState<Array<Category>>([]);
 
   useEffect(() => {
     serverAPI.getTasks().then((response) => {
@@ -57,19 +53,23 @@ function App() {
   }, []);
 
   const createTodo = async (newCategoryTodo: NewCategoryTodo) => {
-    const response = await serverAPI.postTodo(newCategoryTodo);
-    categories.find((category) => category.title === newCategoryTodo.title)
-      ? setCategories(
-          categories.map((category) =>
-            category.title === newCategoryTodo.title
-              ? {
-                  ...category,
-                  todos: [...category.todos, ...response.data.todos],
-                }
-              : category,
-          ),
-        )
-      : setCategories([...categories, response.data]);
+    try {
+      const response = await serverAPI.postTodo(newCategoryTodo);
+      categories.find((category) => category.title === newCategoryTodo.title)
+        ? setCategories(
+            categories.map((category) =>
+              category.title === newCategoryTodo.title
+                ? {
+                    ...category,
+                    todos: [...category.todos, ...response.data.todos],
+                  }
+                : category,
+            ),
+          )
+        : setCategories([...categories, response.data]);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (

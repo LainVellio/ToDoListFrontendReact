@@ -14,6 +14,9 @@ const serverAPI = {
   postTodo(newCategoryTodo: NewCategoryTodo) {
     return axios.post(`${MAIN_URL}todos`, newCategoryTodo);
   },
+  todoChecked(todoId: number) {
+    return axios.patch(`${MAIN_URL}/todos/${todoId}`, {});
+  },
 };
 
 export default serverAPI;
