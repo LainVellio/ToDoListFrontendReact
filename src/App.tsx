@@ -23,9 +23,7 @@ const CardContainer = styled.div`
   width: 1200px;
   margin: 20px auto;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  grid-column-gap: 20px;
-  grid-row-gap: 20px;
+  grid-gap: 20px;
 
   @media screen and (max-width: 1200px) {
     width: 800px;

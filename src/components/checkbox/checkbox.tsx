@@ -1,33 +1,11 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import uncheckedImg from '../../assets/images/unchecked.png';
-import checkedImg from '../../assets/images/checked.png';
-import disabledCheckedImg from '../../assets/images/disabledChecked.png';
-import disabledUncheckedImg from '../../assets/images/disabledUnchecked.png';
 import { Todo } from '../../App';
 import serverAPI from '../../api/api';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
-const Checkbox = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  margin: 10px 0px;
-  cursor: pointer;
-
-  .checkbox {
-    cursor: pointer;
-    position: absolute;
-    width: 15px;
-    height: 15px;
-  }
-  .checkbox-img {
-    width: 20px;
-    width: 20px;
-    z-index: 1;
-  }
-  .label-text {
-    margin-left: 5px;
-  }
+const CheckboxWrap = styled.div`
   .label-text__checked {
     text-decoration: line-through;
   }
@@ -48,35 +26,21 @@ const ToDoCheckbox = ({ id, text, isCompleted }: Todo) => {
   };
 
   return (
-    <Checkbox onClick={onChecked}>
-      <input
-        className={'checkbox'}
-        type="checkbox"
-        onChange={onChecked}
-        checked={isChecked}
-        disabled={isDisabled}
-      />
-      <img
-        src={
-          isDisabled
-            ? isChecked
-              ? disabledCheckedImg
-              : disabledUncheckedImg
-            : isChecked
-            ? checkedImg
-            : uncheckedImg
+    <CheckboxWrap onClick={onChecked}>
+      <FormControlLabel
+        className={`label-text ${isChecked ? 'label-text__checked' : ''}`}
+        control={
+          <Checkbox
+            checked={isChecked}
+            onChange={onChecked}
+            name="checkedB"
+            color="primary"
+            disabled={isDisabled}
+          />
         }
-        className={'checkbox-img'}
-        alt=""
+        label={text}
       />
-      <div
-        className={`label-text ${isChecked ? 'label-text__checked' : ''} ${
-          isDisabled ? 'label-text__disabled' : ''
-        }`}
-      >
-        {text}
-      </div>
-    </Checkbox>
+    </CheckboxWrap>
   );
 };
 
