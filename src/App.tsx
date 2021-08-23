@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import serverAPI from './api/api';
+import serverAPI, { NewCategoryTodo } from './api/api';
 import './App.css';
 import styled from 'styled-components';
 import Header from './components/header/header';
 import ToDoCard from './components/card/card';
+import NewTodoForm from './components/newTodoForm/newTodoForm';
 
 export interface Todo {
   id: number;
@@ -55,6 +56,22 @@ function App() {
     });
   }, []);
 
+  const createTodo = async (newCategoryTodo: NewCategoryTodo) => {
+    const response = await serverAPI.postTodo(newCategoryTodo);
+    categories.find((category) => category.title === newCategoryTodo.title)
+      ? setCategories(
+          categories.map((category) =>
+            category.title === newCategoryTodo.title
+              ? {
+                  ...category,
+                  todos: [...category.todos, ...response.data.todos],
+                }
+              : category,
+          ),
+        )
+      : setCategories([...categories, response.data]);
+  };
+
   return (
     <div>
       <Header />
@@ -69,6 +86,7 @@ function App() {
             />
           ))}
         </CardContainer>
+        <NewTodoForm createTodo={createTodo} categories={categories} />
       </main>
     </div>
   );

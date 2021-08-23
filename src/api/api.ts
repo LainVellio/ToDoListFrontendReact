@@ -2,9 +2,17 @@ import axios from 'axios';
 
 const MAIN_URL = process.env.REACT_APP_MAIN_URL;
 
+export interface NewCategoryTodo {
+  title: string;
+  text: string;
+}
+
 const serverAPI = {
   getTasks() {
     return axios.get(MAIN_URL || '');
+  },
+  postTodo(newCategoryTodo: NewCategoryTodo) {
+    return axios.post(`${MAIN_URL}todos`, newCategoryTodo);
   },
 };
 
