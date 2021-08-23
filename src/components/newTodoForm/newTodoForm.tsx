@@ -56,7 +56,6 @@ const NewTodoForm = ({ categories, createTodo }: IProps) => {
 
   return (
     <Form>
-      {console.log(selectedCategory)}
       {selectedCategory === NEWCATEGORY && (
         <FormControl className="formControl">
           <InputLabel htmlFor="newCategory">Название категории</InputLabel>

@@ -17,6 +17,9 @@ const serverAPI = {
   todoChecked(todoId: number) {
     return axios.patch(`${MAIN_URL}/todos/${todoId}`, {});
   },
+  deleteCategory(categoryId: number) {
+    return axios.delete(`${MAIN_URL}/projects/${categoryId}`);
+  },
 };
 
 export default serverAPI;
