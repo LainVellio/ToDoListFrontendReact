@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import styled from 'styled-components';
-import { Todo } from '../../App';
 import serverAPI from '../../api/api';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
+
+interface IProps {
+  id: number;
+  text: string;
+  isCompleted: boolean;
+  closeTodo: Function;
+}
 
 const CheckboxWrap = styled.div`
   display: flex;
@@ -17,13 +23,15 @@ const CheckboxWrap = styled.div`
   }
   .closeIcon {
     cursor: pointer;
+    color: #8b8b8b;
     margin-top: 10px;
+    padding: 2px;
     width: 20px;
     height: 20px;
   }
 `;
 
-const ToDoCheckbox = ({ id, text, isCompleted }: Todo) => {
+const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
   const [isChecked, setIsChecked] = useState(isCompleted);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
@@ -35,20 +43,20 @@ const ToDoCheckbox = ({ id, text, isCompleted }: Todo) => {
     setIsDisabled(false);
   };
 
-  const onMouseOver = () => {
+  const onMouseEnter = () => {
     setIsFocus(true);
-    console.log(isFocus);
   };
 
-  const onMouseOut = () => {
+  const onMouseLeave = () => {
     setIsFocus(false);
-    console.log(isFocus);
   };
 
-  const onClose = () => {};
+  const onClose = () => {
+    closeTodo(id);
+  };
 
   return (
-    <CheckboxWrap onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
+    <CheckboxWrap onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <FormControlLabel
         onClick={onChecked}
         className={`label-text ${isChecked ? 'label-text__checked' : ''}`}
@@ -63,6 +71,7 @@ const ToDoCheckbox = ({ id, text, isCompleted }: Todo) => {
         }
         label={text}
       />
+
       {isFocus && (
         <div className="closeIcon">
           <CloseIcon onClick={onClose} />

@@ -4,12 +4,15 @@ import styled from 'styled-components';
 import { Todo } from '../../App';
 import ToDoCheckbox from '../checkbox/checkbox';
 import CloseIcon from '@material-ui/icons/Close';
+import serverAPI from '../../api/api';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 interface IProps {
   id: number;
   title: string;
   todos: Array<Todo>;
-  close: Function;
+  closeCategory: Function;
 }
 
 const CardWrap = styled.div`
@@ -27,10 +30,21 @@ const CardWrap = styled.div`
   }
 `;
 
-const ToDoCard = ({ id, title, todos, close }: IProps) => {
+const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
+  const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Todo>>([]);
+  useEffect(() => {
+    setToDoCheckboxes(todos);
+  }, [todos]);
+
   const onClose = () => {
-    close(id);
+    closeCategory(id);
   };
+
+  const closeTodo = async (todoId: number) => {
+    await serverAPI.deleteTodo(todoId);
+    setToDoCheckboxes(toDoCheckboxes.filter((todo) => todo.id !== todoId));
+  };
+
   return (
     <CardWrap>
       <Card>
@@ -39,12 +53,13 @@ const ToDoCard = ({ id, title, todos, close }: IProps) => {
             <Typography variant="h6">{title}</Typography>
             <CloseIcon onClick={onClose} className="closeIcon" />
           </div>
-          {todos.map((todo) => (
+          {toDoCheckboxes.map((todo) => (
             <ToDoCheckbox
               key={todo.id}
               id={todo.id}
               text={todo.text}
               isCompleted={todo.isCompleted}
+              closeTodo={closeTodo}
             />
           ))}
         </CardContent>

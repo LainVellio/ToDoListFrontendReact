@@ -20,6 +20,9 @@ const serverAPI = {
   deleteCategory(categoryId: number) {
     return axios.delete(`${MAIN_URL}/projects/${categoryId}`);
   },
+  deleteTodo(todoId: number) {
+    return axios.delete(`${MAIN_URL}/todos/${todoId}`);
+  },
 };
 
 export default serverAPI;

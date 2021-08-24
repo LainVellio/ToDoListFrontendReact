@@ -70,7 +70,7 @@ function App() {
     }
   };
 
-  const close = async (categoryId: number) => {
+  const closeCategory = async (categoryId: number) => {
     await serverAPI.deleteCategory(categoryId);
     setCategories(categories.filter((category) => category.id !== categoryId));
   };
@@ -84,7 +84,7 @@ function App() {
             <ToDoCard
               key={category.id}
               title={category.title}
-              close={close}
+              closeCategory={closeCategory}
               id={category.id}
               todos={category.todos}
             />
