@@ -41,8 +41,12 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
   };
 
   const closeTodo = async (todoId: number) => {
-    await serverAPI.deleteTodo(todoId);
-    setToDoCheckboxes(toDoCheckboxes.filter((todo) => todo.id !== todoId));
+    try {
+      await serverAPI.deleteTodo(todoId);
+      setToDoCheckboxes(toDoCheckboxes.filter((todo) => todo.id !== todoId));
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (

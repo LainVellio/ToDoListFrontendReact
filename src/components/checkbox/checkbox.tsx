@@ -17,6 +17,7 @@ const CheckboxWrap = styled.div`
   justify-content: space-between;
   .label-text__checked {
     text-decoration: line-through;
+    color: gray;
   }
   .label-text__disabled {
     color: #d8d8d8;
@@ -37,10 +38,14 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
   const [isFocus, setIsFocus] = useState(false);
 
   const onChecked = async () => {
-    setIsDisabled(true);
-    await serverAPI.todoChecked(id);
-    setIsChecked(!isChecked);
-    setIsDisabled(false);
+    try {
+      setIsDisabled(true);
+      await serverAPI.todoChecked(id);
+      setIsChecked(!isChecked);
+      setIsDisabled(false);
+    } catch (error) {
+      alert(error);
+    }
   };
 
   const onMouseEnter = () => {

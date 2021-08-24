@@ -43,11 +43,16 @@ const CardContainer = styled.div`
 
 function App() {
   const [categories, setCategories] = useState<Array<Category>>([]);
+  const [isFormEnabled, setIsFormEnabled] = useState<boolean>(false);
 
   useEffect(() => {
-    serverAPI.getTasks().then((response) => {
-      setCategories(response.data);
-    });
+    try {
+      serverAPI.getTasks().then((response) => {
+        setCategories(response.data);
+      });
+    } catch (error) {
+      alert(error);
+    }
   }, []);
 
   const createTodo = async (newCategoryTodo: NewCategoryTodo) => {
@@ -75,9 +80,13 @@ function App() {
     setCategories(categories.filter((category) => category.id !== categoryId));
   };
 
+  const toggleForm = () => {
+    setIsFormEnabled(!isFormEnabled);
+  };
+
   return (
     <div>
-      <Header />
+      <Header toggleForm={toggleForm} />
       <main>
         <CardContainer>
           {categories.map((category) => (
@@ -90,7 +99,13 @@ function App() {
             />
           ))}
         </CardContainer>
-        <NewTodoForm createTodo={createTodo} categories={categories} />
+        {isFormEnabled && (
+          <NewTodoForm
+            toggleForm={toggleForm}
+            createTodo={createTodo}
+            categories={categories}
+          />
+        )}
       </main>
     </div>
   );
