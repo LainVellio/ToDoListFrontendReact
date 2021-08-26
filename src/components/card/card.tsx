@@ -5,8 +5,19 @@ import { Todo } from '../../App';
 import ToDoCheckbox from '../checkbox/checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import serverAPI from '../../api/api';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+const reorder = (
+  list: Array<Todo>,
+  startIndex: number,
+  endIndex: number,
+): Array<Todo> => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
 
 interface IProps {
   id: number;
@@ -32,9 +43,25 @@ const CardWrap = styled.div`
 
 const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Todo>>([]);
+  const cardRef = useRef<any>(null);
+
   useEffect(() => {
     setToDoCheckboxes(todos);
   }, [todos]);
+
+  const onDragEnd = (result: any) => {
+    if (!result.destination) {
+      return;
+    }
+
+    const reorderTodos = reorder(
+      toDoCheckboxes,
+      result.source.index,
+      result.destination.index,
+    );
+
+    setToDoCheckboxes(reorderTodos);
+  };
 
   const onClose = () => {
     closeCategory(id);
@@ -49,23 +76,52 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
     }
   };
 
+  const onMouseDown = (e: any) => {
+    e.stopPropagation();
+  };
+
   return (
-    <CardWrap>
+    <CardWrap ref={cardRef}>
       <Card>
         <CardContent>
           <div className="header">
             <Typography variant="h6">{title}</Typography>
             <CloseIcon onClick={onClose} className="closeIcon" />
           </div>
-          {toDoCheckboxes.map((todo) => (
-            <ToDoCheckbox
-              key={todo.id}
-              id={todo.id}
-              text={todo.text}
-              isCompleted={todo.isCompleted}
-              closeTodo={closeTodo}
-            />
-          ))}
+          <div onMouseDown={(e: any) => onMouseDown(e)}>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable droppableId="droppable">
+                {(provided) => (
+                  <div {...provided.droppableProps} ref={provided.innerRef}>
+                    {toDoCheckboxes.map((todo: any, index: number) => (
+                      <Draggable
+                        key={todo.id}
+                        draggableId={String(todo.id)}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
+                            <ToDoCheckbox
+                              key={todo.id}
+                              id={todo.id}
+                              text={todo.text}
+                              isCompleted={todo.isCompleted}
+                              closeTodo={closeTodo}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
         </CardContent>
       </Card>
     </CardWrap>
