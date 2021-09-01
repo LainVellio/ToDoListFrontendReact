@@ -4,6 +4,7 @@ import serverAPI from '../../api/api';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/Edit';
 
 interface IProps {
   id: number;
@@ -22,12 +23,20 @@ const CheckboxWrap = styled.div`
   .label-text__disabled {
     color: #d8d8d8;
   }
-  .closeIcon {
-    cursor: pointer;
+  .options {
     color: #8b8b8b;
     margin-top: 10px;
     padding: 2px;
+  }
+  .icon {
+    cursor: pointer;
     width: 20px;
+    height: 20px;
+  }
+  .input {
+    margin-top: 10px;
+    width: 250px;
+    margin-bottom: 6px;
     height: 20px;
   }
 `;
@@ -36,6 +45,8 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
   const [isChecked, setIsChecked] = useState(isCompleted);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [label, setLabel] = useState(text);
 
   const onChecked = async () => {
     try {
@@ -46,6 +57,10 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
     } catch (error) {
       alert(error);
     }
+  };
+
+  const handleChange = (e: any) => {
+    setLabel(e.target.value);
   };
 
   const onMouseEnter = () => {
@@ -59,14 +74,20 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
   const onClose = () => {
     closeTodo(id);
   };
+  const onEdit = () => {
+    setEditMode(!editMode);
+  };
+  const onBlur = () => {
+    setEditMode(false);
+  };
 
   return (
     <CheckboxWrap onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <FormControlLabel
-        onClick={onChecked}
         className={`label-text ${isChecked ? 'label-text__checked' : ''}`}
         control={
           <Checkbox
+            onClick={onChecked}
             checked={isChecked}
             onChange={onChecked}
             name="checkedB"
@@ -74,12 +95,28 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
             disabled={isDisabled}
           />
         }
-        label={text}
+        label={
+          editMode ? (
+            <input
+              value={label}
+              onChange={(e) => {
+                handleChange(e);
+              }}
+              className="input"
+              autoFocus
+              type="text"
+              onBlur={onBlur}
+            />
+          ) : (
+            label
+          )
+        }
       />
 
       {isFocus && (
-        <div className="closeIcon">
-          <CloseIcon onClick={onClose} />
+        <div className="options">
+          <EditIcon className="icon" onClick={onEdit} />
+          <CloseIcon className="icon" onClick={onClose} />
         </div>
       )}
     </CheckboxWrap>

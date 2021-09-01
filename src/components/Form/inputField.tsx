@@ -1,5 +1,6 @@
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
+import { ChangeEvent } from 'react';
 import { useState } from 'react';
 
 interface IProps {
@@ -31,9 +32,9 @@ const InputField = ({
     setValidForm(!Boolean(error));
   };
 
-  const onChange = (e: any) => {
-    inputChange(e);
-    checkValidation(e);
+  const onChange = (value: string) => {
+    inputChange(value);
+    checkValidation(value);
   };
 
   return (
@@ -42,7 +43,7 @@ const InputField = ({
         error={Boolean(validationMessage) || undefined}
         label={label}
         value={value}
-        onChange={(e: any) => {
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
           onChange(e.target.value);
         }}
         aria-describedby="my-helper-text"

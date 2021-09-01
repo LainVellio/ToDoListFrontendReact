@@ -5,9 +5,14 @@ import { Todo } from '../../App';
 import ToDoCheckbox from '../checkbox/checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import serverAPI from '../../api/api';
-import { useEffect, useRef } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 import { useState } from 'react';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from 'react-beautiful-dnd';
 const reorder = (
   list: Array<Todo>,
   startIndex: number,
@@ -43,13 +48,13 @@ const CardWrap = styled.div`
 
 const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Todo>>([]);
-  const cardRef = useRef<any>(null);
+  const cardRef = useRef(null);
 
   useEffect(() => {
     setToDoCheckboxes(todos);
   }, [todos]);
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
@@ -76,7 +81,7 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
     }
   };
 
-  const onMouseDown = (e: any) => {
+  const onMouseDown = (e: MouseEvent) => {
     e.stopPropagation();
   };
 
@@ -88,12 +93,12 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
             <Typography variant="h6">{title}</Typography>
             <CloseIcon onClick={onClose} className="closeIcon" />
           </div>
-          <div onMouseDown={(e: any) => onMouseDown(e)}>
+          <div onMouseDown={(e: MouseEvent) => onMouseDown(e)}>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="droppable">
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {toDoCheckboxes.map((todo: any, index: number) => (
+                    {toDoCheckboxes.map((todo: Todo, index: number) => (
                       <Draggable
                         key={todo.id}
                         draggableId={String(todo.id)}
