@@ -6,6 +6,7 @@ import ToDoCheckbox from '../checkbox/checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import serverAPI from '../../api/api';
 import { MouseEvent, useEffect, useRef } from 'react';
+import EditIcon from '@material-ui/icons/Edit';
 import { useState } from 'react';
 import {
   DragDropContext,
@@ -13,6 +14,8 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
+import InputEdit from '../Form/InputEdit';
+
 const reorder = (
   list: Array<Todo>,
   startIndex: number,
@@ -40,15 +43,38 @@ const CardWrap = styled.div`
     margin: -15px -16px 0px -16px;
     padding: 5px 10px;
   }
-  .closeIcon {
-    margin: 3px;
+  .icon {
+    margin: 6px 3px 3px 0;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+  }
+  .inputCard {
+    font-size: 1.25rem;
+  }
+`;
+
+const NewTodoButton = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+  width: 100%;
+  .button {
+    color: #1976d2;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-size: 14px;
+    border: none;
+    background-color: white;
     cursor: pointer;
   }
 `;
 
 const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Todo>>([]);
+  const [editMode, setEditMode] = useState(false);
+  const [cardTitle, setCardTitle] = useState(title);
   const cardRef = useRef(null);
+  const editRef = useRef(null);
 
   useEffect(() => {
     setToDoCheckboxes(todos);
@@ -85,13 +111,45 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
     e.stopPropagation();
   };
 
+  const onEdit = () => {
+    setEditMode(!editMode);
+
+    console.log('onEdit');
+  };
+
+  const handleChange = (e: any) => {
+    setCardTitle(e.target.value);
+  };
+
+  const onBlur = () => {
+    setEditMode(false);
+    console.log('onBlur');
+  };
+
+  const addNewTodo = () => {};
+
   return (
     <CardWrap ref={cardRef}>
       <Card>
         <CardContent>
           <div className="header">
-            <Typography variant="h6">{title}</Typography>
-            <CloseIcon onClick={onClose} className="closeIcon" />
+            {editMode ? (
+              <InputEdit
+                value={cardTitle}
+                onChange={handleChange}
+                className="inputCard"
+                onBlur={onBlur}
+              />
+            ) : (
+              <Typography variant="h6">{cardTitle}</Typography>
+            )}
+            <div>
+              <EditIcon
+                onClick={!editMode ? onEdit : () => {}}
+                className="icon"
+              />
+              <CloseIcon onClick={onClose} className="icon" />
+            </div>
           </div>
           <div onMouseDown={(e: MouseEvent) => onMouseDown(e)}>
             <DragDropContext onDragEnd={onDragEnd}>
@@ -127,6 +185,11 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
               </Droppable>
             </DragDropContext>
           </div>
+          <NewTodoButton>
+            <button onClick={addNewTodo} className="button">
+              Добавить новую задачу
+            </button>
+          </NewTodoButton>
         </CardContent>
       </Card>
     </CardWrap>

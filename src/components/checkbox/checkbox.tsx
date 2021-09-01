@@ -5,6 +5,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
+import InputEdit from '../Form/InputEdit';
 
 interface IProps {
   id: number;
@@ -28,16 +29,19 @@ const CheckboxWrap = styled.div`
     margin-top: 10px;
     padding: 2px;
   }
-  .icon {
+  .iconCheckbox {
     cursor: pointer;
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
   }
-  .input {
+  .inputCheckbox {
     margin-top: 10px;
-    width: 250px;
+    width: 240px;
     margin-bottom: 6px;
     height: 20px;
+    font-size: 14px;
+    font-family: 'Roboto', 'Helvetica';
+    border: none;
   }
 `;
 
@@ -76,9 +80,11 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
   };
   const onEdit = () => {
     setEditMode(!editMode);
+    console.log('onEdit');
   };
   const onBlur = () => {
     setEditMode(false);
+    console.log('onBlur');
   };
 
   return (
@@ -97,14 +103,10 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
         }
         label={
           editMode ? (
-            <input
+            <InputEdit
               value={label}
-              onChange={(e) => {
-                handleChange(e);
-              }}
-              className="input"
-              autoFocus
-              type="text"
+              onChange={handleChange}
+              className="inputCheckbox"
               onBlur={onBlur}
             />
           ) : (
@@ -115,8 +117,8 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
 
       {isFocus && (
         <div className="options">
-          <EditIcon className="icon" onClick={onEdit} />
-          <CloseIcon className="icon" onClick={onClose} />
+          <EditIcon className="iconCheckbox" onClick={onEdit} />
+          <CloseIcon className="iconCheckbox" onClick={onClose} />
         </div>
       )}
     </CheckboxWrap>
