@@ -16,6 +16,7 @@ import {
 } from 'react-beautiful-dnd';
 import InputEdit from '../Form/InputEdit';
 import AddIcon from '@material-ui/icons/Add';
+import ColorCircle, { Colors } from '../checkbox/ColorCircle';
 
 interface IProps {
   id: number;
@@ -29,11 +30,11 @@ interface Checkbox extends Todo {
   isEdit?: boolean;
 }
 
-const CardWrap = styled.div`
+const CardWrap = styled.div<{ headerColor: string }>`
   .header {
     display: flex;
     justify-content: space-between;
-    background-color: #1976d2;
+    background-color: ${(props) => props.headerColor};
     color: white;
     margin: -15px -16px 0px -16px;
     padding: 5px 10px;
@@ -46,6 +47,10 @@ const CardWrap = styled.div`
   }
   .inputCard {
     font-size: 1.25rem;
+  }
+  .colorCircles {
+    display: flex;
+    margin: 10px 0 5px 10px;
   }
 `;
 
@@ -93,7 +98,10 @@ const ToDoCard = ({
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>([]);
   const [editMode, setEditMode] = useState(isEdit);
   const [cardTitle, setCardTitle] = useState(title);
+  const [headerColor, setHeaderColor] = useState<Colors>(Colors.blue);
   const cardRef = useRef(null);
+
+  const colors: Array<Colors> = [Colors.red, Colors.blue, Colors.green];
 
   useEffect(() => {
     setToDoCheckboxes(todos);
@@ -132,7 +140,6 @@ const ToDoCard = ({
 
   const onEdit = () => {
     setEditMode(!editMode);
-    console.log('onEdit');
   };
 
   const handleChange = (e: any) => {
@@ -141,7 +148,6 @@ const ToDoCard = ({
 
   const onBlur = () => {
     setEditMode(false);
-    console.log('onBlur');
   };
 
   const addNewTodo = async () => {
@@ -156,7 +162,7 @@ const ToDoCard = ({
   };
 
   return (
-    <CardWrap ref={cardRef}>
+    <CardWrap headerColor={headerColor} ref={cardRef}>
       <Card>
         <CardContent>
           <div className="header">
@@ -169,6 +175,22 @@ const ToDoCard = ({
               />
             ) : (
               <Typography variant="h6">{cardTitle}</Typography>
+            )}
+            {editMode && (
+              <div className="colorCircles">
+                {colors.map(
+                  (color) =>
+                    color !== headerColor && (
+                      <ColorCircle
+                        key={color}
+                        color={color}
+                        setEditMode={setEditMode}
+                        setColor={setHeaderColor}
+                        border={true}
+                      />
+                    ),
+                )}
+              </div>
             )}
             <div>
               {!editMode ? (

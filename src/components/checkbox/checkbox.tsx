@@ -6,6 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import InputEdit from '../Form/InputEdit';
+import ColorCircle, { Colors } from './ColorCircle';
 
 interface IProps {
   id: number;
@@ -15,9 +16,10 @@ interface IProps {
   isEdit?: boolean;
 }
 
-const CheckboxWrap = styled.div`
+const CheckboxWrap = styled.div<{ textColor: string }>`
   display: flex;
   justify-content: space-between;
+  color: ${(props) => props.textColor};
   .label-text__checked {
     text-decoration: line-through;
     color: gray;
@@ -44,6 +46,10 @@ const CheckboxWrap = styled.div`
     font-family: 'Roboto', 'Helvetica';
     border: none;
   }
+  .menu {
+    display: flex;
+    margin-left: 30px;
+  }
 `;
 
 const ToDoCheckbox = ({
@@ -59,6 +65,14 @@ const ToDoCheckbox = ({
   const [editMode, setEditMode] = useState(isEdit);
   const [label, setLabel] = useState(text);
   const [isEmpty, setIsEmpty] = useState(false);
+  const [textColor, setTextColor] = useState<Colors>(Colors.black);
+
+  const colors: Array<Colors> = [
+    Colors.red,
+    Colors.blue,
+    Colors.green,
+    Colors.black,
+  ];
 
   useEffect(() => {
     label === '' ? setIsEmpty(false) : setIsEmpty(true);
@@ -78,15 +92,12 @@ const ToDoCheckbox = ({
   const handleChange = (e: any) => {
     setLabel(e.target.value);
   };
-
   const onMouseEnter = () => {
     setIsFocus(true);
   };
-
   const onMouseLeave = () => {
     setIsFocus(false);
   };
-
   const onClose = () => {
     closeTodo(id);
   };
@@ -101,33 +112,52 @@ const ToDoCheckbox = ({
   };
 
   return (
-    <CheckboxWrap onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-      <FormControlLabel
-        className={`label-text ${isChecked ? 'label-text__checked' : ''}`}
-        control={
-          <Checkbox
-            onClick={onChecked}
-            checked={isChecked}
-            onChange={onChecked}
-            name="checkedB"
-            color="primary"
-            disabled={isDisabled}
-          />
-        }
-        label={
-          editMode ? (
-            <InputEdit
-              value={label}
-              onChange={handleChange}
-              className="inputCheckbox"
-              onBlur={onBlur}
+    <CheckboxWrap
+      textColor={textColor}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      <span>
+        <FormControlLabel
+          className={`label-text ${isChecked ? 'label-text__checked' : ''}`}
+          control={
+            <Checkbox
+              onClick={onChecked}
+              checked={isChecked}
+              onChange={onChecked}
+              name="checkedB"
+              color="primary"
+              disabled={isDisabled}
             />
-          ) : (
-            label
-          )
-        }
-      />
-
+          }
+          label={
+            editMode ? (
+              <div>
+                <InputEdit
+                  value={label}
+                  onChange={handleChange}
+                  className="inputCheckbox"
+                  onBlur={onBlur}
+                />
+              </div>
+            ) : (
+              label
+            )
+          }
+        />
+        {editMode && (
+          <div className="menu">
+            {colors.map((color) => (
+              <ColorCircle
+                key={color}
+                color={color}
+                setEditMode={setEditMode}
+                setColor={setTextColor}
+              />
+            ))}
+          </div>
+        )}
+      </span>
       {isFocus && (
         <div className="options">
           <EditIcon className="iconCheckbox" onClick={onEdit} />
