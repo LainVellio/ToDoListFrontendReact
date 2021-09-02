@@ -124,7 +124,6 @@ const ToDoCheckbox = ({
             <Checkbox
               onClick={onChecked}
               checked={isChecked}
-              onChange={onChecked}
               name="checkedB"
               color="primary"
               disabled={isDisabled}
