@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import Header from './components/header/header';
 import ToDoCard from './components/card/card';
 import NewTodoForm from './components/newTodoForm/newTodoForm';
+import AddIcon from '@material-ui/icons/Add';
 
 export interface Todo {
   id: number;
@@ -16,6 +17,10 @@ export interface Category {
   id: number;
   title: string;
   todos: Array<Todo>;
+}
+
+interface Card extends Category {
+  isEdit?: boolean;
 }
 
 const CardContainer = styled.div`
@@ -41,8 +46,31 @@ const CardContainer = styled.div`
   }
 `;
 
+const NewCardButton = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+  width: 100%;
+  .button {
+    display: flex;
+    align-items: center;
+    color: #1976d2;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-size: 20px;
+    border: none;
+    background-color: white;
+    cursor: pointer;
+  }
+  .button:hover {
+    color: #3f51b5;
+  }
+  .addIcon {
+    margin-right: 5px;
+  }
+`;
+
 function App() {
-  const [categories, setCategories] = useState<Array<Category>>([]);
+  const [categories, setCategories] = useState<Array<Card>>([]);
   const [isFormEnabled, setIsFormEnabled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -83,6 +111,13 @@ function App() {
   const toggleForm = () => {
     setIsFormEnabled(!isFormEnabled);
   };
+  const addNewCard = async () => {
+    const newCard = await serverAPI.postTodo({
+      title: 'Новая категория',
+      text: 'Новая задача',
+    });
+    setCategories([...categories, { ...newCard.data, isEdit: true }]);
+  };
 
   return (
     <div>
@@ -96,8 +131,15 @@ function App() {
               closeCategory={closeCategory}
               id={category.id}
               todos={category.todos}
+              isEdit={category.isEdit}
             />
           ))}
+          <NewCardButton>
+            <button onClick={addNewCard} className="button">
+              <AddIcon className="addIcon" />
+              Добавить новую категорию
+            </button>
+          </NewCardButton>
         </CardContainer>
         {isFormEnabled && (
           <NewTodoForm

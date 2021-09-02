@@ -15,23 +15,18 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import InputEdit from '../Form/InputEdit';
-
-const reorder = (
-  list: Array<Todo>,
-  startIndex: number,
-  endIndex: number,
-): Array<Todo> => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
+import AddIcon from '@material-ui/icons/Add';
 
 interface IProps {
   id: number;
   title: string;
   todos: Array<Todo>;
   closeCategory: Function;
+  isEdit?: boolean;
+}
+
+interface Checkbox extends Todo {
+  isEdit?: boolean;
 }
 
 const CardWrap = styled.div`
@@ -60,6 +55,8 @@ const NewTodoButton = styled.div`
   margin-top: 5px;
   width: 100%;
   .button {
+    display: flex;
+    align-items: center;
     color: #1976d2;
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-size: 14px;
@@ -67,14 +64,36 @@ const NewTodoButton = styled.div`
     background-color: white;
     cursor: pointer;
   }
+  .button:hover {
+    color: #3f51b5;
+  }
+  .addIcon {
+    margin-right: 5px;
+  }
 `;
 
-const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
-  const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Todo>>([]);
-  const [editMode, setEditMode] = useState(false);
+const reorder = (
+  list: Array<Todo>,
+  startIndex: number,
+  endIndex: number,
+): Array<Todo> => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+  return result;
+};
+
+const ToDoCard = ({
+  id,
+  title,
+  todos,
+  closeCategory,
+  isEdit = false,
+}: IProps) => {
+  const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>([]);
+  const [editMode, setEditMode] = useState(isEdit);
   const [cardTitle, setCardTitle] = useState(title);
   const cardRef = useRef(null);
-  const editRef = useRef(null);
 
   useEffect(() => {
     setToDoCheckboxes(todos);
@@ -113,7 +132,6 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
 
   const onEdit = () => {
     setEditMode(!editMode);
-
     console.log('onEdit');
   };
 
@@ -126,7 +144,16 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
     console.log('onBlur');
   };
 
-  const addNewTodo = () => {};
+  const addNewTodo = async () => {
+    const newToDo = await serverAPI.postTodo({
+      title: title,
+      text: 'Новая задача',
+    });
+    setToDoCheckboxes([
+      ...toDoCheckboxes,
+      { ...newToDo.data.todos[0], isEdit: true },
+    ]);
+  };
 
   return (
     <CardWrap ref={cardRef}>
@@ -144,10 +171,13 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
               <Typography variant="h6">{cardTitle}</Typography>
             )}
             <div>
-              <EditIcon
-                onClick={!editMode ? onEdit : () => {}}
-                className="icon"
-              />
+              {!editMode ? (
+                <EditIcon onClick={onEdit} className="icon" />
+              ) : (
+                <span>
+                  <EditIcon className="icon" />
+                </span>
+              )}
               <CloseIcon onClick={onClose} className="icon" />
             </div>
           </div>
@@ -156,7 +186,7 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
               <Droppable droppableId="droppable">
                 {(provided) => (
                   <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {toDoCheckboxes.map((todo: Todo, index: number) => (
+                    {toDoCheckboxes.map((todo: Checkbox, index: number) => (
                       <Draggable
                         key={todo.id}
                         draggableId={String(todo.id)}
@@ -174,6 +204,7 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
                               text={todo.text}
                               isCompleted={todo.isCompleted}
                               closeTodo={closeTodo}
+                              isEdit={todo.isEdit}
                             />
                           </div>
                         )}
@@ -187,6 +218,7 @@ const ToDoCard = ({ id, title, todos, closeCategory }: IProps) => {
           </div>
           <NewTodoButton>
             <button onClick={addNewTodo} className="button">
+              <AddIcon className="addIcon" />
               Добавить новую задачу
             </button>
           </NewTodoButton>

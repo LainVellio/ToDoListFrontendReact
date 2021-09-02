@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import serverAPI from '../../api/api';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -12,6 +12,7 @@ interface IProps {
   text: string;
   isCompleted: boolean;
   closeTodo: Function;
+  isEdit?: boolean;
 }
 
 const CheckboxWrap = styled.div`
@@ -45,12 +46,23 @@ const CheckboxWrap = styled.div`
   }
 `;
 
-const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
+const ToDoCheckbox = ({
+  id,
+  text,
+  isCompleted,
+  closeTodo,
+  isEdit = false,
+}: IProps) => {
   const [isChecked, setIsChecked] = useState(isCompleted);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(isEdit);
   const [label, setLabel] = useState(text);
+  const [isEmpty, setIsEmpty] = useState(false);
+
+  useEffect(() => {
+    label === '' ? setIsEmpty(false) : setIsEmpty(true);
+  }, [label]);
 
   const onChecked = async () => {
     try {
@@ -83,6 +95,7 @@ const ToDoCheckbox = ({ id, text, isCompleted, closeTodo }: IProps) => {
     console.log('onEdit');
   };
   const onBlur = () => {
+    !isEmpty && closeTodo(id);
     setEditMode(false);
     console.log('onBlur');
   };
