@@ -144,7 +144,7 @@ const ToDoCheckbox = ({
             )
           }
         />
-        {editMode && (
+        {editMode && !isChecked && (
           <div className="menu">
             {colors.map((color) => (
               <ColorCircle
