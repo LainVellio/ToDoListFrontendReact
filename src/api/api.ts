@@ -5,8 +5,10 @@ import { INewCategoryTodo, ITodo } from '../interfaces';
 const MAIN_URL = process.env.REACT_APP_MAIN_URL;
 
 const serverAPI = {
-  getTasks() {
-    return axios.get(MAIN_URL || '');
+  async getTasks() {
+    const Categories = await axios.get(MAIN_URL || '');
+    localStorage.setItem('categories', JSON.stringify(Categories.data));
+    return Categories;
   },
   postTodo(newCategoryTodo: INewCategoryTodo) {
     return axios.post(`${MAIN_URL}todos`, newCategoryTodo);

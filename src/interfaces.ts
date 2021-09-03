@@ -15,6 +15,11 @@ export interface INewCategoryTodo {
   text: string;
 }
 
+export interface INewTodo {
+  categoryId: number;
+  text: string;
+}
+
 export enum EColors {
   red = '#df0b52',
   blue = '#1976d2',

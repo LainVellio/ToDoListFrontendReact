@@ -46,6 +46,10 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
 
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
+  const onBlur = () => {
+    setEditMode(false);
+  };
+
   return (
     <CardHeaderWraper headerColor={headerColor}>
       {editMode ? (
@@ -55,7 +59,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
             setCardTitle(e.target.value)
           }
           className="inputCard"
-          onBlur={() => setEditMode(false)}
+          onBlur={onBlur}
         />
       ) : (
         <Typography variant="h6">{cardTitle}</Typography>

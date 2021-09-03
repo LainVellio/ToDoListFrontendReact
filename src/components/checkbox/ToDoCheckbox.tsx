@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import serverAPI from '../../api/api';
 import { EColors } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
@@ -10,14 +9,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-
-interface CheckboxProps {
-  id: number;
-  text: string;
-  isCompleted: boolean;
-  isEdit?: boolean;
-  closeTodo(id: number): void;
-}
+import localStorageApi from '../../api/localStorageAPI';
 
 const CheckboxWrap = styled.div<{ textColor: string }>`
   display: flex;
@@ -54,16 +46,24 @@ const CheckboxWrap = styled.div<{ textColor: string }>`
     margin-left: 30px;
   }
 `;
+interface CheckboxProps {
+  id: number;
+  categoryId: number;
+  text: string;
+  isCompleted: boolean;
+  isEdit?: boolean;
+  closeTodo(id: number): void;
+}
 
 const ToDoCheckbox: React.FC<CheckboxProps> = ({
   id,
+  categoryId,
   text,
   isCompleted,
   closeTodo,
   isEdit = false,
 }) => {
   const [isChecked, setIsChecked] = useState(isCompleted);
-  const [isDisabled, setIsDisabled] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(isEdit);
   const [label, setLabel] = useState(text);
@@ -81,18 +81,13 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
     label === '' ? setIsEmpty(false) : setIsEmpty(true);
   }, [label]);
 
-  const onChecked = async () => {
-    try {
-      setIsDisabled(true);
-      await serverAPI.todoChecked(id);
-      setIsChecked(!isChecked);
-      setIsDisabled(false);
-    } catch (error) {
-      alert(error);
-    }
+  const onChecked = () => {
+    localStorageApi.checkedTodo(categoryId, id);
+    setIsChecked(!isChecked);
   };
 
   const onBlur = () => {
+    localStorageApi.changeTextTodo(categoryId, id, label);
     !isEmpty && closeTodo(id);
     setEditMode(false);
   };
@@ -112,7 +107,6 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
               checked={isChecked}
               name="checkedB"
               color="primary"
-              disabled={isDisabled}
             />
           }
           label={
@@ -147,7 +141,10 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
         <div className="options">
           <EditIcon
             className="iconCheckbox"
-            onClick={() => setEditMode(!editMode)}
+            onClick={() => {
+              setEditMode(!editMode);
+              localStorageApi.changeTextTodo(categoryId, id, label);
+            }}
           />
           <CloseIcon className="iconCheckbox" onClick={() => closeTodo(id)} />
         </div>

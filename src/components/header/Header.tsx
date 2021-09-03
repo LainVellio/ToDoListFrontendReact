@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import AddIcon from '@material-ui/icons/Add';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 
 interface HeaderProps {
@@ -28,7 +27,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleForm }) => {
           <Typography variant="h6" color="inherit" noWrap>
             To Do List
           </Typography>
-          <AddIcon onClick={() => toggleForm} className="addButton" />
         </Toolbar>
       </AppBar>
     </ToolbarStyle>

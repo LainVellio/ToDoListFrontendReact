@@ -6,7 +6,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 
-import serverAPI from '../../api/api';
+import localStorageApi from '../../api/localStorageAPI';
 import { ITodo } from '../../interfaces';
 import ToDoCheckbox from '../checkbox/ToDoCheckbox';
 import { NewTodoButton } from './NewTodoButton';
@@ -25,30 +25,32 @@ const reorder = (
 interface CardContentProps {
   todos: Array<ITodo>;
   title: string;
+  id: number;
 }
 interface Checkbox extends ITodo {
   isEdit?: boolean;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ todos, title }) => {
+export const CardContent: React.FC<CardContentProps> = ({
+  todos,
+  title,
+  id,
+}) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>([]);
   useEffect(() => {
     setToDoCheckboxes(todos);
   }, [todos]);
 
-  const addNewTodo = async () => {
-    try {
-      const newToDo = await serverAPI.postTodo({
-        title: title,
-        text: 'Новая задача',
-      });
-      setToDoCheckboxes([
-        ...toDoCheckboxes,
-        { ...newToDo.data.todos[0], isEdit: true },
-      ]);
-    } catch (error) {
-      alert(error);
-    }
+  const addNewTodo = () => {
+    const newToDo = localStorageApi.postTodo(id, 'Новая задача');
+    setToDoCheckboxes([...toDoCheckboxes, { ...newToDo, isEdit: true }]);
+  };
+
+  const closeTodo = (categoryId: number) => (todoId: number) => {
+    localStorageApi.deleteTodo(categoryId, todoId);
+    setToDoCheckboxes((prev) =>
+      prev.filter((checkbox) => checkbox.id !== todoId),
+    );
   };
 
   const onDragEnd = (result: DropResult) => {
@@ -61,15 +63,6 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, title }) => {
       result.destination.index,
     );
     setToDoCheckboxes(reorderTodos);
-  };
-
-  const closeTodo = async (todoId: number) => {
-    try {
-      await serverAPI.deleteTodo(todoId);
-      setToDoCheckboxes(toDoCheckboxes.filter((todo) => todo.id !== todoId));
-    } catch (error) {
-      alert(error);
-    }
   };
 
   return (
@@ -93,10 +86,11 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, title }) => {
                       <ToDoCheckbox
                         key={todo.id}
                         id={todo.id}
+                        categoryId={id}
                         text={todo.text}
                         isCompleted={todo.isCompleted}
                         isEdit={todo.isEdit}
-                        closeTodo={closeTodo}
+                        closeTodo={closeTodo(id)}
                       />
                     </div>
                   )}

@@ -29,7 +29,7 @@ export const ToDoCard: React.FC<CardProps> = ({
             closeCategory={closeCategory}
             id={id}
           />
-          <CardContent todos={todos} title={title} />
+          <CardContent id={id} todos={todos} title={title} />
         </CardContentWraper>
       </Card>
     </div>
