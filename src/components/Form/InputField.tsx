@@ -1,25 +1,25 @@
+import { useState, ChangeEvent } from 'react';
+
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
-import { ChangeEvent } from 'react';
-import { useState } from 'react';
 
-interface IProps {
+interface InputFieldProps {
   value: string;
-  inputChange: Function;
   label: string;
-  validators: Array<Function>;
-  setValidForm: Function;
   className?: string;
+  inputChange(fieldValue: string): void;
+  setValidForm(isValid: boolean): void;
+  validators: Array<Function>;
 }
 
-const InputField = ({
+export const InputField: React.FC<InputFieldProps> = ({
   value,
   inputChange,
   label,
   validators,
   setValidForm,
   className,
-}: IProps) => {
+}) => {
   const [validationMessage, setValidationMessage] = useState<string | null>(
     null,
   );
@@ -52,5 +52,3 @@ const InputField = ({
     </FormControl>
   );
 };
-
-export default InputField;

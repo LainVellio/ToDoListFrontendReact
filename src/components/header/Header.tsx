@@ -1,9 +1,11 @@
-import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import React from 'react';
 import styled from 'styled-components';
-import AddIcon from '@material-ui/icons/Add';
 
-interface IProps {
-  toggleForm: Function;
+import AddIcon from '@material-ui/icons/Add';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
+
+interface HeaderProps {
+  toggleForm(): void;
 }
 
 const ToolbarStyle = styled.div`
@@ -18,11 +20,7 @@ const ToolbarStyle = styled.div`
   }
 `;
 
-const Header = ({ toggleForm }: IProps) => {
-  const onToggleForm = () => {
-    toggleForm();
-  };
-
+export const Header: React.FC<HeaderProps> = ({ toggleForm }) => {
   return (
     <ToolbarStyle>
       <AppBar position="relative">
@@ -30,11 +28,9 @@ const Header = ({ toggleForm }: IProps) => {
           <Typography variant="h6" color="inherit" noWrap>
             To Do List
           </Typography>
-          <AddIcon onClick={onToggleForm} className="addButton" />
+          <AddIcon onClick={() => toggleForm} className="addButton" />
         </Toolbar>
       </AppBar>
     </ToolbarStyle>
   );
 };
-
-export default Header;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-interface IProps extends React.HTMLAttributes<HTMLInputElement> {
+interface InputEditProps extends React.HTMLAttributes<HTMLInputElement> {
   value: string;
   className?: string;
 }
@@ -10,7 +10,12 @@ const Input = styled.input`
   border: none;
 `;
 
-const InputEdit = ({ value, onChange, className, onBlur }: IProps) => (
+export const InputEdit: React.FC<InputEditProps> = ({
+  value,
+  onChange,
+  className,
+  onBlur,
+}) => (
   <Input
     className={className}
     autoFocus
@@ -20,5 +25,3 @@ const InputEdit = ({ value, onChange, className, onBlur }: IProps) => (
     onChange={onChange}
   />
 );
-
-export default InputEdit;

@@ -1,29 +1,20 @@
 import { useEffect, useState } from 'react';
-import serverAPI, { NewCategoryTodo } from './api/api';
-import './App.css';
 import styled from 'styled-components';
-import Header from './components/header/header';
-import ToDoCard from './components/card/card';
-import NewTodoForm from './components/newTodoForm/newTodoForm';
+
+import serverAPI from './api/api';
+import { ICategory, INewCategoryTodo } from './interfaces';
+import { Header } from './components/header/Header';
+import { ToDoCard } from './components/card/Card';
+import { NewTodoForm } from './components/newTodoForm/NewTodoForm';
+
 import AddIcon from '@material-ui/icons/Add';
+import './App.css';
 
-export interface Todo {
-  id: number;
-  text: string;
-  isCompleted: boolean;
-}
-
-export interface Category {
-  id: number;
-  title: string;
-  todos: Array<Todo>;
-}
-
-interface Card extends Category {
+interface Card extends ICategory {
   isEdit?: boolean;
 }
 
-const CardContainer = styled.div`
+const CardsContainer = styled.div`
   display: grid;
   width: 1200px;
   margin: 20px auto;
@@ -69,7 +60,7 @@ const NewCardButton = styled.div`
   }
 `;
 
-function App() {
+const App: React.FC = () => {
   const [categories, setCategories] = useState<Array<Card>>([]);
   const [isFormEnabled, setIsFormEnabled] = useState<boolean>(false);
 
@@ -83,12 +74,12 @@ function App() {
     }
   }, []);
 
-  const createTodo = async (newCategoryTodo: NewCategoryTodo) => {
+  const createTodo = async (newCategoryTodo: INewCategoryTodo) => {
     try {
       const response = await serverAPI.postTodo(newCategoryTodo);
       categories.find((category) => category.title === newCategoryTodo.title)
-        ? setCategories(
-            categories.map((category) =>
+        ? setCategories((prev) =>
+            prev.map((category) =>
               category.title === newCategoryTodo.title
                 ? {
                     ...category,
@@ -97,7 +88,7 @@ function App() {
                 : category,
             ),
           )
-        : setCategories([...categories, response.data]);
+        : setCategories((prev) => [...prev, response.data]);
     } catch (error) {
       alert(error);
     }
@@ -116,14 +107,14 @@ function App() {
       title: 'Новая категория',
       text: 'Новая задача',
     });
-    setCategories([...categories, { ...newCard.data, isEdit: true }]);
+    setCategories((prev) => [...prev, { ...newCard.data, isEdit: true }]);
   };
 
   return (
-    <div>
+    <>
       <Header toggleForm={toggleForm} />
       <main>
-        <CardContainer>
+        <CardsContainer>
           {categories.map((category) => (
             <ToDoCard
               key={category.id}
@@ -140,7 +131,7 @@ function App() {
               Добавить новую категорию
             </button>
           </NewCardButton>
-        </CardContainer>
+        </CardsContainer>
         {isFormEnabled && (
           <NewTodoForm
             toggleForm={toggleForm}
@@ -149,8 +140,8 @@ function App() {
           />
         )}
       </main>
-    </div>
+    </>
   );
-}
+};
 
 export default App;

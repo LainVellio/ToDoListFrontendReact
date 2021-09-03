@@ -1,20 +1,21 @@
+import React, { useState } from 'react';
 import styled from 'styled-components';
+
+import { ICategory, INewCategoryTodo, TNewTodoText } from '../../interfaces';
+import { maxLength, required } from '../validators/validators';
+import { InputField } from '../Form/InputField';
+
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { Category } from '../../App';
-import { useState } from 'react';
-import React from 'react';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
-import InputField from '../Form/inputField';
-import { maxLength, required } from '../validators/validators';
 
 const Form = styled.form`
   display: flex;
   justify-content: center;
-  .fillingArea {
+  .filledArea {
     position: absolute;
     top: 0;
     left: 0;
@@ -44,15 +45,18 @@ const Form = styled.form`
     margin-bottom: 20px;
   }
 `;
-interface IProps {
-  categories: Array<Category>;
-  createTodo: Function;
-  toggleForm: Function;
+
+interface NewTodoFormProps {
+  categories: Array<ICategory>;
+  createTodo(newCategoryTodo: INewCategoryTodo): void;
+  toggleForm(): void;
 }
 
-type NewTodoText = 'todoText' | 'categoryName';
-
-const NewTodoForm = ({ categories, createTodo, toggleForm }: IProps) => {
+export const NewTodoForm: React.FC<NewTodoFormProps> = ({
+  categories,
+  createTodo,
+  toggleForm,
+}) => {
   const NEWCATEGORY = 'Новая категория';
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isValidForm, setIsValidForm] = useState({
@@ -69,25 +73,21 @@ const NewTodoForm = ({ categories, createTodo, toggleForm }: IProps) => {
     setSelectedCategory(value);
   };
 
-  const handelSubmit = () => {
+  const handleSubmit = () => {
     selectedCategory === NEWCATEGORY
       ? createTodo({
           title: newTodoText.categoryName,
           text: newTodoText.todoText,
         })
       : createTodo({ title: selectedCategory, text: newTodoText.todoText });
-    onToggleForm();
+    toggleForm();
   };
 
   const inputChange = (fieldName: string) => (fieldValue: string) => {
     setNewTodoText({ ...newTodoText, [fieldName]: fieldValue });
   };
 
-  const onToggleForm = () => {
-    toggleForm();
-  };
-
-  const setValidForm = (fieldName: NewTodoText) => (isValid: boolean) => {
+  const setValidForm = (fieldName: TNewTodoText) => (isValid: boolean) => {
     setIsValidForm({ ...isValidForm, [fieldName]: isValid });
   };
 
@@ -100,7 +100,7 @@ const NewTodoForm = ({ categories, createTodo, toggleForm }: IProps) => {
 
   return (
     <Form>
-      <div onClick={onToggleForm} className="fillingArea"></div>
+      <div onClick={() => toggleForm} className="filledArea"></div>
       <Card className="card">
         {selectedCategory === NEWCATEGORY && (
           <InputField
@@ -122,12 +122,7 @@ const NewTodoForm = ({ categories, createTodo, toggleForm }: IProps) => {
         />
         <FormControl className="formControl">
           <InputLabel htmlFor="newTodo">Категории</InputLabel>
-          <Select
-            value={selectedCategory}
-            onChange={selectChange}
-            id="selectCategory"
-            aria-describedby="my-helper-text"
-          >
+          <Select value={selectedCategory} onChange={selectChange}>
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.title}>
                 {category.title}
@@ -138,7 +133,7 @@ const NewTodoForm = ({ categories, createTodo, toggleForm }: IProps) => {
         </FormControl>
         <Button
           disabled={disabledButton()}
-          onClick={handelSubmit}
+          onClick={handleSubmit}
           className="button"
           variant="contained"
           color="primary"
@@ -149,5 +144,3 @@ const NewTodoForm = ({ categories, createTodo, toggleForm }: IProps) => {
     </Form>
   );
 };
-
-export default NewTodoForm;

@@ -1,19 +1,22 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import serverAPI from '../../api/api';
+import { EColors } from '../../interfaces';
+import { InputEdit } from '../Form/InputEdit';
+import { ColorsCircles } from '../ColorCircle/ColorCircles';
+
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import InputEdit from '../Form/InputEdit';
-import ColorCircle, { Colors } from './ColorCircle';
 
-interface IProps {
+interface CheckboxProps {
   id: number;
   text: string;
   isCompleted: boolean;
-  closeTodo: Function;
   isEdit?: boolean;
+  closeTodo(id: number): void;
 }
 
 const CheckboxWrap = styled.div<{ textColor: string }>`
@@ -52,26 +55,26 @@ const CheckboxWrap = styled.div<{ textColor: string }>`
   }
 `;
 
-const ToDoCheckbox = ({
+const ToDoCheckbox: React.FC<CheckboxProps> = ({
   id,
   text,
   isCompleted,
   closeTodo,
   isEdit = false,
-}: IProps) => {
+}) => {
   const [isChecked, setIsChecked] = useState(isCompleted);
   const [isDisabled, setIsDisabled] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(isEdit);
   const [label, setLabel] = useState(text);
   const [isEmpty, setIsEmpty] = useState(false);
-  const [textColor, setTextColor] = useState<Colors>(Colors.black);
+  const [textColor, setTextColor] = useState<EColors>(EColors.black);
 
-  const colors: Array<Colors> = [
-    Colors.red,
-    Colors.blue,
-    Colors.green,
-    Colors.black,
+  const colors: Array<EColors> = [
+    EColors.red,
+    EColors.blue,
+    EColors.green,
+    EColors.black,
   ];
 
   useEffect(() => {
@@ -89,33 +92,16 @@ const ToDoCheckbox = ({
     }
   };
 
-  const handleChange = (e: any) => {
-    setLabel(e.target.value);
-  };
-  const onMouseEnter = () => {
-    setIsFocus(true);
-  };
-  const onMouseLeave = () => {
-    setIsFocus(false);
-  };
-  const onClose = () => {
-    closeTodo(id);
-  };
-  const onEdit = () => {
-    setEditMode(!editMode);
-    console.log('onEdit');
-  };
   const onBlur = () => {
     !isEmpty && closeTodo(id);
     setEditMode(false);
-    console.log('onBlur');
   };
 
   return (
     <CheckboxWrap
       textColor={textColor}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={() => setIsFocus(true)}
+      onMouseLeave={() => setIsFocus(false)}
     >
       <span>
         <FormControlLabel
@@ -134,7 +120,9 @@ const ToDoCheckbox = ({
               <div>
                 <InputEdit
                   value={label}
-                  onChange={handleChange}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setLabel(e.target.value)
+                  }
                   className="inputCheckbox"
                   onBlur={onBlur}
                 />
@@ -146,21 +134,22 @@ const ToDoCheckbox = ({
         />
         {editMode && !isChecked && (
           <div className="menu">
-            {colors.map((color) => (
-              <ColorCircle
-                key={color}
-                color={color}
-                setEditMode={setEditMode}
-                setColor={setTextColor}
-              />
-            ))}
+            <ColorsCircles
+              colors={colors}
+              currentColor={textColor}
+              setEditMode={setEditMode}
+              setColor={setTextColor}
+            />
           </div>
         )}
       </span>
       {isFocus && (
         <div className="options">
-          <EditIcon className="iconCheckbox" onClick={onEdit} />
-          <CloseIcon className="iconCheckbox" onClick={onClose} />
+          <EditIcon
+            className="iconCheckbox"
+            onClick={() => setEditMode(!editMode)}
+          />
+          <CloseIcon className="iconCheckbox" onClick={() => closeTodo(id)} />
         </div>
       )}
     </CheckboxWrap>

@@ -1,21 +1,17 @@
 import axios from 'axios';
-import { Todo } from '../App';
+
+import { INewCategoryTodo, ITodo } from '../interfaces';
 
 const MAIN_URL = process.env.REACT_APP_MAIN_URL;
-
-export interface NewCategoryTodo {
-  title: string;
-  text: string;
-}
 
 const serverAPI = {
   getTasks() {
     return axios.get(MAIN_URL || '');
   },
-  postTodo(newCategoryTodo: NewCategoryTodo) {
+  postTodo(newCategoryTodo: INewCategoryTodo) {
     return axios.post(`${MAIN_URL}todos`, newCategoryTodo);
   },
-  putTodo(newTodo: Todo) {
+  putTodo(newTodo: ITodo) {
     return axios.put(`${MAIN_URL}todos`, newTodo);
   },
   todoChecked(todoId: number) {
