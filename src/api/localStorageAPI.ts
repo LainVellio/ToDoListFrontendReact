@@ -7,7 +7,7 @@ const setCategories = (categories: Array<ICategory>) => {
   localStorage.setItem('categories', JSON.stringify(categories));
 };
 const getCategory = (categoryId: number) => {
-  return getCategories().find((category) => category.id === categoryId);
+  return getCategories().find((category) => category.id === categoryId)!;
 };
 const setCategory = (changeCategory: ICategory) => {
   const categories = getCategories().map((category) =>
@@ -40,11 +40,32 @@ const localStorageApi = {
     setCategory({ ...category, todos: [...category.todos, newTodo] });
     return newTodo;
   },
+  postCategory(title: string) {
+    const newCategory = {
+      title: title,
+      id: Date.now(),
+      todos: [],
+    };
+    setCategories([...getCategories(), newCategory]);
+    return newCategory;
+  },
+
+  setOrderedTodos(categoryId: number, todos: ITodo[]): void {
+    const category = getCategory(categoryId);
+    const changedCategory = { ...category, todos: todos };
+    setCategory(changedCategory);
+  },
 
   checkedTodo(categoryId: number, todoId: number) {
     const todo = getTodo(categoryId, todoId);
     const checkedTodo = { ...todo, isCompleted: !todo!.isCompleted };
     setTodo(categoryId, checkedTodo);
+  },
+
+  changeTitleCategory(categoryId: number, title: string) {
+    const category = getCategory(categoryId);
+    const changedCategory = { ...category, title: title };
+    setCategory(changedCategory);
   },
 
   changeTextTodo(categoryId: number, todoId: number, text: string) {
@@ -59,6 +80,10 @@ const localStorageApi = {
       ...category,
       todos: category.todos.filter((todo) => todo.id !== todoId),
     });
+  },
+  deleteCategory(categoryId: number) {
+    const categories = getCategories();
+    setCategories(categories.filter((category) => category.id !== categoryId));
   },
 };
 

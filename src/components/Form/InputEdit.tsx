@@ -15,6 +15,7 @@ export const InputEdit: React.FC<InputEditProps> = ({
   onChange,
   className,
   onBlur,
+  onKeyPress,
 }) => (
   <Input
     className={className}
@@ -23,5 +24,6 @@ export const InputEdit: React.FC<InputEditProps> = ({
     value={value}
     onBlur={onBlur}
     onChange={onChange}
+    onKeyPress={onKeyPress}
   />
 );

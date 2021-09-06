@@ -42,7 +42,7 @@ export const CardContent: React.FC<CardContentProps> = ({
   }, [todos]);
 
   const addNewTodo = () => {
-    const newToDo = localStorageApi.postTodo(id, 'Новая задача');
+    const newToDo = localStorageApi.postTodo(id, '');
     setToDoCheckboxes([...toDoCheckboxes, { ...newToDo, isEdit: true }]);
   };
 
@@ -63,6 +63,7 @@ export const CardContent: React.FC<CardContentProps> = ({
       result.destination.index,
     );
     setToDoCheckboxes(reorderTodos);
+    localStorageApi.setOrderedTodos(id, reorderTodos);
   };
 
   return (

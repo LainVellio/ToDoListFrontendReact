@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { getCategories } from './api/localStorageAPI';
+import localStorageApi, { getCategories } from './api/localStorageAPI';
 import { ICategory } from './interfaces';
 import { Header } from './components/header/Header';
 import { ToDoCard } from './components/card/Card';
@@ -67,8 +67,14 @@ const App: React.FC = () => {
     setCategories(getCategories());
   }, []);
 
-  const closeCategory = () => {};
-  const addNewCard = () => {};
+  const closeCategory = (categoryId: number) => {
+    localStorageApi.deleteCategory(categoryId);
+    setCategories((prev) => prev.filter((c) => c.id !== categoryId));
+  };
+  const addNewCard = () => {
+    const newCategory = localStorageApi.postCategory('');
+    setCategories((prev) => [...prev, { ...newCategory, isEdit: true }]);
+  };
 
   const toggleForm = () => {
     setIsFormEnabled(!isFormEnabled);

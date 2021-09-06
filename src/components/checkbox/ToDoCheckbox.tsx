@@ -92,6 +92,10 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
     setEditMode(false);
   };
 
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    event.key === 'Enter' && onBlur();
+  };
+
   return (
     <CheckboxWrap
       textColor={textColor}
@@ -119,6 +123,7 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
                   }
                   className="inputCheckbox"
                   onBlur={onBlur}
+                  onKeyPress={onKeyPress}
                 />
               </div>
             ) : (

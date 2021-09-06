@@ -8,6 +8,7 @@ import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
+import localStorageApi from '../../api/localStorageAPI';
 
 const CardHeaderWraper = styled.div<{ headerColor: string }>`
   display: flex;
@@ -48,6 +49,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
 
   const onBlur = () => {
     setEditMode(false);
+    localStorageApi.changeTitleCategory(id, cardTitle);
+  };
+
+  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    event.key === 'Enter' && onBlur();
   };
 
   return (
@@ -58,6 +64,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setCardTitle(e.target.value)
           }
+          onKeyPress={onKeyPress}
           className="inputCard"
           onBlur={onBlur}
         />
@@ -75,7 +82,13 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       )}
       <div>
         {!editMode ? (
-          <EditIcon onClick={() => setEditMode(!editMode)} className="icon" />
+          <EditIcon
+            onClick={() => {
+              setEditMode(!editMode);
+              localStorageApi.changeTitleCategory(id, cardTitle);
+            }}
+            className="icon"
+          />
         ) : (
           <span>
             <EditIcon className="icon" />
