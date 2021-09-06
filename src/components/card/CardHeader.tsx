@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from 'react';
 import styled from 'styled-components';
 
+import localStorageApi from '../../api/localStorageAPI';
 import { EColors } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
@@ -8,7 +9,6 @@ import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import localStorageApi from '../../api/localStorageAPI';
 
 const CardHeaderWraper = styled.div<{ headerColor: string }>`
   display: flex;
@@ -25,6 +25,13 @@ const CardHeaderWraper = styled.div<{ headerColor: string }>`
   }
   .inputCard {
     font-size: 1.25rem;
+  }
+  .colorCircles {
+    margin-top: 5px;
+    margin-right: 3px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid white;
   }
 `;
 
@@ -81,9 +88,9 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       )}
       {editMode && (
         <ColorsCircles
+          className="colorCircles"
           colors={colors}
           currentColor={headerColor}
-          setEditMode={setEditMode}
           setColor={changeColor}
           hasBorder={true}
         />

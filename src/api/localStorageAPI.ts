@@ -1,4 +1,4 @@
-import { EColors, ICategory, ITodo } from '../interfaces';
+import { EColors, ETextStyle, ICategory, ITodo } from '../interfaces';
 
 export const getCategories = (): Array<ICategory> => {
   return JSON.parse(localStorage.getItem('categories') || '[]');
@@ -36,6 +36,7 @@ const localStorageApi = {
       id: Date.now(),
       isCompleted: false,
       textColor: EColors.black,
+      textStyle: ETextStyle.normal,
     };
     const category = getCategory(categoryId)!;
     setCategory({ ...category, todos: [...category.todos, newTodo] });
@@ -56,6 +57,10 @@ const localStorageApi = {
   changeTextColor(categoryId: number, todoId: number, textColor: EColors) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, textColor: textColor });
+  },
+  changeTextStyle(categoryId: number, todoId: number, textStyle: ETextStyle) {
+    const todo = getTodo(categoryId, todoId);
+    setTodo(categoryId, { ...todo, textStyle: textStyle });
   },
   deleteTodo(categoryId: number, todoId: number) {
     const category = getCategory(categoryId)!;

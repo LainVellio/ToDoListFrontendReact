@@ -2,6 +2,7 @@ export interface ITodo {
   id: number;
   text: string;
   textColor: EColors;
+  textStyle: ETextStyle;
   isCompleted: boolean;
 }
 
@@ -20,6 +21,11 @@ export interface INewCategoryTodo {
 export interface INewTodo {
   categoryId: number;
   text: string;
+}
+
+export enum ETextStyle {
+  bold = '900',
+  normal = '400',
 }
 
 export enum EColors {

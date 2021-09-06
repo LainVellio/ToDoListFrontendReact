@@ -4,63 +4,64 @@ import { EColors } from '../../interfaces';
 
 const Circle = styled.div<{ border: boolean }>`
   background-color: ${(props) => props.color};
-  font-weight: 900;
-  width: 15px;
-  height: 15px;
-  margin-right: 3px;
-  border: ${(props) => (props.border ? '1px solid white' : 'none')};
-  border-radius: 15px;
   cursor: pointer;
+  font-weight: 900;
+  border-radius: 15px;
 `;
 
 interface CircleProps {
   color: EColors;
   border?: boolean;
-  setEditMode(idEdit: boolean): void;
+  className?: string;
   setColor(color: EColors): void;
 }
 
 const ColorCircle: React.FC<CircleProps> = ({
   color,
-  setEditMode,
   setColor,
   border = false,
+  className,
 }) => {
   const selectColor = () => {
     setColor(color);
-    setEditMode(false);
   };
-  return <Circle onMouseDown={selectColor} color={color} border={border} />;
+  return (
+    <Circle
+      className={className}
+      onMouseDown={selectColor}
+      color={color}
+      border={border}
+    />
+  );
 };
 
 const ColorCircleWraper = styled.div`
   display: flex;
-  margin: 10px 0 5px 10px;
 `;
 
 export interface ColorCirclesProps {
   colors: Array<EColors>;
   currentColor: string;
   hasBorder?: boolean;
-  setEditMode(isEdit: boolean): void;
+  className?: string;
   setColor(color: EColors): void;
 }
 
 export const ColorsCircles: React.FC<ColorCirclesProps> = ({
   colors,
   currentColor,
-  setEditMode,
   setColor,
   hasBorder = false,
+  className,
 }) => (
   <ColorCircleWraper>
     {colors.map(
       (color) =>
         currentColor !== color && (
           <ColorCircle
+            className={className}
             key={color}
             color={color}
-            setEditMode={setEditMode}
             setColor={setColor}
             border={hasBorder}
           />
