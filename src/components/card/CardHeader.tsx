@@ -32,6 +32,7 @@ interface CardHeaderProps {
   isEdit: boolean;
   title: string;
   id: number;
+  colorHeader: EColors;
   closeCategory(id: number): void;
 }
 
@@ -39,11 +40,12 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   isEdit,
   title,
   closeCategory,
+  colorHeader,
   id,
 }) => {
   const [editMode, setEditMode] = useState(isEdit);
   const [cardTitle, setCardTitle] = useState(title);
-  const [headerColor, setHeaderColor] = useState<EColors>(EColors.blue);
+  const [headerColor, setHeaderColor] = useState<EColors>(colorHeader);
 
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
@@ -54,6 +56,12 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
 
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && onBlur();
+  };
+
+  const changeColor = (color: EColors) => {
+    setHeaderColor(color);
+    localStorageApi.changeColorHeaderCategory(id, color);
+    onBlur();
   };
 
   return (
@@ -76,7 +84,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           colors={colors}
           currentColor={headerColor}
           setEditMode={setEditMode}
-          setColor={setHeaderColor}
+          setColor={changeColor}
           hasBorder={true}
         />
       )}

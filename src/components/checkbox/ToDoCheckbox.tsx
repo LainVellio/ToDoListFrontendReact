@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { EColors } from '../../interfaces';
+import { EColors, ITodo } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 
@@ -46,11 +46,8 @@ const CheckboxWrap = styled.div<{ textColor: string }>`
     margin-left: 30px;
   }
 `;
-interface CheckboxProps {
-  id: number;
+interface CheckboxProps extends ITodo {
   categoryId: number;
-  text: string;
-  isCompleted: boolean;
   isEdit?: boolean;
   closeTodo(id: number): void;
 }
@@ -59,6 +56,7 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
   id,
   categoryId,
   text,
+  textColor,
   isCompleted,
   closeTodo,
   isEdit = false,
@@ -68,7 +66,7 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
   const [editMode, setEditMode] = useState(isEdit);
   const [label, setLabel] = useState(text);
   const [isEmpty, setIsEmpty] = useState(false);
-  const [textColor, setTextColor] = useState<EColors>(EColors.black);
+  const [colorText, setColorText] = useState<EColors>(textColor);
 
   const colors: Array<EColors> = [
     EColors.red,
@@ -96,9 +94,15 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
     event.key === 'Enter' && onBlur();
   };
 
+  const changeTextColor = (color: EColors) => {
+    setColorText(color);
+    localStorageApi.changeTextColor(categoryId, id, color);
+    onBlur();
+  };
+
   return (
     <CheckboxWrap
-      textColor={textColor}
+      textColor={colorText}
       onMouseEnter={() => setIsFocus(true)}
       onMouseLeave={() => setIsFocus(false)}
     >
@@ -135,9 +139,9 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
           <div className="menu">
             <ColorsCircles
               colors={colors}
-              currentColor={textColor}
+              currentColor={colorText}
               setEditMode={setEditMode}
-              setColor={setTextColor}
+              setColor={changeTextColor}
             />
           </div>
         )}

@@ -1,12 +1,14 @@
 export interface ITodo {
   id: number;
   text: string;
+  textColor: EColors;
   isCompleted: boolean;
 }
 
 export interface ICategory {
   id: number;
   title: string;
+  colorHeader: EColors;
   todos: Array<ITodo>;
 }
 

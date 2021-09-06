@@ -1,13 +1,10 @@
-import { ITodo } from '../../interfaces';
+import { ICategory } from '../../interfaces';
 import { CardContent } from './CardContent';
 import { CardHeader } from './CardHeader';
 
 import { Card, CardContent as CardContentWraper } from '@material-ui/core';
 
-interface CardProps {
-  id: number;
-  title: string;
-  todos: Array<ITodo>;
+interface CardProps extends ICategory {
   closeCategory(categoryId: number): void;
   isEdit?: boolean;
 }
@@ -18,6 +15,7 @@ export const ToDoCard: React.FC<CardProps> = ({
   todos,
   closeCategory,
   isEdit = false,
+  colorHeader,
 }) => {
   return (
     <div>
@@ -28,6 +26,7 @@ export const ToDoCard: React.FC<CardProps> = ({
             isEdit={isEdit}
             closeCategory={closeCategory}
             id={id}
+            colorHeader={colorHeader}
           />
           <CardContent id={id} todos={todos} title={title} />
         </CardContentWraper>

@@ -92,6 +92,7 @@ export const CardContent: React.FC<CardContentProps> = ({
                         isCompleted={todo.isCompleted}
                         isEdit={todo.isEdit}
                         closeTodo={closeTodo(id)}
+                        textColor={todo.textColor}
                       />
                     </div>
                   )}

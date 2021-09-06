@@ -1,4 +1,4 @@
-import { ICategory, ITodo } from '../interfaces';
+import { EColors, ICategory, ITodo } from '../interfaces';
 
 export const getCategories = (): Array<ICategory> => {
   return JSON.parse(localStorage.getItem('categories') || '[]');
@@ -35,45 +35,28 @@ const localStorageApi = {
       text: text,
       id: Date.now(),
       isCompleted: false,
+      textColor: EColors.black,
     };
     const category = getCategory(categoryId)!;
     setCategory({ ...category, todos: [...category.todos, newTodo] });
     return newTodo;
   },
-  postCategory(title: string) {
-    const newCategory = {
-      title: title,
-      id: Date.now(),
-      todos: [],
-    };
-    setCategories([...getCategories(), newCategory]);
-    return newCategory;
-  },
-
   setOrderedTodos(categoryId: number, todos: ITodo[]): void {
     const category = getCategory(categoryId);
-    const changedCategory = { ...category, todos: todos };
-    setCategory(changedCategory);
+    setCategory({ ...category, todos: todos });
   },
-
   checkedTodo(categoryId: number, todoId: number) {
     const todo = getTodo(categoryId, todoId);
-    const checkedTodo = { ...todo, isCompleted: !todo!.isCompleted };
-    setTodo(categoryId, checkedTodo);
+    setTodo(categoryId, { ...todo, isCompleted: !todo!.isCompleted });
   },
-
-  changeTitleCategory(categoryId: number, title: string) {
-    const category = getCategory(categoryId);
-    const changedCategory = { ...category, title: title };
-    setCategory(changedCategory);
-  },
-
   changeTextTodo(categoryId: number, todoId: number, text: string) {
     const todo = getTodo(categoryId, todoId);
-    const changedTodo = { ...todo, text: text };
-    setTodo(categoryId, changedTodo);
+    setTodo(categoryId, { ...todo, text: text });
   },
-
+  changeTextColor(categoryId: number, todoId: number, textColor: EColors) {
+    const todo = getTodo(categoryId, todoId);
+    setTodo(categoryId, { ...todo, textColor: textColor });
+  },
   deleteTodo(categoryId: number, todoId: number) {
     const category = getCategory(categoryId)!;
     setCategory({
@@ -81,6 +64,27 @@ const localStorageApi = {
       todos: category.todos.filter((todo) => todo.id !== todoId),
     });
   },
+  postCategory(title: string) {
+    const newCategory = {
+      title: title,
+      id: Date.now(),
+      todos: [],
+      colorHeader: EColors.blue,
+    };
+    setCategories([...getCategories(), newCategory]);
+    return newCategory;
+  },
+
+  changeTitleCategory(categoryId: number, title: string) {
+    const category = getCategory(categoryId);
+    setCategory({ ...category, title: title });
+  },
+
+  changeColorHeaderCategory(categoryId: number, colorHeader: EColors) {
+    const category = getCategory(categoryId);
+    setCategory({ ...category, colorHeader: colorHeader });
+  },
+
   deleteCategory(categoryId: number) {
     const categories = getCategories();
     setCategories(categories.filter((category) => category.id !== categoryId));

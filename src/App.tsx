@@ -93,6 +93,7 @@ const App: React.FC = () => {
               id={category.id}
               todos={category.todos}
               isEdit={category.isEdit}
+              colorHeader={category.colorHeader}
             />
           ))}
           <NewCardButton>
