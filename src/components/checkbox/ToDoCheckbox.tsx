@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import localStorageApi from '../../api/localStorageAPI';
 import { EColors, ETextStyle, ITodo } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
@@ -8,7 +9,6 @@ import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import Checkbox from '@material-ui/core/Checkbox';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import localStorageApi from '../../api/localStorageAPI';
 
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   display: flex;
@@ -133,13 +133,11 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
     localStorageApi.checkedTodo(categoryId, id);
     setIsChecked(!isChecked);
   };
-
   const onBlur = () => {
     localStorageApi.changeTextTodo(categoryId, id, label);
     !isEmpty && closeTodo(id);
     setEditMode(false);
   };
-
   const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && onBlur();
   };

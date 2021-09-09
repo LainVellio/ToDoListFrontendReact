@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import localStorageApi, { getCategories } from './api/localStorageAPI';
-import { ICategory } from './interfaces';
+import { ICategory, EColors } from './interfaces';
 import { Header } from './components/header/Header';
 import { ToDoCard } from './components/card/Card';
 
@@ -61,35 +61,32 @@ const NewCardButton = styled.div`
 
 const App: React.FC = () => {
   const [categories, setCategories] = useState<Array<Card>>([]);
-  const [isFormEnabled, setIsFormEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     setCategories(getCategories());
   }, []);
 
-  const closeCategory = (categoryId: number) => {
-    localStorageApi.deleteCategory(categoryId);
-    setCategories((prev) => prev.filter((c) => c.id !== categoryId));
-  };
-  const addNewCard = () => {
+  const createCard = () => {
     const newCategory = localStorageApi.postCategory('');
     setCategories((prev) => [...prev, { ...newCategory, isEdit: true }]);
   };
 
-  const toggleForm = () => {
-    setIsFormEnabled(!isFormEnabled);
+  const closeCard = (categoryId: number) => {
+    localStorageApi.deleteCategory(categoryId);
+    setCategories((prev) => prev.filter((c) => c.id !== categoryId));
   };
 
   return (
     <>
-      <Header toggleForm={toggleForm} />
+      <Header />
       <main>
         <CardsContainer>
           {categories.map((category) => (
             <ToDoCard
+              data-testid="toDoCard"
               key={category.id}
               title={category.title}
-              closeCategory={closeCategory}
+              closeCard={closeCard}
               id={category.id}
               todos={category.todos}
               isEdit={category.isEdit}
@@ -97,7 +94,7 @@ const App: React.FC = () => {
             />
           ))}
           <NewCardButton>
-            <button onClick={addNewCard} className="button">
+            <button onClick={createCard} className="button">
               <AddIcon className="addIcon" />
               Добавить новую категорию
             </button>

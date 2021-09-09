@@ -22,6 +22,7 @@ const CardHeaderWraper = styled.div<{ headerColor: string }>`
     cursor: pointer;
     width: 20px;
     height: 20px;
+    color: white;
   }
   .inputCard {
     font-size: 1.25rem;
@@ -33,20 +34,24 @@ const CardHeaderWraper = styled.div<{ headerColor: string }>`
     height: 20px;
     border: 1px solid white;
   }
+  .button {
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+  }
 `;
 
-interface CardHeaderProps {
+export interface CardHeaderProps {
   isEdit: boolean;
   title: string;
   id: number;
   colorHeader: EColors;
-  closeCategory(id: number): void;
+  closeCard(id: number): void;
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({
   isEdit,
   title,
-  closeCategory,
+  closeCard,
   colorHeader,
   id,
 }) => {
@@ -61,7 +66,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
     localStorageApi.changeTitleCategory(id, cardTitle);
   };
 
-  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && onBlur();
   };
 
@@ -79,7 +84,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setCardTitle(e.target.value)
           }
-          onKeyPress={onKeyPress}
+          onKeyPress={InputKeyPress}
           className="inputCard"
           onBlur={onBlur}
         />
@@ -97,19 +102,23 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       )}
       <div>
         {!editMode ? (
-          <EditIcon
+          <button
+            className="button"
             onClick={() => {
               setEditMode(!editMode);
               localStorageApi.changeTitleCategory(id, cardTitle);
             }}
-            className="icon"
-          />
+          >
+            <EditIcon className="icon" />
+          </button>
         ) : (
           <span>
             <EditIcon className="icon" />
           </span>
         )}
-        <CloseIcon onClick={() => closeCategory(id)} className="icon" />
+        <button className="button" onClick={() => closeCard(id)}>
+          <CloseIcon className="icon" />
+        </button>
       </div>
     </CardHeaderWraper>
   );

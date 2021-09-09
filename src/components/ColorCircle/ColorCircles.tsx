@@ -22,13 +22,10 @@ const ColorCircle: React.FC<CircleProps> = ({
   border = false,
   className,
 }) => {
-  const selectColor = () => {
-    setColor(color);
-  };
   return (
     <Circle
       className={className}
-      onMouseDown={selectColor}
+      onMouseDown={() => setColor(color)}
       color={color}
       border={border}
     />

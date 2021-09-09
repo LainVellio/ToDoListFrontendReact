@@ -9,7 +9,7 @@ import {
 import localStorageApi from '../../api/localStorageAPI';
 import { ITodo } from '../../interfaces';
 import ToDoCheckbox from '../checkbox/ToDoCheckbox';
-import { NewTodoButton } from './NewTodoButton';
+import { CreateTodoButton } from './NewTodoButton';
 
 const reorder = (
   list: Array<ITodo>,
@@ -24,28 +24,22 @@ const reorder = (
 
 interface CardContentProps {
   todos: Array<ITodo>;
-  title: string;
   id: number;
 }
 interface Checkbox extends ITodo {
   isEdit?: boolean;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({
-  todos,
-  title,
-  id,
-}) => {
+export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>([]);
   useEffect(() => {
     setToDoCheckboxes(todos);
   }, [todos]);
 
-  const addNewTodo = () => {
+  const createTodo = () => {
     const newToDo = localStorageApi.postTodo(id, '');
     setToDoCheckboxes([...toDoCheckboxes, { ...newToDo, isEdit: true }]);
   };
-
   const closeTodo = (categoryId: number) => (todoId: number) => {
     localStorageApi.deleteTodo(categoryId, todoId);
     setToDoCheckboxes((prev) =>
@@ -104,7 +98,7 @@ export const CardContent: React.FC<CardContentProps> = ({
           )}
         </Droppable>
       </DragDropContext>
-      <NewTodoButton addNewTodo={addNewTodo} />
+      <CreateTodoButton createTodo={createTodo} />
     </div>
   );
 };

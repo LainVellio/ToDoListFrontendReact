@@ -25,14 +25,16 @@ const NewTodoButtonWrap = styled.div`
   }
 `;
 
-interface NewTodoButtonProps {
-  addNewTodo(): void;
+interface CreateTodoButtonProps {
+  createTodo(): void;
 }
 
-export const NewTodoButton: React.FC<NewTodoButtonProps> = ({ addNewTodo }) => {
+export const CreateTodoButton: React.FC<CreateTodoButtonProps> = ({
+  createTodo,
+}) => {
   return (
     <NewTodoButtonWrap>
-      <button onClick={addNewTodo} className="button">
+      <button onClick={createTodo} className="button">
         <AddIcon className="addIcon" />
         Добавить новую задачу
       </button>

@@ -3,10 +3,6 @@ import styled from 'styled-components';
 
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 
-interface HeaderProps {
-  toggleForm(): void;
-}
-
 const ToolbarStyle = styled.div`
   .toolbar {
     display: flex;
@@ -19,7 +15,7 @@ const ToolbarStyle = styled.div`
   }
 `;
 
-export const Header: React.FC<HeaderProps> = ({ toggleForm }) => {
+export const Header: React.FC = () => {
   return (
     <ToolbarStyle>
       <AppBar position="relative">
