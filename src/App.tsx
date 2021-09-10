@@ -2,10 +2,9 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import serverAPI from './api/api';
-import { ICategory, INewCategoryTodo } from './interfaces';
+import { ICategory } from './interfaces';
 import { Header } from './components/header/Header';
 import { ToDoCard } from './components/card/Card';
-import { NewTodoForm } from './components/newTodoForm/NewTodoForm';
 
 import AddIcon from '@material-ui/icons/Add';
 import './App.css';
@@ -62,7 +61,6 @@ const NewCardButton = styled.div`
 
 const App: React.FC = () => {
   const [categories, setCategories] = useState<Array<Card>>([]);
-  const [isFormEnabled, setIsFormEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -74,34 +72,13 @@ const App: React.FC = () => {
     }
   }, []);
 
-  const createTodo = async (newCategoryTodo: INewCategoryTodo) => {
-    try {
-      const response = await serverAPI.postTodo(newCategoryTodo);
-      categories.find((category) => category.title === newCategoryTodo.title)
-        ? setCategories((prev) =>
-            prev.map((category) =>
-              category.title === newCategoryTodo.title
-                ? {
-                    ...category,
-                    todos: [...category.todos, ...response.data.todos],
-                  }
-                : category,
-            ),
-          )
-        : setCategories((prev) => [...prev, response.data]);
-    } catch (error) {
-      alert(error);
-    }
-  };
-
   const closeCategory = async (categoryId: number) => {
     await serverAPI.deleteCategory(categoryId);
-    setCategories(categories.filter((category) => category.id !== categoryId));
+    setCategories((prev) =>
+      prev.filter((category) => category.id !== categoryId),
+    );
   };
 
-  const toggleForm = () => {
-    setIsFormEnabled(!isFormEnabled);
-  };
   const addNewCard = async () => {
     const newCard = await serverAPI.postTodo({
       title: 'Новая категория',
@@ -112,11 +89,12 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Header toggleForm={toggleForm} />
+      <Header />
       <main>
         <CardsContainer>
           {categories.map((category) => (
             <ToDoCard
+              label="header"
               key={category.id}
               title={category.title}
               closeCategory={closeCategory}
@@ -126,19 +104,16 @@ const App: React.FC = () => {
             />
           ))}
           <NewCardButton>
-            <button onClick={addNewCard} className="button">
+            <button
+              data-testid="createCard"
+              onClick={addNewCard}
+              className="button"
+            >
               <AddIcon className="addIcon" />
               Добавить новую категорию
             </button>
           </NewCardButton>
         </CardsContainer>
-        {isFormEnabled && (
-          <NewTodoForm
-            toggleForm={toggleForm}
-            createTodo={createTodo}
-            categories={categories}
-          />
-        )}
       </main>
     </>
   );

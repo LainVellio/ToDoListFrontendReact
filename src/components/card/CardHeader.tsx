@@ -77,7 +77,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
             <EditIcon className="icon" />
           </span>
         )}
-        <CloseIcon onClick={() => closeCategory(id)} className="icon" />
+        <CloseIcon
+          data-testid="closeCard"
+          onClick={() => closeCategory(id)}
+          className="icon"
+        />
       </div>
     </CardHeaderWraper>
   );
