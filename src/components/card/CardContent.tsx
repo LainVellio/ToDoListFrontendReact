@@ -11,7 +11,7 @@ import { ITodo } from '../../interfaces';
 import ToDoCheckbox from '../checkbox/ToDoCheckbox';
 import { NewTodoButton } from './NewTodoButton';
 
-const reorder = (
+export const reorder = (
   list: Array<ITodo>,
   startIndex: number,
   endIndex: number,

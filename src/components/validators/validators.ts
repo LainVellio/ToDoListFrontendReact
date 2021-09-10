@@ -4,6 +4,6 @@ export const required = (value: string) => {
 };
 
 export const maxLength = (maxLength: number) => (value: string) => {
-  if (value.length < maxLength) return null;
+  if (value.length <= maxLength) return null;
   return 'Слишком длинная строка';
 };

@@ -32,7 +32,7 @@ interface NewTodoButtonProps {
 export const NewTodoButton: React.FC<NewTodoButtonProps> = ({ addNewTodo }) => {
   return (
     <NewTodoButtonWrap>
-      <button onClick={addNewTodo} className="button">
+      <button data-testid="addNewTodo" onClick={addNewTodo} className="button">
         <AddIcon className="addIcon" />
         Добавить новую задачу
       </button>

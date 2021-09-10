@@ -149,7 +149,11 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
             className="iconCheckbox"
             onClick={() => setEditMode(!editMode)}
           />
-          <CloseIcon className="iconCheckbox" onClick={() => closeTodo(id)} />
+          <CloseIcon
+            data-testid="closeTodo"
+            className="iconCheckbox"
+            onClick={() => closeTodo(id)}
+          />
         </div>
       )}
     </CheckboxWrap>

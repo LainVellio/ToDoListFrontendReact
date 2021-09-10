@@ -63,7 +63,9 @@
   "jest": {
     "coveragePathIgnorePatterns": [
       "src/index.tsx",
-      "src/reportWebVitals.ts"
+      "src/reportWebVitals.ts",
+      "src/components/Form/InputField.tsx",
+      "src/components/newTodoForm"
     ]
   }
 }
