@@ -71,7 +71,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       )}
       <div>
         {!editMode ? (
-          <EditIcon onClick={() => setEditMode(!editMode)} className="icon" />
+          <EditIcon
+            data-testid="editIcon"
+            onClick={() => setEditMode(!editMode)}
+            className="icon"
+          />
         ) : (
           <span>
             <EditIcon className="icon" />

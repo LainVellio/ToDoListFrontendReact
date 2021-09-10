@@ -53,7 +53,7 @@ export const ColorsCircles: React.FC<ColorCirclesProps> = ({
   setColor,
   hasBorder = false,
 }) => (
-  <ColorCircleWraper>
+  <ColorCircleWraper data-testid="ColorCircles">
     {colors.map(
       (color) =>
         currentColor !== color && (
