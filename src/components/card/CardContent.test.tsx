@@ -15,6 +15,7 @@ describe('CardContent component', () => {
   it('render CardContent', () => {
     render(<CardContent {...props} />);
     expect(screen.getByText(/test/i)).toBeInTheDocument();
+    expect(screen.getByTestId('droppable')).toBeInTheDocument();
     expect(screen.getByText(/Добавить новую задачу/i)).toBeInTheDocument();
   });
 

@@ -77,7 +77,11 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, title }) => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
+            <div
+              data-testid="droppable"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
               {toDoCheckboxes.map((todo: Checkbox, index: number) => (
                 <Draggable
                   key={todo.id}

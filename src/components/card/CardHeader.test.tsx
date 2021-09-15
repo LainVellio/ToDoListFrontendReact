@@ -17,16 +17,19 @@ describe('CardHeader component', () => {
     expect(screen.getByTestId('ColorCircles')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
+
   it('onBlur Input', () => {
     render(<CardHeader {...props} isEdit={true} />);
     screen.getByRole('textbox').blur();
     expect(screen.getByText('title')).toBeInTheDocument();
   });
+
   it('Change Input', () => {
     render(<CardHeader {...props} isEdit={true} />);
     userEvent.type(screen.getByRole('textbox'), 'test');
     expect(screen.getByDisplayValue(/test/i)).toBeInTheDocument();
   });
+
   it('Click EditIcon', () => {
     render(<CardHeader {...props} isEdit={false} />);
     expect(screen.queryByRole('textbox')).toBeNull();
