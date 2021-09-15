@@ -37,6 +37,7 @@ const localStorageApi = {
       isCompleted: false,
       textColor: EColors.black,
       textStyle: ETextStyle.normal,
+      inArchive: false,
     };
     const category = getCategory(categoryId)!;
     setCategory({ ...category, todos: [...category.todos, newTodo] });
@@ -61,6 +62,10 @@ const localStorageApi = {
   changeTextStyle(categoryId: number, todoId: number, textStyle: ETextStyle) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, textStyle: textStyle });
+  },
+  sendTodoInArchive(categoryId: number, todoId: number) {
+    const todo = getTodo(categoryId, todoId);
+    setTodo(categoryId, { ...todo, inArchive: true });
   },
   deleteTodo(categoryId: number, todoId: number) {
     const category = getCategory(categoryId)!;

@@ -4,6 +4,7 @@ export interface ITodo {
   textColor: EColors;
   textStyle: ETextStyle;
   isCompleted: boolean;
+  inArchive: boolean;
 }
 
 export interface ICategory {

@@ -5,8 +5,8 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-
 import localStorageApi from '../../api/localStorageAPI';
+
 import { ITodo } from '../../interfaces';
 import ToDoCheckbox from '../checkbox/ToDoCheckbox';
 import { CreateTodoButton } from './NewTodoButton';
@@ -33,7 +33,7 @@ interface Checkbox extends ITodo {
 export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>([]);
   useEffect(() => {
-    setToDoCheckboxes(todos);
+    setToDoCheckboxes(todos.filter((todo) => todo.inArchive === false));
   }, [todos]);
 
   const createTodo = () => {
@@ -42,6 +42,12 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
   };
   const closeTodo = (categoryId: number) => (todoId: number) => {
     localStorageApi.deleteTodo(categoryId, todoId);
+    setToDoCheckboxes((prev) =>
+      prev.filter((checkbox) => checkbox.id !== todoId),
+    );
+  };
+  const sendInArchive = (categoryId: number) => (todoId: number) => {
+    localStorageApi.sendTodoInArchive(categoryId, todoId);
     setToDoCheckboxes((prev) =>
       prev.filter((checkbox) => checkbox.id !== todoId),
     );
@@ -80,12 +86,14 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
                     >
                       <ToDoCheckbox
                         key={todo.id}
+                        inArchive={todo.inArchive}
                         id={todo.id}
                         categoryId={id}
                         text={todo.text}
                         isCompleted={todo.isCompleted}
                         isEdit={todo.isEdit}
                         closeTodo={closeTodo(id)}
+                        sendInArchive={sendInArchive(id)}
                         textColor={todo.textColor}
                         textStyle={todo.textStyle}
                       />

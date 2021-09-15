@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import localStorageApi, { getCategories } from './api/localStorageAPI';
-import { ICategory, EColors } from './interfaces';
+import { ICategory } from './interfaces';
 import { Header } from './components/header/Header';
 import { ToDoCard } from './components/card/Card';
 

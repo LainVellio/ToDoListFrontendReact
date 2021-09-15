@@ -1,7 +1,6 @@
 import React from 'react';
-import { getByTestId, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import App from './App';
-import { act } from 'react-dom/test-utils';
 
 describe('App component', () => {
   test('renders button add new category', () => {
@@ -19,13 +18,4 @@ describe('App component', () => {
   //   const { asFragment } = render(<App />);
   //   expect(asFragment(<App />)).toMatchSnapshot();
   // });
-});
-
-it('ToDoCard count', async () => {
-  // await screen.findAllByTestId('toDoCard');
-  // expect(screen.getByTestId('toDoCard')).toBeNull();
-  act(() => {
-    render(<App />);
-  });
-  expect(await screen.findByText(/title/i)).toBeInTheDocument();
 });

@@ -1,13 +1,14 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import localStorageApi from '../../api/localStorageAPI';
-import { EColors, ETextStyle, ITodo } from '../../interfaces';
-import { InputEdit } from '../Form/InputEdit';
-import { ColorsCircles } from '../ColorCircle/ColorCircles';
+import { EColors, ITodo } from '../../interfaces';
+import { DeleteMenu } from './DeleteMenu';
+import { EditMenu } from './EditMenu';
+import { useOutsideClick } from '../../utils/useOutsideClick';
 
 import Checkbox from '@material-ui/core/Checkbox';
-import CloseIcon from '@material-ui/icons/Close';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
@@ -32,72 +33,20 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     width: 19px;
     height: 19px;
   }
-  .inputCheckbox {
-    position: relative;
-    font-weight: ${(props) => props.textStyle};
-    width: 240px;
-    height: 20px;
-    margin-left: -2px;
-    font-size: 16px;
-    font-family: 'Roboto', 'Helvetica';
-    border: none;
-    color: ${(props) => props.textColor};
-    z-index: 2;
-  }
   .checkbox {
     display: flex;
     position: relative;
     align-items: center;
   }
-  @keyframes menuSlide {
-    from {
-      top: 10px;
-    }
-    to {
-      top: 34px;
-    }
-  }
-  .menu {
-    display: flex;
-    position: absolute;
-    width: 244px;
-    top: 34px;
-    left: -2px;
-    padding: 0 1px;
-    margin-left: 2.5rem;
-    background-color: rgba(189, 189, 189, 0.3);
-    border-radius: 0px 0px 5px 5px;
-    z-index: 1;
-    animation: menuSlide 0.7s ease-in-out;
-  }
-  .editContainer {
-  }
-  .colorCircles {
-    width: 20px;
-    height: 20px;
-    margin: 3px 7px 7px 3px;
-  }
-  .B {
-    font-size: 20px;
-    margin: 2px 0 0 10px;
-    cursor: pointer;
-    font-family: 'Roboto', 'Helvetica';
-    color: black;
-    font-weight: ${(props) => (props.textStyle === '400' ? '900' : '400')};
-  }
-  @media screen and (max-width: 400px) {
-    .inputCheckbox {
-      width: 200px;
-    }
-    .menu {
-      width: 205px;
-    }
+  .label {
+    background-color: white;
   }
 `;
 interface CheckboxProps extends ITodo {
   categoryId: number;
   isEdit?: boolean;
   closeTodo(id: number): void;
+  sendInArchive: Function;
 }
 
 const ToDoCheckbox: React.FC<CheckboxProps> = ({
@@ -106,54 +55,37 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
   text,
   textColor,
   isCompleted,
-  closeTodo,
   isEdit = false,
   textStyle,
+  sendInArchive,
+  closeTodo,
 }) => {
   const [isChecked, setIsChecked] = useState(isCompleted);
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(isEdit);
+  const [deleteMenu, setDeleteMenu] = useState(false);
   const [label, setLabel] = useState(text);
-  const [isEmpty, setIsEmpty] = useState(false);
   const [colorText, setColorText] = useState<EColors>(textColor);
   const [checkboxTextStyle, setTextStyle] = useState(textStyle);
-
-  const colors: Array<EColors> = [
-    EColors.red,
-    EColors.blue,
-    EColors.green,
-    EColors.black,
-  ];
-
-  useEffect(() => {
-    label === '' ? setIsEmpty(false) : setIsEmpty(true);
-  }, [label]);
+  const ref = useRef(null);
 
   const onChecked = () => {
     localStorageApi.checkedTodo(categoryId, id);
     setIsChecked(!isChecked);
   };
-  const onBlur = () => {
-    localStorageApi.changeTextTodo(categoryId, id, label);
-    !isEmpty && closeTodo(id);
-    setEditMode(false);
-  };
-  const onKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.key === 'Enter' && onBlur();
-  };
-
-  const changeTextColor = (color: EColors) => {
-    setColorText(color);
-    localStorageApi.changeTextColor(categoryId, id, color);
-  };
-
   const onEdit = () => {
     setEditMode(!editMode);
+    setDeleteMenu(false);
     localStorageApi.changeTextTodo(categoryId, id, label);
+  };
+  const onDeleteMenu = () => {
+    setDeleteMenu(!deleteMenu);
+    setEditMode(false);
   };
 
   return (
     <CheckboxWrap
+      ref={ref}
       textColor={colorText}
       textStyle={checkboxTextStyle}
       onMouseEnter={() => setIsFocus(true)}
@@ -168,67 +100,40 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
             color="primary"
           />
           {editMode ? (
-            <div className={`editContainer`}>
-              <InputEdit
-                value={label}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setLabel(e.target.value)
-                }
-                className={`inputCheckbox ${
-                  isChecked ? 'label-text__checked' : ''
-                }`}
-                onBlur={onBlur}
-                onKeyPress={onKeyPress}
+            <>
+              <EditMenu
+                id={id}
+                categoryId={categoryId}
+                label={label}
+                isChecked={isChecked}
+                checkboxTextStyle={checkboxTextStyle}
+                colorText={colorText}
+                setLabel={setLabel}
+                setColorText={setColorText}
+                setTextStyle={setTextStyle}
+                closeTodo={closeTodo}
+                setEditMode={setEditMode}
+                useOutsideClick={useOutsideClick.bind(null, ref)}
               />
-              {!isChecked && (
-                <div className={`menu`}>
-                  <ColorsCircles
-                    colors={colors}
-                    currentColor={colorText}
-                    setColor={changeTextColor}
-                    className="colorCircles"
-                  />
-                  {checkboxTextStyle !== ETextStyle.bold ? (
-                    <div
-                      onClick={() => {
-                        setTextStyle(ETextStyle.bold);
-                        localStorageApi.changeTextStyle(
-                          categoryId,
-                          id,
-                          ETextStyle.bold,
-                        );
-                      }}
-                      className="B"
-                    >
-                      B
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => {
-                        setTextStyle(ETextStyle.normal);
-                        localStorageApi.changeTextStyle(
-                          categoryId,
-                          id,
-                          ETextStyle.normal,
-                        );
-                      }}
-                      className="B"
-                    >
-                      N
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+            </>
           ) : (
-            label
+            <div className="label">{label}</div>
+          )}
+          {deleteMenu && (
+            <DeleteMenu
+              sendInArchive={sendInArchive}
+              setDeleteMenu={setDeleteMenu}
+              closeTodo={closeTodo}
+              id={id}
+              useOutsideClick={useOutsideClick.bind(null, ref)}
+            />
           )}
         </div>
       </span>
       {isFocus && (
         <div className="options">
           <EditIcon className="iconCheckbox" onClick={onEdit} />
-          <CloseIcon className="iconCheckbox" onClick={() => closeTodo(id)} />
+          <DeleteOutlineIcon className="iconCheckbox" onClick={onDeleteMenu} />
         </div>
       )}
     </CheckboxWrap>
