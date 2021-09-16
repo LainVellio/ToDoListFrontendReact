@@ -2,9 +2,9 @@ import { ICategory } from '../../interfaces';
 import { CardContent } from './CardContent';
 import { CardHeader } from './CardHeader';
 
-import { Card, CardContent as CardContentWraper } from '@material-ui/core';
+import { Card, CardContent as CardContentWrapper } from '@material-ui/core';
 
-interface CardProps extends ICategory {
+export interface CardProps extends ICategory {
   closeCard(categoryId: number): void;
   isEdit?: boolean;
 }
@@ -13,14 +13,14 @@ export const ToDoCard: React.FC<CardProps> = ({
   id,
   title,
   todos,
-  closeCard,
   isEdit = false,
   colorHeader,
+  closeCard,
 }) => {
   return (
     <div>
       <Card>
-        <CardContentWraper>
+        <CardContentWrapper>
           <CardHeader
             title={title}
             isEdit={isEdit}
@@ -29,7 +29,7 @@ export const ToDoCard: React.FC<CardProps> = ({
             colorHeader={colorHeader}
           />
           <CardContent id={id} todos={todos} />
-        </CardContentWraper>
+        </CardContentWrapper>
       </Card>
     </div>
   );
