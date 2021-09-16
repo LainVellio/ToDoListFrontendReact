@@ -30,6 +30,15 @@ const setTodo = (categoryId: number, changeTodo: ITodo) => {
 };
 
 const localStorageApi = {
+  getCategoriesInArchive() {
+    const categories = getCategories().map((category) => {
+      return {
+        ...category,
+        todos: category.todos.filter((todo) => todo.inArchive),
+      };
+    });
+    return categories.filter((category) => category.todos.length !== 0);
+  },
   postTodo(categoryId: number, text: string) {
     const newTodo = {
       text: text,
@@ -66,6 +75,10 @@ const localStorageApi = {
   sendTodoInArchive(categoryId: number, todoId: number) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, inArchive: true });
+  },
+  backTodoInMainPage(categoryId: number, todoId: number) {
+    const todo = getTodo(categoryId, todoId);
+    setTodo(categoryId, { ...todo, inArchive: false });
   },
   deleteTodo(categoryId: number, todoId: number) {
     const category = getCategory(categoryId)!;

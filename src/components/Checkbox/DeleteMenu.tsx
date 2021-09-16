@@ -1,6 +1,7 @@
+import React from 'react';
 import styled from 'styled-components';
 
-import { MenuWraper } from './MenuWraper';
+import { MenuWrapper } from './MenuWrapper';
 
 const DeleteMenuWraper = styled.div`
   margin-top: 15px;
@@ -23,10 +24,10 @@ const DeleteMenuWraper = styled.div`
 
 interface DeleteMenuProps {
   id: number;
-  closeTodo: Function;
-  setDeleteMenu: Function;
-  useOutsideClick: Function;
-  sendInArchive: Function;
+  closeTodo(categoryId: number): void;
+  setDeleteMenu(deleteMenu: boolean): void;
+  useOutsideClick(callback: Function): void;
+  sendInArchive(categoryId: number): void;
 }
 
 export const DeleteMenu: React.FC<DeleteMenuProps> = ({
@@ -43,7 +44,7 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
 
   return (
     <DeleteMenuWraper>
-      <MenuWraper topShift={60}>
+      <MenuWrapper topShift={60}>
         <div className="option">
           <div
             onClick={() => sendInArchive(id)}
@@ -60,7 +61,7 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
             Удалить
           </div>
         </div>
-      </MenuWraper>
+      </MenuWrapper>
     </DeleteMenuWraper>
   );
 };

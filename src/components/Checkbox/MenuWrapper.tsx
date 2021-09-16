@@ -20,7 +20,7 @@ const Menu = styled.div<{ topShift: number }>`
     left: 0px;
     padding: 0 1px;
     z-index: 1;
-    animation: menuSlide 0.7s ease-in-out;
+    animation: menuSlide 0.5s ease-in-out;
   }
   .paper {
     border-radius: 0px 0px 3px 3px;
@@ -42,11 +42,11 @@ const Menu = styled.div<{ topShift: number }>`
   }
 `;
 
-interface MenuWraperProps extends React.HTMLAttributes<HTMLDivElement> {
+interface MenuWrapperProps extends React.HTMLAttributes<HTMLDivElement> {
   topShift: number;
 }
 
-export const MenuWraper = ({ children, topShift }: MenuWraperProps) => {
+export const MenuWrapper = ({ children, topShift }: MenuWrapperProps) => {
   return (
     <Window>
       <Menu topShift={topShift}>

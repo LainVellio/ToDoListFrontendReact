@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link, useLocation } from 'react-router-dom';
 
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 const ToolbarStyle = styled.div`
   .toolbar {
@@ -18,9 +19,15 @@ const ToolbarStyle = styled.div`
     color: white;
     text-decoration: none;
   }
+  .back {
+    display: flex;
+    align-items: center;
+  }
 `;
 
 export const Header: React.FC = () => {
+  const location = useLocation();
+
   return (
     <ToolbarStyle>
       <AppBar position="relative">
@@ -31,9 +38,15 @@ export const Header: React.FC = () => {
             </Link>
           </Typography>
           <Typography variant="h6" color="inherit" noWrap>
-            <Link className="link" to="/archive">
-              Archive
-            </Link>
+            {location.pathname === '/archive' ? (
+              <Link className="link back" to="/">
+                Back <ArrowForwardIcon className="arrow" />
+              </Link>
+            ) : (
+              <Link className="link" to="/archive">
+                Archive
+              </Link>
+            )}
           </Typography>
         </Toolbar>
       </AppBar>

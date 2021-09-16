@@ -46,7 +46,7 @@ interface CheckboxProps extends ITodo {
   categoryId: number;
   isEdit?: boolean;
   closeTodo(id: number): void;
-  sendInArchive: Function;
+  sendInArchive(categoryId: number): void;
 }
 
 const ToDoCheckbox: React.FC<CheckboxProps> = ({

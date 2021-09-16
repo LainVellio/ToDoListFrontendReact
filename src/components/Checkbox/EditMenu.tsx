@@ -5,7 +5,7 @@ import localStorageApi from '../../api/localStorageAPI';
 import { EColors, ETextStyle } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
-import { MenuWraper } from './MenuWraper';
+import { MenuWrapper } from './MenuWrapper';
 
 const CheckboxEditMenuWrap = styled.div<{
   textColor: string;
@@ -51,7 +51,7 @@ interface CheckboxEditMenuProps {
   isChecked: boolean;
   colorText: EColors;
   checkboxTextStyle: ETextStyle;
-  useOutsideClick: Function;
+  useOutsideClick(callback: Function): void;
   setLabel(label: string): void;
   setColorText(colorText: EColors): void;
   setTextStyle(textStyle: ETextStyle): void;
@@ -73,12 +73,6 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   closeTodo,
   setEditMode,
 }) => {
-  const [isEmpty, setIsEmpty] = useState(false);
-
-  useEffect(() => {
-    label === '' ? setIsEmpty(false) : setIsEmpty(true);
-  }, [label]);
-
   const colors: Array<EColors> = [
     EColors.red,
     EColors.blue,
@@ -88,7 +82,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
 
   const closeMenu = () => {
     localStorageApi.changeTextTodo(categoryId, id, label);
-    !isEmpty && closeTodo(id);
+    label === '' && closeTodo(id);
     setEditMode(false);
   };
   useOutsideClick(closeMenu);
@@ -108,7 +102,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
           className={`inputCheckbox ${isChecked ? 'label-text__checked' : ''}`}
         />
         {!isChecked && (
-          <MenuWraper topShift={30}>
+          <MenuWrapper topShift={30}>
             <ColorsCircles
               colors={colors}
               currentColor={colorText}
@@ -144,7 +138,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
                 N
               </div>
             )}
-          </MenuWraper>
+          </MenuWrapper>
         )}
       </CheckboxEditMenuWrap>
     </div>
