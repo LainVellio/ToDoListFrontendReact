@@ -87,6 +87,10 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   };
   useOutsideClick(closeMenu);
 
+  const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    event.key === 'Enter' && closeMenu();
+  };
+
   const changeTextColor = (color: EColors) => {
     setColorText(color);
     localStorageApi.changeTextColor(categoryId, id, color);
@@ -100,6 +104,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
             setLabel(e.target.value)
           }
           className={`inputCheckbox ${isChecked ? 'label-text__checked' : ''}`}
+          onKeyPress={InputKeyPress}
         />
         {!isChecked && (
           <MenuWrapper topShift={30}>

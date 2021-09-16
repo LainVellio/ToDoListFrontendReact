@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import localStorageApi from '../../api/localStorageAPI';
@@ -9,8 +9,9 @@ import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
+import { useOutsideClick } from '../../utils/useOutsideClick';
 
-const CardHeaderWraper = styled.div<{ headerColor: string }>`
+const CardHeaderWrapper = styled.div<{ headerColor: string }>`
   display: flex;
   justify-content: space-between;
   background-color: ${(props) => props.headerColor};
@@ -18,7 +19,7 @@ const CardHeaderWraper = styled.div<{ headerColor: string }>`
   margin: -15px -16px 0px -16px;
   padding: 5px 10px;
   .icon {
-    margin: 6px 3px 3px 0;
+    margin: 6px 5px 3px 0;
     cursor: pointer;
     width: 20px;
     height: 20px;
@@ -26,6 +27,7 @@ const CardHeaderWraper = styled.div<{ headerColor: string }>`
   }
   .inputCard {
     font-size: 1.25rem;
+    width: 250px;
   }
   .colorCircles {
     margin-top: 5px;
@@ -37,6 +39,8 @@ const CardHeaderWraper = styled.div<{ headerColor: string }>`
   .button {
     background-color: rgba(255, 255, 255, 0);
     border: none;
+    margin: 0;
+    padding: 0;
   }
 `;
 
@@ -49,77 +53,72 @@ export interface CardHeaderProps {
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({
-  isEdit,
-  title,
-  closeCard,
-  colorHeader,
   id,
+  title,
+  colorHeader,
+  isEdit,
+  closeCard,
 }) => {
   const [editMode, setEditMode] = useState(isEdit);
   const [cardTitle, setCardTitle] = useState(title);
   const [headerColor, setHeaderColor] = useState<EColors>(colorHeader);
+  const ref = useRef(null);
 
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
-  const onBlur = () => {
+  const finishEdit = () => {
     setEditMode(false);
     localStorageApi.changeTitleCategory(id, cardTitle);
   };
+  useOutsideClick(ref, finishEdit);
 
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.key === 'Enter' && onBlur();
+    event.key === 'Enter' && finishEdit();
   };
 
   const changeColor = (color: EColors) => {
     setHeaderColor(color);
     localStorageApi.changeColorHeaderCategory(id, color);
-    onBlur();
+    finishEdit();
   };
 
   return (
-    <CardHeaderWraper headerColor={headerColor}>
+    <CardHeaderWrapper ref={ref} headerColor={headerColor}>
       {editMode ? (
-        <InputEdit
-          value={cardTitle}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setCardTitle(e.target.value)
-          }
-          onKeyPress={InputKeyPress}
-          className="inputCard"
-          onBlur={onBlur}
-        />
+        <>
+          <InputEdit
+            value={cardTitle}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setCardTitle(e.target.value)
+            }
+            onKeyPress={InputKeyPress}
+            className="inputCard"
+          />
+          <ColorsCircles
+            className="colorCircles"
+            colors={colors}
+            currentColor={headerColor}
+            setColor={changeColor}
+            hasBorder={true}
+          />
+        </>
       ) : (
         <Typography variant="h6">{cardTitle}</Typography>
       )}
-      {editMode && (
-        <ColorsCircles
-          className="colorCircles"
-          colors={colors}
-          currentColor={headerColor}
-          setColor={changeColor}
-          hasBorder={true}
-        />
-      )}
       <div>
-        {!editMode ? (
-          <button
-            className="button"
-            onClick={() => {
-              setEditMode(!editMode);
-              localStorageApi.changeTitleCategory(id, cardTitle);
-            }}
-          >
-            <EditIcon className="icon" />
-          </button>
-        ) : (
-          <span>
-            <EditIcon className="icon" />
-          </span>
-        )}
+        <button
+          className="button"
+          onClick={() => {
+            setEditMode(!editMode);
+            localStorageApi.changeTitleCategory(id, cardTitle);
+          }}
+        >
+          <EditIcon className="icon" />
+        </button>
         <button className="button" onClick={() => closeCard(id)}>
           <CloseIcon className="icon" />
         </button>
       </div>
-    </CardHeaderWraper>
+    </CardHeaderWrapper>
   );
 };
