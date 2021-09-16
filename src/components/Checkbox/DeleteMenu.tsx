@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { MenuWrapper } from './MenuWrapper';
 
-const DeleteMenuWraper = styled.div`
+const DeleteMenuWrapper = styled.div`
   margin-top: 15px;
   .option {
     width: 100%;
@@ -43,7 +43,7 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
   useOutsideClick(closeMenu);
 
   return (
-    <DeleteMenuWraper>
+    <DeleteMenuWrapper>
       <MenuWrapper topShift={60}>
         <div className="option">
           <div
@@ -62,6 +62,6 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
           </div>
         </div>
       </MenuWrapper>
-    </DeleteMenuWraper>
+    </DeleteMenuWrapper>
   );
 };

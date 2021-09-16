@@ -9,7 +9,7 @@ import localStorageApi from '../../api/localStorageAPI';
 
 import { ITodo } from '../../interfaces';
 import ToDoCheckbox from '../Checkbox/ToDoCheckbox';
-import { CreateTodoButton } from './NewTodoButton';
+import { CreateTodoButton } from './CreateTodoButton';
 
 const reorder = (
   list: Array<ITodo>,

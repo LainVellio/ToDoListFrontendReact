@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
 import localStorageApi from '../../api/localStorageAPI';

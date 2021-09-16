@@ -15,7 +15,7 @@ const data: CardHeaderProps = {
 describe('CardHeader component', () => {
   it('CardHeader render', () => {
     render(<CardHeader {...data} />);
-    expect(screen.getByText('title')).toBeInTheDocument();
+    expect(screen.getByText(/title/i)).toBeInTheDocument();
   });
 
   it('Edit mode in header work', () => {
@@ -30,7 +30,7 @@ describe('CardHeader component', () => {
     userEvent.click(screen.getByTestId('editButton'));
     userEvent.clear(screen.getByRole('textbox'));
     userEvent.type(screen.getByRole('textbox'), 'Test');
-    expect(screen.queryByDisplayValue('Test')).toBeInTheDocument();
+    expect(screen.queryByDisplayValue(/test/i)).toBeInTheDocument();
   });
 
   it('Dynamic styles works', () => {
