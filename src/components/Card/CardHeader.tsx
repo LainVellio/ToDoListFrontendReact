@@ -5,11 +5,11 @@ import localStorageApi from '../../api/localStorageAPI';
 import { EColors } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
+import { useOutsideClick } from '../../utils/useOutsideClick';
 
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import { useOutsideClick } from '../../utils/useOutsideClick';
 
 const CardHeaderWrapper = styled.div<{ headerColor: string }>`
   display: flex;

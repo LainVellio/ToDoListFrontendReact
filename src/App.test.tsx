@@ -1,19 +1,27 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
+import userEvent from '@testing-library/user-event';
 
 describe('App component', () => {
-  test('renders button add new category', () => {
+  it('render header', () => {
     render(<App />);
-    const linkElement = screen.getByText(/Добавить новую категорию/i);
-    expect(linkElement).toBeInTheDocument();
+    const header = screen.getByText(/to do list/i);
+    expect(header).toBeInTheDocument();
   });
 
-  test('renders button add new category with screen', () => {
+  it('render archive page', () => {
     const { getByText } = render(<App />);
-    const linkElement = getByText(/Добавить новую категорию/i);
-    expect(linkElement).toBeInTheDocument();
+    userEvent.click(getByText(/archive/i));
+    expect(getByText(/archive/i)).toBeInTheDocument();
+    expect(getByText(/back/i)).toBeInTheDocument();
   });
+
+  it('render main page', () => {
+    const { getByText } = render(<App />);
+    userEvent.click(getByText(/to do list/i));
+    expect(getByText(/добавить новую категорию/i)).toBeInTheDocument();
+  });
+
   // test('App snapshot', () => {
   //   const { asFragment } = render(<App />);
   //   expect(asFragment(<App />)).toMatchSnapshot();

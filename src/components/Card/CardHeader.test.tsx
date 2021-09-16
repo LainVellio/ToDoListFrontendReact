@@ -27,7 +27,7 @@ describe('CardHeader component', () => {
 
   it('closeCard work', () => {
     render(<CardHeader {...data} />);
-    userEvent.click(screen.getByRole('button'));
+    userEvent.click(screen.getAllByRole('button')[0]);
     expect(closeCard).toHaveBeenCalledTimes(1);
   });
 
