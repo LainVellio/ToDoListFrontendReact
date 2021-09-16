@@ -83,7 +83,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   };
 
   return (
-    <CardHeaderWrapper ref={ref} headerColor={headerColor}>
+    <CardHeaderWrapper
+      data-testid="cardHeader"
+      ref={ref}
+      headerColor={headerColor}
+    >
       {editMode ? (
         <>
           <InputEdit
@@ -108,6 +112,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       <div>
         <button
           className="button"
+          data-testid="editButton"
           onClick={() => {
             setEditMode(!editMode);
             localStorageApi.changeTitleCategory(id, cardTitle);
@@ -115,7 +120,11 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
         >
           <EditIcon className="icon" />
         </button>
-        <button className="button" onClick={() => closeCard(id)}>
+        <button
+          data-testid="deleteButton"
+          className="button"
+          onClick={() => closeCard(id)}
+        >
           <CloseIcon className="icon" />
         </button>
       </div>

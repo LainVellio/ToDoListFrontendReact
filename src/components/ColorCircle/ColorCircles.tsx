@@ -24,8 +24,9 @@ const ColorCircle: React.FC<CircleProps> = ({
 }) => {
   return (
     <Circle
+      data-testId="circle"
       className={className}
-      onMouseDown={() => setColor(color)}
+      onClick={() => setColor(color)}
       color={color}
       border={border}
     />

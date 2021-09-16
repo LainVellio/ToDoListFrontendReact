@@ -4,10 +4,9 @@ import { EColors } from '../../interfaces';
 import { CardHeader, CardHeaderProps } from './CardHeader';
 
 const closeCard = jest.fn();
-
 const data: CardHeaderProps = {
-  isEdit: true,
-  title: '',
+  isEdit: false,
+  title: 'title',
   id: 1,
   colorHeader: EColors.blue,
   closeCard: closeCard,
@@ -16,30 +15,47 @@ const data: CardHeaderProps = {
 describe('CardHeader component', () => {
   it('CardHeader render', () => {
     render(<CardHeader {...data} />);
-    screen.debug();
-    expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    expect(screen.getByText('title')).toBeInTheDocument();
   });
 
-  //   it('CardHeader snapshot', () => {
-  //     const cardHeader = render(<CardHeader {...data} />);
-  //     expect(cardHeader).toMatchSnapshot();
-  //   });
-
-  it('closeCard work', () => {
+  it('Edit mode in header work', () => {
     render(<CardHeader {...data} />);
-    userEvent.click(screen.getAllByRole('button')[0]);
-    expect(closeCard).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('textbox')).toBeNull();
+    userEvent.click(screen.getByTestId('editButton'));
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('Type in InputEdit', () => {
     render(<CardHeader {...data} />);
+    userEvent.click(screen.getByTestId('editButton'));
+    userEvent.clear(screen.getByRole('textbox'));
     userEvent.type(screen.getByRole('textbox'), 'Test');
     expect(screen.queryByDisplayValue('Test')).toBeInTheDocument();
   });
 
-  it('dinamyc styles works', () => {
+  it('Dynamic styles works', () => {
     render(<CardHeader {...data} />);
+    userEvent.click(screen.getByTestId('editButton'));
     expect(screen.getByRole('textbox')).toHaveClass('inputCard');
     expect(screen.getByRole('textbox')).toHaveStyle('font-size: 1.25rem');
+  });
+
+  it('Close card works', () => {
+    render(<CardHeader {...data} />);
+    expect(screen.getByText('title')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('deleteButton'));
+    expect(screen.queryByText('textbox')).toBeNull();
+  });
+
+  it('Change header colors work', () => {
+    render(<CardHeader {...data} />);
+    expect(screen.getByTestId('cardHeader')).toHaveStyle(
+      `background-color: ${EColors.blue}`,
+    );
+    userEvent.click(screen.getByTestId('editButton'));
+    userEvent.click(screen.getAllByTestId('circle')[0]);
+    expect(screen.getByTestId('cardHeader')).toHaveStyle(
+      `background-color: ${EColors.red}`,
+    );
   });
 });

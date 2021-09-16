@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
-const ToolbarStyle = styled.div`
+const ToolbarWrapper = styled.div`
   .toolbar {
     display: flex;
     justify-content: space-between;
@@ -29,7 +29,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
 
   return (
-    <ToolbarStyle>
+    <ToolbarWrapper data-testid="header1">
       <AppBar position="relative">
         <Toolbar className="toolbar">
           <Typography variant="h6" color="inherit" noWrap>
@@ -50,6 +50,6 @@ export const Header: React.FC = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-    </ToolbarStyle>
+    </ToolbarWrapper>
   );
 };
