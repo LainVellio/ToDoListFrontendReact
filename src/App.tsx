@@ -2,8 +2,6 @@ import { BrowserRouter, Route } from 'react-router-dom';
 
 import { Header } from './components/Header/Header';
 import { MainPage } from './components/MainPage/MainPage';
-
-import './App.css';
 import { ArchivePage } from './ArchivePage/ArchivePage';
 
 const App: React.FC = () => {

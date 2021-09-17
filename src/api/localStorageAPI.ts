@@ -50,7 +50,7 @@ const localStorageApi = {
     };
     const category = getCategory(categoryId)!;
     setCategory({ ...category, todos: [...category.todos, newTodo] });
-    return newTodo;
+    return getTodo(categoryId, newTodo.id);
   },
   setOrderedTodos(categoryId: number, todos: ITodo[]): void {
     const category = getCategory(categoryId);

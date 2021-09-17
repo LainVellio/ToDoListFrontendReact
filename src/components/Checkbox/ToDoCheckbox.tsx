@@ -132,8 +132,16 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
       </span>
       {isFocus && (
         <div className="options">
-          <EditIcon className="iconCheckbox" onClick={onEdit} />
-          <DeleteOutlineIcon className="iconCheckbox" onClick={onDeleteMenu} />
+          <EditIcon
+            data-testid="editCheckbox"
+            className="iconCheckbox"
+            onClick={onEdit}
+          />
+          <DeleteOutlineIcon
+            data-testid="deleteMenu"
+            className="iconCheckbox"
+            onClick={onDeleteMenu}
+          />
         </div>
       )}
     </CheckboxWrap>

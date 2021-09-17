@@ -24,7 +24,7 @@ const ColorCircle: React.FC<CircleProps> = ({
 }) => {
   return (
     <Circle
-      data-testId="circle"
+      data-testid="circle"
       className={className}
       onClick={() => setColor(color)}
       color={color}
@@ -33,7 +33,7 @@ const ColorCircle: React.FC<CircleProps> = ({
   );
 };
 
-const ColorCircleWraper = styled.div`
+const ColorCircleWrapper = styled.div`
   display: flex;
 `;
 
@@ -52,7 +52,7 @@ export const ColorsCircles: React.FC<ColorCirclesProps> = ({
   hasBorder = false,
   className,
 }) => (
-  <ColorCircleWraper>
+  <ColorCircleWrapper>
     {colors.map(
       (color) =>
         currentColor !== color && (
@@ -65,5 +65,5 @@ export const ColorsCircles: React.FC<ColorCirclesProps> = ({
           />
         ),
     )}
-  </ColorCircleWraper>
+  </ColorCircleWrapper>
 );

@@ -33,7 +33,11 @@ export const CreateTodoButton: React.FC<CreateTodoButtonProps> = ({
   createTodo,
 }) => (
   <NewTodoButtonWrap>
-    <button onClick={createTodo} className="button">
+    <button
+      data-testid="editButtonCheckbox"
+      onClick={createTodo}
+      className="button"
+    >
       <AddIcon className="addIcon" />
       Добавить новую задачу
     </button>

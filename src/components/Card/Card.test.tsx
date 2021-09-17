@@ -17,7 +17,6 @@ const data: CardProps = {
       inArchive: false,
     },
   ],
-  isEdit: false,
   colorHeader: EColors.blue,
   closeCard: closeCard,
 };

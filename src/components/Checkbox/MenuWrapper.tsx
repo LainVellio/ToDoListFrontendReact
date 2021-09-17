@@ -1,5 +1,6 @@
-import Paper from '@material-ui/core/Paper';
 import styled from 'styled-components';
+
+import Paper from '@material-ui/core/Paper';
 
 const Window = styled.div`
   position: absolute;

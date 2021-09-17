@@ -5,13 +5,13 @@ import {
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
-import localStorageApi from '../../api/localStorageAPI';
 
+import localStorageApi from '../../api/localStorageAPI';
 import { ITodo } from '../../interfaces';
 import ToDoCheckbox from '../Checkbox/ToDoCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
 
-const reorder = (
+export const reorder = (
   list: Array<ITodo>,
   startIndex: number,
   endIndex: number,
@@ -22,7 +22,7 @@ const reorder = (
   return result;
 };
 
-interface CardContentProps {
+export interface CardContentProps {
   todos: Array<ITodo>;
   id: number;
 }
