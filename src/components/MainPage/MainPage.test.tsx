@@ -1,7 +1,7 @@
 import { MainPage } from './MainPage';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle } from '../../interfaces';
+import { EColors } from '../../interfaces';
 
 const data = [
   {

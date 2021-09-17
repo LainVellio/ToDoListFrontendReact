@@ -14,49 +14,70 @@ const data = {
       isCompleted: false,
       inArchive: false,
     },
+    {
+      id: 2,
+      text: 'text2',
+      textColor: EColors.black,
+      textStyle: ETextStyle.normal,
+      isCompleted: false,
+      inArchive: false,
+    },
   ],
+};
+
+const renderComponent = () => {
+  render(<CardContent {...data} />);
+  localStorage.setItem('categories', JSON.stringify([data]));
 };
 
 describe('CardContent component', () => {
   it('Render CardContent', () => {
     expect(screen.queryByRole('checkbox')).toBeNull();
-    render(<CardContent {...data} />);
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1);
-    expect(screen.getByText(/text/i)).toBeInTheDocument();
+    renderComponent();
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+    expect(screen.getByText(/text2/i)).toBeInTheDocument();
   });
 
   it('Create todo work', () => {
-    render(<CardContent {...data} />);
-    localStorage.setItem('categories', JSON.stringify([data]));
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1);
-    userEvent.click(screen.getByText(/добавить новую задачу/i));
+    renderComponent();
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+    userEvent.click(screen.getByText(/добавить новую задачу/i));
+    expect(screen.getAllByRole('checkbox')).toHaveLength(3);
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos,
-    ).toHaveLength(2);
+    ).toHaveLength(3);
+  });
+
+  it('should deleteMenu open and close work', () => {
+    renderComponent();
+    userEvent.hover(screen.getByText('text'));
+    userEvent.click(screen.getByTestId('deleteMenu'));
+    expect(screen.getByText(/в архив/i)).toBeInTheDocument();
+    expect(screen.getByText(/удалить/i)).toBeInTheDocument();
+    userEvent.click(screen.getByText('text2'));
+    expect(screen.queryByText(/в архив/i)).toBeNull();
+    expect(screen.queryByText(/удалить/i)).toBeNull();
   });
 
   it('Close todo work', () => {
-    render(<CardContent {...data} />);
-    localStorage.setItem('categories', JSON.stringify([data]));
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1);
+    renderComponent();
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     userEvent.hover(screen.getByText('text'));
     userEvent.click(screen.getByTestId('deleteMenu'));
     userEvent.click(screen.getByText(/Удалить/i));
-    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos,
-    ).toHaveLength(0);
+    ).toHaveLength(1);
   });
 
   it('Send todo to archive work', () => {
-    render(<CardContent {...data} />);
-    localStorage.setItem('categories', JSON.stringify([data]));
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1);
+    renderComponent();
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
     userEvent.hover(screen.getByText('text'));
     userEvent.click(screen.getByTestId('deleteMenu'));
     userEvent.click(screen.getByText(/в архив/i));
-    expect(screen.queryAllByRole('checkbox')).toHaveLength(0);
+    expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].inArchive,
     ).toBeTruthy();

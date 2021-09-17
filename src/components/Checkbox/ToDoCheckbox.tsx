@@ -42,14 +42,14 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     background-color: white;
   }
 `;
-interface CheckboxProps extends ITodo {
+export interface CheckboxProps extends ITodo {
   categoryId: number;
   isEdit?: boolean;
   closeTodo(id: number): void;
   sendInArchive(categoryId: number): void;
 }
 
-const ToDoCheckbox: React.FC<CheckboxProps> = ({
+export const ToDoCheckbox: React.FC<CheckboxProps> = ({
   id,
   categoryId,
   text,
@@ -92,9 +92,12 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
       onMouseLeave={() => setIsFocus(false)}
     >
       <span>
-        <div className={`checkbox ${isChecked ? 'label-text__checked' : ''}`}>
+        <div
+          data-testid="checkboxWrapper"
+          className={`checkbox ${isChecked ? 'label-text__checked' : ''}`}
+        >
           <Checkbox
-            onClick={onChecked}
+                     onClick={onChecked}
             checked={isChecked}
             name="checkedB"
             color="primary"
@@ -147,5 +150,3 @@ const ToDoCheckbox: React.FC<CheckboxProps> = ({
     </CheckboxWrap>
   );
 };
-
-export default ToDoCheckbox;
