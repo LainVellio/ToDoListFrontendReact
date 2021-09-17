@@ -48,10 +48,12 @@ export const TodoArchive: React.FC<TodoArchiveProps> = ({
       {isFocus && (
         <div>
           <ArrowForwardIcon
+            data-testid="backTodoToMainPage"
             onClick={() => backTodo(categoryId, id)}
             className="iconOptions"
           />
           <DeleteOutlineIcon
+            data-testid="deleteArchiveTodo"
             onClick={() => deleteTodo(categoryId, id)}
             className="iconOptions delete"
           />
