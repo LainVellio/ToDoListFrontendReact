@@ -18,7 +18,7 @@ export const ToDoCard: React.FC<CardProps> = ({
   closeCard,
 }) => {
   return (
-    <div>
+    <div data-testid="card">
       <Card>
         <CardContentWrapper>
           <CardHeader
