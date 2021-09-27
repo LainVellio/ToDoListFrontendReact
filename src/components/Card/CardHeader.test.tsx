@@ -40,7 +40,7 @@ describe('CardHeader component', () => {
     expect(screen.getByRole('textbox')).toHaveStyle('font-size: 1.25rem');
   });
 
-  it('Close card works', () => {
+  it('Close card on click works', () => {
     render(<CardHeader {...data} />);
     expect(screen.getByText('title')).toBeInTheDocument();
     userEvent.click(screen.getByTestId('deleteButton'));

@@ -44,7 +44,7 @@ const CheckboxEditMenuWrap = styled.div<{
   }
 `;
 
-interface CheckboxEditMenuProps {
+export interface CheckboxEditMenuProps {
   label: string;
   id: number;
   categoryId: number;
@@ -95,8 +95,18 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     setColorText(color);
     localStorageApi.changeTextColor(categoryId, id, color);
   };
+
+  const changeTextNormal = () => {
+    setTextStyle(ETextStyle.normal);
+    localStorageApi.changeTextStyle(categoryId, id, ETextStyle.normal);
+  };
+  const changeTextBold = () => {
+    setTextStyle(ETextStyle.bold);
+    localStorageApi.changeTextStyle(categoryId, id, ETextStyle.bold);
+  };
+
   return (
-    <div>
+    <div data-testid="editMenu">
       <CheckboxEditMenuWrap textColor={colorText} textStyle={checkboxTextStyle}>
         <InputEdit
           value={label}
@@ -115,31 +125,11 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
               className="colorCircles"
             />
             {checkboxTextStyle !== ETextStyle.bold ? (
-              <div
-                onClick={() => {
-                  setTextStyle(ETextStyle.bold);
-                  localStorageApi.changeTextStyle(
-                    categoryId,
-                    id,
-                    ETextStyle.bold,
-                  );
-                }}
-                className="B"
-              >
+              <div onClick={changeTextBold} className="B">
                 B
               </div>
             ) : (
-              <div
-                onClick={() => {
-                  setTextStyle(ETextStyle.normal);
-                  localStorageApi.changeTextStyle(
-                    categoryId,
-                    id,
-                    ETextStyle.normal,
-                  );
-                }}
-                className="B"
-              >
+              <div onClick={changeTextNormal} className="B">
                 N
               </div>
             )}

@@ -70,7 +70,8 @@
       "src/index.tsx",
       "src/reportWebVitals.ts",
       "src/components/Form/InputField.tsx",
-      "src/components/NewTodoForm"
+      "src/components/NewTodoForm",
+      "src/api/api.ts"
     ]
   }
 }

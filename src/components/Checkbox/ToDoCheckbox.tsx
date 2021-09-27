@@ -87,6 +87,7 @@ export const ToDoCheckbox: React.FC<CheckboxProps> = ({
     <CheckboxWrap
       ref={ref}
       textColor={colorText}
+      data-testid="checkbox"
       textStyle={checkboxTextStyle}
       onMouseEnter={() => setIsFocus(true)}
       onMouseLeave={() => setIsFocus(false)}
@@ -97,7 +98,7 @@ export const ToDoCheckbox: React.FC<CheckboxProps> = ({
           className={`checkbox ${isChecked ? 'label-text__checked' : ''}`}
         >
           <Checkbox
-                     onClick={onChecked}
+            onClick={onChecked}
             checked={isChecked}
             name="checkedB"
             color="primary"

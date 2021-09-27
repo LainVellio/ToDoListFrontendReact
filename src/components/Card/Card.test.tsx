@@ -38,4 +38,13 @@ describe('Card component', () => {
     userEvent.click(screen.getByRole('checkbox'));
     expect(screen.queryByRole('textbox')).toBeNull();
   });
+
+  it('Close Edit mode on press Enter works', () => {
+    render(<ToDoCard {...data} />);
+    expect(screen.queryByRole('textbox')).toBeNull();
+    userEvent.click(screen.getByTestId('editButton'));
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    userEvent.type(screen.getByRole('textbox'), '{enter}');
+    expect(screen.queryByRole('textbox')).toBeNull();
+  });
 });

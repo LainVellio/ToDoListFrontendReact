@@ -52,8 +52,8 @@ describe('ToDoCheckbox component', () => {
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].isCompleted,
     ).toBeTruthy();
-    expect(screen.getByTestId('checkboxWrapper')).toHaveStyle(
-      'text-decoration: line-through',
+    expect(screen.getByTestId('checkboxWrapper')).toHaveClass(
+      'label-text__checked',
     );
   });
 
@@ -73,5 +73,39 @@ describe('ToDoCheckbox component', () => {
     ).toBe('test');
     userEvent.unhover(screen.getByRole('checkbox'));
     expect(screen.queryByTestId('editCheckbox')).toBeNull();
+  });
+
+  it('change text style work', () => {
+    renderComponent();
+    userEvent.hover(screen.getByRole('checkbox'));
+    userEvent.click(screen.getByTestId('editCheckbox'));
+    userEvent.click(screen.getByText('B'));
+    expect(screen.getByText('N')).toBeInTheDocument();
+    expect(
+      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textStyle,
+    ).toBe(ETextStyle.bold);
+    userEvent.click(screen.getByText('N'));
+    expect(screen.getByText('B')).toBeInTheDocument();
+    expect(
+      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textStyle,
+    ).toBe(ETextStyle.normal);
+  });
+
+  it('change text color', () => {
+    renderComponent();
+    expect(screen.getByTestId('checkbox')).toHaveStyle(
+      `color: ${EColors.black}`,
+    );
+    expect(
+      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textColor,
+    ).toBe(EColors.black);
+    userEvent.hover(screen.getByRole('checkbox'));
+    userEvent.click(screen.getByTestId('editCheckbox'));
+    expect(screen.getAllByTestId('circle')).toHaveLength(3);
+    userEvent.click(screen.getAllByTestId('circle')[0]);
+    expect(screen.getByTestId('checkbox')).toHaveStyle(`color: ${EColors.red}`);
+    expect(
+      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textColor,
+    ).toBe(EColors.red);
   });
 });
