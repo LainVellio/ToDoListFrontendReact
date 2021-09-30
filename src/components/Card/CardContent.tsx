@@ -7,15 +7,15 @@ import {
 } from 'react-beautiful-dnd';
 
 import localStorageApi from '../../api/localStorageAPI';
-import { ITodo } from '../../interfaces';
-import { ToDoCheckbox } from '../Checkbox/ToDoCheckbox';
+import { IGroupTodo } from '../../interfaces';
+import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
 
 export const reorder = (
-  list: Array<ITodo>,
+  list: Array<IGroupTodo>,
   startIndex: number,
   endIndex: number,
-): Array<ITodo> => {
+): Array<IGroupTodo> => {
   const result = Array.from(list);
   const [removed] = result.splice(startIndex, 1);
   result.splice(endIndex, 0, removed);
@@ -23,10 +23,10 @@ export const reorder = (
 };
 
 export interface CardContentProps {
-  todos: Array<ITodo>;
+  todos: Array<IGroupTodo>;
   id: number;
 }
-interface Checkbox extends ITodo {
+export interface Checkbox extends IGroupTodo {
   isEdit?: boolean;
 }
 
@@ -37,15 +37,17 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
   }, [todos]);
 
   const createTodo = () => {
-    const newToDo = localStorageApi.postTodo(id, '');
+    const newToDo = localStorageApi.postTodo(id);
     setToDoCheckboxes([...toDoCheckboxes, { ...newToDo, isEdit: true }]);
   };
+
   const closeTodo = (categoryId: number) => (todoId: number) => {
     localStorageApi.deleteTodo(categoryId, todoId);
     setToDoCheckboxes((prev) =>
       prev.filter((checkbox) => checkbox.id !== todoId),
     );
   };
+
   const sendInArchive = (categoryId: number) => (todoId: number) => {
     localStorageApi.sendTodoInArchive(categoryId, todoId);
     setToDoCheckboxes((prev) =>
@@ -72,7 +74,7 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
         <Droppable droppableId="droppable">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {toDoCheckboxes.map((todo: Checkbox, index: number) => (
+              {toDoCheckboxes.map((todo: IGroupTodo, index: number) => (
                 <Draggable
                   key={todo.id}
                   draggableId={String(todo.id)}
@@ -84,18 +86,18 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <ToDoCheckbox
+                      <GroupCheckbox
                         key={todo.id}
                         inArchive={todo.inArchive}
                         id={todo.id}
                         categoryId={id}
                         text={todo.text}
                         isCompleted={todo.isCompleted}
-                        isEdit={todo.isEdit}
                         closeTodo={closeTodo(id)}
                         sendInArchive={sendInArchive(id)}
                         textColor={todo.textColor}
                         textStyle={todo.textStyle}
+                        subTasks={todo.subTasks}
                       />
                     </div>
                   )}

@@ -5,13 +5,18 @@ export interface ITodo {
   textStyle: ETextStyle;
   isCompleted: boolean;
   inArchive: boolean;
+  timeCompleted?: Date | null;
+}
+
+export interface IGroupTodo extends ITodo {
+  subTasks: Array<ITodo>;
 }
 
 export interface ICategory {
   id: number;
   title: string;
   colorHeader: EColors;
-  todos: Array<ITodo>;
+  todos: Array<IGroupTodo>;
 }
 
 export interface INewCategoryTodo {

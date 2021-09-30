@@ -69,6 +69,7 @@ export const ArchivePage = () => {
                   id={todo.id}
                   categoryId={category.id}
                   text={todo.text}
+                  timeCompleted={todo.timeCompleted || null}
                   backTodo={backTodo}
                   deleteTodo={deleteTodo}
                 />

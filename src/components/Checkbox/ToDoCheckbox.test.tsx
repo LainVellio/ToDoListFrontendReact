@@ -14,6 +14,8 @@ const data: CheckboxProps = {
   isEdit: false,
   closeTodo: jest.fn(),
   sendInArchive: jest.fn(),
+  hasAddSubTaskButton: false,
+  createSubTodo: jest.fn(),
 };
 
 const items = [

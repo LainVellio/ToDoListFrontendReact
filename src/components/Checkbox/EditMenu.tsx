@@ -1,7 +1,6 @@
 import { ChangeEvent } from 'react';
 import styled from 'styled-components';
 
-import localStorageApi from '../../api/localStorageAPI';
 import { EColors, ETextStyle } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
@@ -30,11 +29,15 @@ const CheckboxEditMenuWrap = styled.div<{
   }
   .B {
     font-size: 20px;
-    margin: 2px 0 0 10px;
+    margin-left: 10px;
     cursor: pointer;
     font-family: 'Roboto', 'Helvetica';
     color: black;
     font-weight: ${(props) => (props.textStyle === '400' ? '900' : '400')};
+  }
+  .addSubTaskIcon {
+    cursor: pointer;
+    margin-left: 10px;
   }
 
   @media screen and (max-width: 400px) {
@@ -46,32 +49,28 @@ const CheckboxEditMenuWrap = styled.div<{
 
 export interface CheckboxEditMenuProps {
   label: string;
-  id: number;
-  categoryId: number;
   isChecked: boolean;
   colorText: EColors;
   checkboxTextStyle: ETextStyle;
   useOutsideClick(callback: Function): void;
   setLabel(label: string): void;
-  setColorText(colorText: EColors): void;
-  setTextStyle(textStyle: ETextStyle): void;
+  changeTextColor(colorText: EColors): void;
+  changeTextStyle(textStyle: ETextStyle): void;
   closeTodo(id: number): void;
   setEditMode(editMode: boolean): void;
+  closeMenu: Function;
 }
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   label,
-  categoryId,
-  id,
   colorText,
   isChecked,
   checkboxTextStyle,
   useOutsideClick,
   setLabel,
-  setColorText,
-  setTextStyle,
-  closeTodo,
-  setEditMode,
+  changeTextColor,
+  changeTextStyle,
+  closeMenu,
 }) => {
   const colors: Array<EColors> = [
     EColors.red,
@@ -80,30 +79,10 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     EColors.black,
   ];
 
-  const closeMenu = () => {
-    localStorageApi.changeTextTodo(categoryId, id, label);
-    label === '' && closeTodo(id);
-    setEditMode(false);
-  };
-  useOutsideClick(closeMenu);
-
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && closeMenu();
   };
-
-  const changeTextColor = (color: EColors) => {
-    setColorText(color);
-    localStorageApi.changeTextColor(categoryId, id, color);
-  };
-
-  const changeTextNormal = () => {
-    setTextStyle(ETextStyle.normal);
-    localStorageApi.changeTextStyle(categoryId, id, ETextStyle.normal);
-  };
-  const changeTextBold = () => {
-    setTextStyle(ETextStyle.bold);
-    localStorageApi.changeTextStyle(categoryId, id, ETextStyle.bold);
-  };
+  useOutsideClick(closeMenu);
 
   return (
     <div data-testid="editMenu">
@@ -125,11 +104,21 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
               className="colorCircles"
             />
             {checkboxTextStyle !== ETextStyle.bold ? (
-              <div onClick={changeTextBold} className="B">
+              <div
+                onClick={() => {
+                  changeTextStyle(ETextStyle.bold);
+                }}
+                className="B"
+              >
                 B
               </div>
             ) : (
-              <div onClick={changeTextNormal} className="B">
+              <div
+                onClick={() => {
+                  changeTextStyle(ETextStyle.normal);
+                }}
+                className="B"
+              >
                 N
               </div>
             )}

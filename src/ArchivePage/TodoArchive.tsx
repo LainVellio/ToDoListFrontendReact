@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import styled from 'styled-components';
+import moment from 'moment';
+import 'moment/locale/ru';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -8,6 +10,7 @@ interface TodoArchiveProps {
   id: number;
   categoryId: number;
   text: string;
+  timeCompleted: Date | null;
   backTodo(categoryId: number, todoId: number): void;
   deleteTodo(categoryId: number, todoId: number): void;
 }
@@ -17,6 +20,7 @@ const TodoArchiveWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 30px;
+  margin-bottom: 10px;
 
   .iconOptions {
     font-size: 18px;
@@ -28,12 +32,26 @@ const TodoArchiveWrapper = styled.div`
   .delete {
     color: #df0b52;
   }
+  .time {
+    color: #acacac;
+    font-size: 12px;
+  }
 `;
+
+const getTimeCompleted = (timeCompleted: Date) => {
+  moment.locale('ru');
+  const timeFormat = 'Do MMMM YYYY в HH:mm';
+  const endTime = moment().add(1, 'week');
+  return moment(timeCompleted).isBefore(endTime)
+    ? moment(timeCompleted).fromNow()
+    : moment(timeCompleted).format(timeFormat);
+};
 
 export const TodoArchive: React.FC<TodoArchiveProps> = ({
   id,
   categoryId,
   text,
+  timeCompleted,
   backTodo,
   deleteTodo,
 }) => {
@@ -44,7 +62,14 @@ export const TodoArchive: React.FC<TodoArchiveProps> = ({
       onMouseEnter={() => setIsFocus(true)}
       onMouseLeave={() => setIsFocus(false)}
     >
-      {text}
+      <div>
+        {text}
+        <div className="time">
+          {timeCompleted
+            ? `Выполнено: ${getTimeCompleted(timeCompleted)}`
+            : 'Не выполнено'}
+        </div>
+      </div>
       {isFocus && (
         <div>
           <ArrowForwardIcon

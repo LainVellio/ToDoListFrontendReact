@@ -14,6 +14,7 @@ const data = {
       textStyle: ETextStyle.normal,
       isCompleted: false,
       inArchive: false,
+      subTasks: [],
     },
     {
       id: 2,
@@ -22,6 +23,7 @@ const data = {
       textStyle: ETextStyle.normal,
       isCompleted: false,
       inArchive: false,
+      subTasks: [],
     },
   ],
 };
@@ -123,6 +125,7 @@ describe('CardContent component', () => {
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: false,
+        subTasks: [],
       },
       {
         id: 2,
@@ -131,6 +134,7 @@ describe('CardContent component', () => {
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: false,
+        subTasks: [],
       },
       {
         id: 3,
@@ -139,6 +143,7 @@ describe('CardContent component', () => {
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: false,
+        subTasks: [],
       },
     ];
     expect(initialArray[0].id).toEqual(1);

@@ -26,6 +26,7 @@ const Menu = styled.div<{ topShift: number }>`
   .paper {
     border-radius: 0px 0px 3px 3px;
     display: flex;
+    align-items: center;
     width: 244px;
   }
   @keyframes menuSlide {

@@ -15,6 +15,7 @@ const data: CardProps = {
       textStyle: ETextStyle.normal,
       isCompleted: false,
       inArchive: false,
+      subTasks: [],
     },
   ],
   colorHeader: EColors.blue,
