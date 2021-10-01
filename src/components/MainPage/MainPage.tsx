@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ICategory } from '../../interfaces';
@@ -58,11 +58,7 @@ interface Card extends ICategory {
 }
 
 export const MainPage = () => {
-  const [categories, setCategories] = useState<Array<Card>>([]);
-
-  useEffect(() => {
-    setCategories(getCategories());
-  }, []);
+  const [categories, setCategories] = useState<Array<Card>>(getCategories());
 
   const createCard = () => {
     const newCategory = localStorageApi.postCategory('');

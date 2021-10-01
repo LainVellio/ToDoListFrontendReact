@@ -12,7 +12,7 @@ export const getCategories = (): Array<ICategory> => {
 const setCategories = (categories: Array<ICategory>) => {
   localStorage.setItem('categories', JSON.stringify(categories));
 };
-const getCategory = (categoryId: number) => {
+export const getCategory = (categoryId: number) => {
   return getCategories().find((category) => category.id === categoryId)!;
 };
 const setCategory = (changeCategory: ICategory) => {
@@ -42,16 +42,31 @@ const setTodo = (categoryId: number, changeTodo: IGroupTodo) => {
   };
   setCategory(changeCategory);
 };
+const setSubTodo = (
+  categoryId: number,
+  todoId: number,
+  changeSubTodo: ITodo,
+) => {
+  const todo = getTodo(categoryId, todoId);
+  const changeTodo = {
+    ...todo,
+    subTasks: todo.subTasks.map((subTodo) =>
+      subTodo.id === changeSubTodo.id ? changeSubTodo : subTodo,
+    ),
+  };
+  setTodo(categoryId, changeTodo);
+};
 
 const localStorageApi = {
-  getCategoriesInArchive() {
-    const categories = getCategories().map((category) => {
-      return {
-        ...category,
-        todos: category.todos.filter((todo) => todo.inArchive),
-      };
-    });
-    return categories.filter((category) => category.todos.length !== 0);
+  postCategory(title: string) {
+    const newCategory = {
+      title: title,
+      id: Date.now(),
+      todos: [],
+      colorHeader: EColors.blue,
+    };
+    setCategories([...getCategories(), newCategory]);
+    return newCategory;
   },
   postTodo(categoryId: number) {
     const newTodo = {
@@ -82,10 +97,12 @@ const localStorageApi = {
     setTodo(categoryId, { ...todo, subTasks: [...todo.subTasks, newSubTodo] });
     return getSubTodo(categoryId, todoId, newSubTodo.id);
   },
+
   setOrderedTodos(categoryId: number, todos: IGroupTodo[]): void {
     const category = getCategory(categoryId);
     setCategory({ ...category, todos: todos });
   },
+
   checkedTodo(categoryId: number, todoId: number) {
     const todo = getTodo(categoryId, todoId);
     const timeCompleted = todo.isCompleted === false ? new Date() : null;
@@ -95,17 +112,74 @@ const localStorageApi = {
       timeCompleted: timeCompleted,
     });
   },
+  checkedSubTodo(categoryId: number, todoId: number, subTodoId: number) {
+    const subTodo = getSubTodo(categoryId, todoId, subTodoId);
+    const timeCompleted = subTodo.isCompleted === false ? new Date() : null;
+    setSubTodo(categoryId, todoId, {
+      ...subTodo,
+      isCompleted: !subTodo!.isCompleted,
+      timeCompleted: timeCompleted,
+    });
+  },
+
+  changeTitleCategory(categoryId: number, title: string) {
+    const category = getCategory(categoryId);
+    setCategory({ ...category, title: title });
+  },
   changeTextTodo(categoryId: number, todoId: number, text: string) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, text: text });
+  },
+  changeTextSubTodo(
+    categoryId: number,
+    todoId: number,
+    subTodoId: number,
+    text: string,
+  ) {
+    const subTodo = getSubTodo(categoryId, todoId, subTodoId);
+    setSubTodo(categoryId, todoId, { ...subTodo, text: text });
+  },
+
+  changeColorHeaderCategory(categoryId: number, colorHeader: EColors) {
+    const category = getCategory(categoryId);
+    setCategory({ ...category, colorHeader: colorHeader });
   },
   changeTextColor(categoryId: number, todoId: number, textColor: EColors) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, textColor: textColor });
   },
+  changeTextColorSubTodo(
+    categoryId: number,
+    todoId: number,
+    subTodoId: number,
+    textColor: EColors,
+  ) {
+    const subTodo = getSubTodo(categoryId, todoId, subTodoId);
+    setSubTodo(categoryId, todoId, { ...subTodo, textColor: textColor });
+  },
+
   changeTextStyle(categoryId: number, todoId: number, textStyle: ETextStyle) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, textStyle: textStyle });
+  },
+  changeTextStyleSubTodo(
+    categoryId: number,
+    todoId: number,
+    subTodoId: number,
+    textStyle: ETextStyle,
+  ) {
+    const subTodo = getSubTodo(categoryId, todoId, subTodoId);
+    setSubTodo(categoryId, todoId, { ...subTodo, textStyle: textStyle });
+  },
+
+  getCategoriesInArchive() {
+    const categories = getCategories().map((category) => {
+      return {
+        ...category,
+        todos: category.todos.filter((todo) => todo.inArchive),
+      };
+    });
+    return categories.filter((category) => category.todos.length !== 0);
   },
   sendTodoInArchive(categoryId: number, todoId: number) {
     const todo = getTodo(categoryId, todoId);
@@ -114,6 +188,11 @@ const localStorageApi = {
   backTodoInMainPage(categoryId: number, todoId: number) {
     const todo = getTodo(categoryId, todoId);
     setTodo(categoryId, { ...todo, inArchive: false });
+  },
+
+  deleteCategory(categoryId: number) {
+    const categories = getCategories();
+    setCategories(categories.filter((category) => category.id !== categoryId));
   },
   deleteTodo(categoryId: number, todoId: number) {
     const category = getCategory(categoryId)!;
@@ -128,31 +207,6 @@ const localStorageApi = {
       ...todo,
       subTasks: todo.subTasks.filter((subTodo) => subTodo.id !== subTodoId),
     });
-  },
-  postCategory(title: string) {
-    const newCategory = {
-      title: title,
-      id: Date.now(),
-      todos: [],
-      colorHeader: EColors.blue,
-    };
-    setCategories([...getCategories(), newCategory]);
-    return newCategory;
-  },
-
-  changeTitleCategory(categoryId: number, title: string) {
-    const category = getCategory(categoryId);
-    setCategory({ ...category, title: title });
-  },
-
-  changeColorHeaderCategory(categoryId: number, colorHeader: EColors) {
-    const category = getCategory(categoryId);
-    setCategory({ ...category, colorHeader: colorHeader });
-  },
-
-  deleteCategory(categoryId: number) {
-    const categories = getCategories();
-    setCategories(categories.filter((category) => category.id !== categoryId));
   },
 };
 

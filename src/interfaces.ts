@@ -6,6 +6,7 @@ export interface ITodo {
   isCompleted: boolean;
   inArchive: boolean;
   timeCompleted?: Date | null;
+  isEdit?: boolean;
 }
 
 export interface IGroupTodo extends ITodo {

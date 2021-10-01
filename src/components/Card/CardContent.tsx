@@ -6,7 +6,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 
-import localStorageApi from '../../api/localStorageAPI';
+import localStorageApi, { getCategory } from '../../api/localStorageAPI';
 import { IGroupTodo } from '../../interfaces';
 import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
@@ -31,7 +31,7 @@ export interface Checkbox extends IGroupTodo {
 }
 
 export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
-  const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>([]);
+  const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>(todos);
   useEffect(() => {
     setToDoCheckboxes(todos.filter((todo) => todo.inArchive === false));
   }, [todos]);
@@ -60,11 +60,12 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
       return;
     }
     const reorderTodos = reorder(
-      toDoCheckboxes,
+      getCategory(id).todos,
       result.source.index,
       result.destination.index,
     );
     setToDoCheckboxes(reorderTodos);
+    console.log(reorderTodos);
     localStorageApi.setOrderedTodos(id, reorderTodos);
   };
 
@@ -98,6 +99,7 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
                         textColor={todo.textColor}
                         textStyle={todo.textStyle}
                         subTasks={todo.subTasks}
+                        isEdit={todo.isEdit}
                       />
                     </div>
                   )}

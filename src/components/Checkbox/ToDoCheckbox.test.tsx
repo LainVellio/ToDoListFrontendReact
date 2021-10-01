@@ -1,9 +1,9 @@
-import { CheckboxProps, ToDoCheckbox } from './ToDoCheckbox';
+import { GroupCheckboxProps, GroupCheckbox } from './GroupCheckbox';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EColors, ETextStyle } from '../../interfaces';
 
-const data: CheckboxProps = {
+const data: GroupCheckboxProps = {
   id: 1,
   text: 'text',
   textColor: EColors.black,
@@ -12,10 +12,9 @@ const data: CheckboxProps = {
   inArchive: false,
   categoryId: 1,
   isEdit: false,
+  subTasks: [],
   closeTodo: jest.fn(),
   sendInArchive: jest.fn(),
-  hasAddSubTaskButton: false,
-  createSubTodo: jest.fn(),
 };
 
 const items = [
@@ -38,7 +37,7 @@ const items = [
 
 const renderComponent = () => {
   localStorage.setItem('categories', JSON.stringify(items));
-  render(<ToDoCheckbox {...data} />);
+  render(<GroupCheckbox {...data} />);
 };
 
 describe('ToDoCheckbox component', () => {

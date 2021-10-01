@@ -10,6 +10,7 @@ const DeleteMenuWrapper = styled.div`
     padding: 5px 10px 5px 10px;
   }
   .elementMenu {
+    font-weight: normal;
     cursor: pointer;
   }
   .elementMenu:hover {

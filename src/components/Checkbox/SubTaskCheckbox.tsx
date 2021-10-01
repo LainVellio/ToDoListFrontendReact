@@ -3,11 +3,9 @@ import styled from 'styled-components';
 
 import localStorageApi from '../../api/localStorageAPI';
 import { EColors, ETextStyle, ITodo } from '../../interfaces';
-import { DeleteMenu } from './DeleteMenu';
 import { EditMenu } from './EditMenu';
 import { useOutsideClick } from '../../utils/useOutsideClick';
 
-import AddIcon from '@material-ui/icons/Add';
 import Checkbox from '@material-ui/core/Checkbox';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
@@ -15,14 +13,14 @@ import EditIcon from '@material-ui/icons/Edit';
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   display: flex;
   justify-content: space-between;
+  height: 30px;
+  margin-left: 25px;
   color: ${(props) => props.textColor};
   font-weight: ${(props) => props.textStyle};
   .label-text__checked {
     text-decoration: line-through;
     color: gray;
-  }
-  .label-text__disabled {
-    color: #d8d8d8;
+    font-weight: normal;
   }
   .options {
     display: flex;
@@ -35,6 +33,9 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     cursor: pointer;
     width: 19px;
     height: 19px;
+  }
+  .deleteIcon {
+    color: ${EColors.red};
   }
   .addSubTaskIcon {
     cursor: pointer;
@@ -49,68 +50,60 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     word-wrap: break-word;
   }
 `;
-export interface CheckboxProps extends ITodo {
-  isEdit?: boolean;
+export interface SubCheckboxProps extends ITodo {
+  todoId: number;
   categoryId: number;
-  hasAddSubTaskButton: boolean;
-  createSubTodo(categoryId: number, todoId: number): void;
+  setCheckedSubTask: Function;
   closeTodo(id: number): void;
   sendInArchive(categoryId: number): void;
 }
 
-export const ToDoCheckbox: React.FC<CheckboxProps> = ({
+export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   id,
+  todoId,
   categoryId,
   text,
   textColor,
   isCompleted,
   isEdit = false,
   textStyle,
-  hasAddSubTaskButton,
-  createSubTodo,
-  sendInArchive,
+  setCheckedSubTask,
   closeTodo,
 }) => {
-  const [isChecked, setIsChecked] = useState(isCompleted);
-  const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(isEdit);
-  const [deleteMenu, setDeleteMenu] = useState(false);
   const [label, setLabel] = useState(text);
+  const [isFocus, setIsFocus] = useState(false);
   const [colorText, setColorText] = useState<EColors>(textColor);
   const [checkboxTextStyle, setTextStyle] = useState(textStyle);
   const ref = useRef(null);
 
   const onChecked = () => {
-    localStorageApi.checkedTodo(categoryId, id);
-    setIsChecked(!isChecked);
+    localStorageApi.checkedSubTodo(categoryId, todoId, id);
+    setCheckedSubTask(!isCompleted);
   };
   const onEdit = () => {
     setEditMode(!editMode);
-    setDeleteMenu(false);
-    localStorageApi.changeTextTodo(categoryId, id, label);
-  };
-  const onDeleteMenu = () => {
-    setDeleteMenu(!deleteMenu);
-    setEditMode(false);
-  };
-  const addSubTask = () => {
-    createSubTodo(categoryId, id);
+    localStorageApi.changeTextSubTodo(categoryId, todoId, id, label);
   };
 
   const closeMenu = () => {
-    localStorageApi.changeTextTodo(categoryId, id, label);
+    localStorageApi.changeTextSubTodo(categoryId, todoId, id, label);
     label === '' && closeTodo(id);
     setEditMode(false);
   };
 
   const changeTextColor = (color: EColors) => {
     setColorText(color);
-    localStorageApi.changeTextColor(categoryId, id, color);
+    localStorageApi.changeTextColorSubTodo(categoryId, todoId, id, color);
   };
 
   const changeTextStyle = (textStyle: ETextStyle) => {
     setTextStyle(textStyle);
-    localStorageApi.changeTextStyle(categoryId, id, textStyle);
+    localStorageApi.changeTextStyleSubTodo(categoryId, todoId, id, textStyle);
+  };
+
+  const onDelete = () => {
+    closeTodo(id);
   };
 
   return (
@@ -124,11 +117,11 @@ export const ToDoCheckbox: React.FC<CheckboxProps> = ({
     >
       <div
         data-testid="checkboxWrapper"
-        className={`checkbox ${isChecked ? 'label-text__checked' : ''}`}
+        className={`checkbox ${isCompleted ? 'label-text__checked' : ''}`}
       >
         <Checkbox
           onClick={onChecked}
-          checked={isChecked}
+          checked={isCompleted}
           name="checkedB"
           color="primary"
         />
@@ -136,7 +129,7 @@ export const ToDoCheckbox: React.FC<CheckboxProps> = ({
         {editMode ? (
           <EditMenu
             label={label}
-            isChecked={isChecked}
+            isChecked={isCompleted}
             checkboxTextStyle={checkboxTextStyle}
             colorText={colorText}
             setLabel={setLabel}
@@ -150,26 +143,10 @@ export const ToDoCheckbox: React.FC<CheckboxProps> = ({
         ) : (
           <div className="label">{label}</div>
         )}
-        {deleteMenu && (
-          <DeleteMenu
-            sendInArchive={sendInArchive}
-            setDeleteMenu={setDeleteMenu}
-            closeTodo={closeTodo}
-            id={id}
-            useOutsideClick={useOutsideClick.bind(null, ref)}
-          />
-        )}
       </div>
 
       {isFocus && (
         <div className="options">
-          {hasAddSubTaskButton && (
-            <AddIcon
-              data-testid="addSubTask"
-              className="addSubTaskIcon"
-              onClick={addSubTask}
-            />
-          )}
           <EditIcon
             data-testid="editCheckbox"
             className="iconCheckbox"
@@ -177,8 +154,8 @@ export const ToDoCheckbox: React.FC<CheckboxProps> = ({
           />
           <DeleteOutlineIcon
             data-testid="deleteMenu"
-            className="iconCheckbox"
-            onClick={onDeleteMenu}
+            className="iconCheckbox deleteIcon"
+            onClick={onDelete}
           />
         </div>
       )}
