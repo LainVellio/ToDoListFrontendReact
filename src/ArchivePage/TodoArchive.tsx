@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import moment from 'moment';
 import 'moment/locale/ru';
 
+import { ITodo } from '../interfaces';
+
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 
@@ -11,15 +13,15 @@ interface TodoArchiveProps {
   categoryId: number;
   text: string;
   timeCompleted: Date | null;
+  subTodos: Array<ITodo>;
   backTodo(categoryId: number, todoId: number): void;
   deleteTodo(categoryId: number, todoId: number): void;
 }
 
 const TodoArchiveWrapper = styled.div`
   display: flex;
-  align-items: center;
+
   justify-content: space-between;
-  height: 30px;
   margin-bottom: 10px;
 
   .iconOptions {
@@ -35,6 +37,11 @@ const TodoArchiveWrapper = styled.div`
   .time {
     color: #acacac;
     font-size: 12px;
+    margin-top: 5px;
+  }
+  .subTodo {
+    margin-left: 10px;
+    color: #727272;
   }
 `;
 
@@ -51,6 +58,7 @@ export const TodoArchive: React.FC<TodoArchiveProps> = ({
   id,
   categoryId,
   text,
+  subTodos,
   timeCompleted,
   backTodo,
   deleteTodo,
@@ -63,7 +71,10 @@ export const TodoArchive: React.FC<TodoArchiveProps> = ({
       onMouseLeave={() => setIsFocus(false)}
     >
       <div>
-        {text}
+        <div>&#10003; {text}</div>
+        {subTodos.map((subTodo) => (
+          <div className="subTodo">&#10003; {subTodo.text}</div>
+        ))}
         <div className="time">
           {timeCompleted
             ? `Выполнено: ${getTimeCompleted(timeCompleted)}`

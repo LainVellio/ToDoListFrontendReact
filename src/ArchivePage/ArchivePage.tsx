@@ -17,7 +17,7 @@ const ArchivePageWrapper = styled.div`
     padding: 20px;
   }
   .categoryTitle {
-    margin: 10px 0;
+    margin: 10px 0 10px 15px;
   }
   .noTodos {
     text-align: center;
@@ -69,6 +69,7 @@ export const ArchivePage = () => {
                   id={todo.id}
                   categoryId={category.id}
                   text={todo.text}
+                  subTodos={todo.subTasks}
                   timeCompleted={todo.timeCompleted || null}
                   backTodo={backTodo}
                   deleteTodo={deleteTodo}

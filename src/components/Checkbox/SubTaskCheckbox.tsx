@@ -53,7 +53,7 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
 export interface SubCheckboxProps extends ITodo {
   todoId: number;
   categoryId: number;
-  setCheckedSubTask: Function;
+  setCheckedSubTask(isChecked: boolean): void;
   closeTodo(id: number): void;
   sendInArchive(categoryId: number): void;
 }
