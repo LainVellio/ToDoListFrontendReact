@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EColors, ETextStyle } from '../../interfaces';
-import { ToDoCard, CardProps } from './Card';
+import { TodoCard, CardProps } from './TodoCard';
 
 const closeCard = jest.fn();
 const data: CardProps = {
@@ -25,14 +25,14 @@ const data: CardProps = {
 describe('Card component', () => {
   it('Render Card work', () => {
     expect(screen.queryByText(/title/i)).toBeNull();
-    render(<ToDoCard {...data} />);
+    render(<TodoCard {...data} />);
     expect(screen.getByText(/title/i)).toBeInTheDocument();
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
     expect(screen.getByText(/text/i)).toBeInTheDocument();
   });
 
   it('Switching Edit mode on click outside works', () => {
-    render(<ToDoCard {...data} />);
+    render(<TodoCard {...data} />);
     expect(screen.queryByRole('textbox')).toBeNull();
     userEvent.click(screen.getByTestId('editButton'));
     expect(screen.getByRole('textbox')).toBeInTheDocument();
@@ -41,7 +41,7 @@ describe('Card component', () => {
   });
 
   it('Close Edit mode on press Enter works', () => {
-    render(<ToDoCard {...data} />);
+    render(<TodoCard {...data} />);
     expect(screen.queryByRole('textbox')).toBeNull();
     userEvent.click(screen.getByTestId('editButton'));
     expect(screen.getByRole('textbox')).toBeInTheDocument();

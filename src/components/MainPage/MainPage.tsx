@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { ICategory } from '../../interfaces';
 import localStorageApi, { getCategories } from '../../api/localStorageAPI';
-import { ToDoCard } from '../Card/Card';
+import { TodoCard } from '../Card/TodoCard';
 
 import AddIcon from '@material-ui/icons/Add';
 
@@ -74,7 +74,7 @@ export const MainPage = () => {
     <main>
       <CardsContainer>
         {categories.map((category) => (
-          <ToDoCard
+          <TodoCard
             data-testid="toDoCard"
             key={category.id}
             title={category.title}

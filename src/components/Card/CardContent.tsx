@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -6,7 +6,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 
-import localStorageApi, { getCategory } from '../../api/localStorageAPI';
+import localStorageApi from '../../api/localStorageAPI';
 import { IGroupTodo } from '../../interfaces';
 import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
@@ -32,13 +32,10 @@ export interface Checkbox extends IGroupTodo {
 
 export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
   const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>(todos);
-  useEffect(() => {
-    setToDoCheckboxes(todos.filter((todo) => todo.inArchive === false));
-  }, [todos]);
 
   const createTodo = () => {
     const newToDo = localStorageApi.postTodo(id);
-    setToDoCheckboxes([...toDoCheckboxes, { ...newToDo, isEdit: true }]);
+    setToDoCheckboxes((prev) => [...prev, { ...newToDo, isEdit: true }]);
   };
 
   const closeTodo = (categoryId: number) => (todoId: number) => {
@@ -60,12 +57,11 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
       return;
     }
     const reorderTodos = reorder(
-      getCategory(id).todos,
+      toDoCheckboxes,
       result.source.index,
       result.destination.index,
     );
     setToDoCheckboxes(reorderTodos);
-    console.log(reorderTodos);
     localStorageApi.setOrderedTodos(id, reorderTodos);
   };
 
@@ -75,36 +71,39 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
         <Droppable droppableId="droppable">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {toDoCheckboxes.map((todo: IGroupTodo, index: number) => (
-                <Draggable
-                  key={todo.id}
-                  draggableId={String(todo.id)}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
+              {toDoCheckboxes.map(
+                (todo: IGroupTodo, index: number) =>
+                  !todo.inArchive && (
+                    <Draggable
+                      key={todo.id}
+                      draggableId={String(todo.id)}
+                      index={index}
                     >
-                      <GroupCheckbox
-                        key={todo.id}
-                        inArchive={todo.inArchive}
-                        id={todo.id}
-                        categoryId={id}
-                        text={todo.text}
-                        isCompleted={todo.isCompleted}
-                        closeTodo={closeTodo(id)}
-                        sendInArchive={sendInArchive(id)}
-                        textColor={todo.textColor}
-                        textStyle={todo.textStyle}
-                        subTasks={todo.subTasks}
-                        isEdit={todo.isEdit}
-                      />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <GroupCheckbox
+                            key={todo.id}
+                            inArchive={todo.inArchive}
+                            id={todo.id}
+                            categoryId={id}
+                            text={todo.text}
+                            isCompleted={todo.isCompleted}
+                            closeTodo={closeTodo(id)}
+                            sendInArchive={sendInArchive(id)}
+                            textColor={todo.textColor}
+                            textStyle={todo.textStyle}
+                            subTasks={todo.subTasks}
+                            isEdit={todo.isEdit}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ),
+              )}
               {provided.placeholder}
             </div>
           )}

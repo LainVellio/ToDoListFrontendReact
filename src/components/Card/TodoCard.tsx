@@ -9,7 +9,7 @@ export interface CardProps extends ICategory {
   isEdit?: boolean;
 }
 
-export const ToDoCard: React.FC<CardProps> = ({
+export const TodoCard: React.FC<CardProps> = ({
   id,
   title,
   todos,

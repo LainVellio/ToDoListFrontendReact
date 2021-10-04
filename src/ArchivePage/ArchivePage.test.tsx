@@ -16,6 +16,7 @@ const data = [
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: true,
+        subTasks: [],
       },
       {
         text: 'text2',
@@ -24,6 +25,7 @@ const data = [
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: true,
+        subTasks: [],
       },
     ],
   },

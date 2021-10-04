@@ -7,6 +7,7 @@ import { ITodo } from '../interfaces';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import { getCheckedSymbol } from '../utils/getCheckedSymbol';
 
 interface TodoArchiveProps {
   id: number;
@@ -71,9 +72,13 @@ export const TodoArchive: React.FC<TodoArchiveProps> = ({
       onMouseLeave={() => setIsFocus(false)}
     >
       <div>
-        <div>&#10003; {text}</div>
+        <div>
+          {getCheckedSymbol(!!timeCompleted)} {text}
+        </div>
         {subTodos.map((subTodo) => (
-          <div className="subTodo">&#10003; {subTodo.text}</div>
+          <div key={subTodo.id} className="subTodo">
+            {getCheckedSymbol(subTodo.isCompleted)} {subTodo.text}
+          </div>
         ))}
         <div className="time">
           {timeCompleted
