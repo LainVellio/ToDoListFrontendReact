@@ -1,9 +1,8 @@
-import { ICategory, IGroupTodo } from '../../interfaces';
+import { IGroupTodo } from '../../interfaces';
 import { CardContent } from './CardContent';
 import { CardHeader } from './CardHeader';
 
 import { Card, CardContent as CardContentWrapper } from '@material-ui/core';
-import { useCategory } from '../../Context';
 
 export interface CardProps {
   id: number;

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
-import { useCategories } from '../../Context';
-import localStorageApi from '../../api/localStorageAPI';
+import { useAllCategories } from '../../Context';
 import { TodoCard } from '../Card/TodoCard';
+import { EColors } from '../../interfaces';
 
 import AddIcon from '@material-ui/icons/Add';
 
@@ -53,18 +53,22 @@ const NewCardButton = styled.div`
 `;
 
 export const MainPage = () => {
-  const [categories, setCategories] = useCategories();
+  const [categories, setAllCategories] = useAllCategories();
 
   const createCard = () => {
-    const newCategory = localStorageApi.postCategory('');
-    setCategories([...categories, { ...newCategory, isEdit: true }]);
+    const newCategory = {
+      title: '',
+      id: Date.now(),
+      todos: [],
+      colorHeader: EColors.blue,
+    };
+    setAllCategories([...categories, { ...newCategory, isEdit: true }]);
   };
   const closeCard = (categoryId: number) => {
-    localStorageApi.deleteCategory(categoryId);
-    setCategories(categories.filter((c: any) => c.id !== categoryId));
+    setAllCategories(categories.filter((c: any) => c.id !== categoryId));
   };
   const editCard = (categoryId: number) => (key: string, value: unknown) => {
-    setCategories(
+    setAllCategories(
       categories.map((category: any) =>
         category.id === categoryId ? { ...category, [key]: value } : category,
       ),

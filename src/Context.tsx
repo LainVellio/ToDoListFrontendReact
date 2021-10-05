@@ -59,6 +59,15 @@ export function useCategory(id: number) {
   return [category, setCategory];
 }
 
+export function useAllCategories() {
+  const [categories, setCategories] = useCategories();
+  const setAllCategories = (changeCategories: ICategory[]) => {
+    localStorageApi.setCategories(changeCategories);
+    setCategories(changeCategories);
+  };
+  return [categories, setAllCategories];
+}
+
 function Provider({ children }: ProviderProps) {
   const [categories, setCategories] = React.useState<ICategory[]>(
     localStorageApi.getCategories(),

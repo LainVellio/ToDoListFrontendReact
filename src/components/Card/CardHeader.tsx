@@ -5,11 +5,11 @@ import { EColors } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { useOutsideClick } from '../../utils/useOutsideClick';
+import { useCategory } from '../../Context';
 
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import { useCategory } from '../../Context';
 
 const CardHeaderWrapper = styled.div<{ colorHeader: EColors }>`
   display: flex;
