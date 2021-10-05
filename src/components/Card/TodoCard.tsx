@@ -1,19 +1,20 @@
-import { ICategory } from '../../interfaces';
+import { ICategory, IGroupTodo } from '../../interfaces';
 import { CardContent } from './CardContent';
 import { CardHeader } from './CardHeader';
 
 import { Card, CardContent as CardContentWrapper } from '@material-ui/core';
+import { useCategory } from '../../Context';
 
-export interface CardProps extends ICategory {
+export interface CardProps {
+  id: number;
+  todos: IGroupTodo[];
   closeCard(categoryId: number): void;
   editCard(key: string, value: unknown): void;
 }
 
 export const TodoCard: React.FC<CardProps> = ({
   id,
-  title,
   todos,
-  colorHeader,
   closeCard,
   editCard,
 }) => {
@@ -21,13 +22,7 @@ export const TodoCard: React.FC<CardProps> = ({
     <div data-testid="card">
       <Card>
         <CardContentWrapper>
-          <CardHeader
-            id={id}
-            title={title}
-            colorHeader={colorHeader}
-            closeCard={closeCard}
-            editCard={editCard}
-          />
+          <CardHeader id={id} closeCard={closeCard} />
           <CardContent id={id} todos={todos} editCard={editCard} />
         </CardContentWrapper>
       </Card>

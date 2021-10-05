@@ -5,10 +5,7 @@ import { CardHeader, CardHeaderProps } from './CardHeader';
 
 const data: CardHeaderProps = {
   id: 1,
-  title: 'title',
-  colorHeader: EColors.blue,
   closeCard: jest.fn(),
-  editCard: jest.fn(),
 };
 
 describe('CardHeader component', () => {

@@ -1,7 +1,6 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import localStorageApi from '../../api/localStorageAPI';
 import { EColors } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
@@ -10,8 +9,9 @@ import { useOutsideClick } from '../../utils/useOutsideClick';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
+import { useCategory } from '../../Context';
 
-const CardHeaderWrapper = styled.div<{ colorHeader: string }>`
+const CardHeaderWrapper = styled.div<{ colorHeader: EColors }>`
   display: flex;
   justify-content: space-between;
   background-color: ${(props) => props.colorHeader};
@@ -46,56 +46,45 @@ const CardHeaderWrapper = styled.div<{ colorHeader: string }>`
 
 export interface CardHeaderProps {
   id: number;
-  title: string;
-  colorHeader: EColors;
   closeCard(id: number): void;
-  editCard(key: string, value: unknown): void;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({
-  id,
-  title,
-  colorHeader,
-  closeCard,
-  editCard,
-}) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({ id, closeCard }) => {
+  const [category, setCategory] = useCategory(id);
   const [editMode, setEditMode] = useState(false);
-  const [textTitle, setTextTitle] = useState(title);
+  const [title, setTitle] = useState(category.title);
   const ref = useRef(null);
-
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
-  const finishEdit = () => {
-    localStorageApi.patchCategory<string>(id, 'title', textTitle);
-    editCard('title', textTitle);
+  const finishEdit = (colorHeader = category.colorHeader) => {
+    setCategory({ ...category, title, colorHeader });
     setEditMode(false);
-    console.log(textTitle);
   };
 
   useOutsideClick(ref, finishEdit, editMode);
-
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && finishEdit();
   };
-
   const changeColor = (color: EColors) => {
-    editCard('colorHeader', color);
-    localStorageApi.patchCategory<EColors>(id, 'colorHeader', color);
-    finishEdit();
+    finishEdit(color);
+  };
+  const onClickEditButton = () => {
+    setEditMode(!editMode);
+    editMode && finishEdit();
   };
 
   return (
     <CardHeaderWrapper
       data-testid="cardHeader"
       ref={ref}
-      colorHeader={colorHeader}
+      colorHeader={category.colorHeader}
     >
       {editMode ? (
         <>
           <InputEdit
-            value={textTitle}
+            value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setTextTitle(e.target.value)
+              setTitle(e.target.value)
             }
             onKeyPress={InputKeyPress}
             className="inputCard"
@@ -103,7 +92,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           <ColorsCircles
             className="colorCircles"
             colors={colors}
-            currentColor={colorHeader}
+            currentColor={category.colorHeader}
             setColor={changeColor}
             hasBorder={true}
           />
@@ -115,10 +104,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
         <button
           className="button"
           data-testid="editButton"
-          onClick={() => {
-            setEditMode(!editMode);
-            localStorageApi.patchCategory<string>(id, 'title', title);
-          }}
+          onClick={onClickEditButton}
         >
           <EditIcon className="icon" />
         </button>

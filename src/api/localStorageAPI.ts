@@ -18,6 +18,7 @@ const localStorageApi = {
     return this.getCategories().find((category) => category.id === categoryId)!;
   },
   setCategory(changeCategory: ICategory) {
+    console.log(changeCategory);
     const categories = this.getCategories().map((category) =>
       category.id === changeCategory.id ? changeCategory : category,
     );

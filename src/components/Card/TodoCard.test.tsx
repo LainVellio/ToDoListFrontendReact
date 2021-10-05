@@ -5,7 +5,6 @@ import { TodoCard, CardProps } from './TodoCard';
 
 const data: CardProps = {
   id: 1,
-  title: 'title',
   todos: [
     {
       id: 1,
@@ -17,7 +16,6 @@ const data: CardProps = {
       subTasks: [],
     },
   ],
-  colorHeader: EColors.blue,
   closeCard: jest.fn(),
   editCard: jest.fn(),
 };
