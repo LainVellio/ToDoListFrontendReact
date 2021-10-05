@@ -3,13 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { EColors } from '../../interfaces';
 import { CardHeader, CardHeaderProps } from './CardHeader';
 
-const closeCard = jest.fn();
 const data: CardHeaderProps = {
-  isEdit: false,
-  title: 'title',
   id: 1,
+  title: 'title',
   colorHeader: EColors.blue,
-  closeCard: closeCard,
+  closeCard: jest.fn(),
+  editCard: jest.fn(),
 };
 
 describe('CardHeader component', () => {
@@ -30,7 +29,7 @@ describe('CardHeader component', () => {
     userEvent.click(screen.getByTestId('editButton'));
     userEvent.clear(screen.getByRole('textbox'));
     userEvent.type(screen.getByRole('textbox'), 'Test');
-    expect(screen.queryByDisplayValue(/test/i)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(/test/i)).toBeInTheDocument();
   });
 
   it('Dynamic styles works', () => {

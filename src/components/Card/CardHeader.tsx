@@ -11,10 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 
-const CardHeaderWrapper = styled.div<{ headerColor: string }>`
+const CardHeaderWrapper = styled.div<{ colorHeader: string }>`
   display: flex;
   justify-content: space-between;
-  background-color: ${(props) => props.headerColor};
+  background-color: ${(props) => props.colorHeader};
   color: white;
   margin: -15px -16px 0px -16px;
   padding: 5px 10px;
@@ -45,40 +45,42 @@ const CardHeaderWrapper = styled.div<{ headerColor: string }>`
 `;
 
 export interface CardHeaderProps {
-  isEdit: boolean;
-  title: string;
   id: number;
+  title: string;
   colorHeader: EColors;
   closeCard(id: number): void;
+  editCard(key: string, value: unknown): void;
 }
 
 export const CardHeader: React.FC<CardHeaderProps> = ({
   id,
   title,
   colorHeader,
-  isEdit,
   closeCard,
+  editCard,
 }) => {
-  const [editMode, setEditMode] = useState(isEdit);
-  const [cardTitle, setCardTitle] = useState(title);
-  const [headerColor, setHeaderColor] = useState<EColors>(colorHeader);
+  const [editMode, setEditMode] = useState(false);
+  const [textTitle, setTextTitle] = useState(title);
   const ref = useRef(null);
 
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
   const finishEdit = () => {
+    localStorageApi.patchCategory<string>(id, 'title', textTitle);
+    editCard('title', textTitle);
     setEditMode(false);
-    localStorageApi.changeTitleCategory(id, cardTitle);
+    console.log(textTitle);
   };
-  useOutsideClick(ref, finishEdit);
+
+  useOutsideClick(ref, finishEdit, editMode);
 
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && finishEdit();
   };
 
   const changeColor = (color: EColors) => {
-    setHeaderColor(color);
-    localStorageApi.changeColorHeaderCategory(id, color);
+    editCard('colorHeader', color);
+    localStorageApi.patchCategory<EColors>(id, 'colorHeader', color);
     finishEdit();
   };
 
@@ -86,14 +88,14 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
     <CardHeaderWrapper
       data-testid="cardHeader"
       ref={ref}
-      headerColor={headerColor}
+      colorHeader={colorHeader}
     >
       {editMode ? (
         <>
           <InputEdit
-            value={cardTitle}
+            value={textTitle}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setCardTitle(e.target.value)
+              setTextTitle(e.target.value)
             }
             onKeyPress={InputKeyPress}
             className="inputCard"
@@ -101,13 +103,13 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           <ColorsCircles
             className="colorCircles"
             colors={colors}
-            currentColor={headerColor}
+            currentColor={colorHeader}
             setColor={changeColor}
             hasBorder={true}
           />
         </>
       ) : (
-        <Typography variant="h6">{cardTitle}</Typography>
+        <Typography variant="h6">{title}</Typography>
       )}
       <div>
         <button
@@ -115,7 +117,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           data-testid="editButton"
           onClick={() => {
             setEditMode(!editMode);
-            localStorageApi.changeTitleCategory(id, cardTitle);
+            localStorageApi.patchCategory<string>(id, 'title', title);
           }}
         >
           <EditIcon className="icon" />

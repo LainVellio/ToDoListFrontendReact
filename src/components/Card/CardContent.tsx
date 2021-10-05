@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -23,32 +22,34 @@ export const reorder = (
 };
 
 export interface CardContentProps {
-  todos: Array<IGroupTodo>;
   id: number;
-}
-export interface Checkbox extends IGroupTodo {
-  isEdit?: boolean;
+  todos: Array<IGroupTodo>;
+  editCard(key: string, value: unknown): void;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
-  const [toDoCheckboxes, setToDoCheckboxes] = useState<Array<Checkbox>>(todos);
-
+export const CardContent: React.FC<CardContentProps> = ({
+  todos,
+  id,
+  editCard,
+}) => {
   const createTodo = () => {
     const newToDo = localStorageApi.postTodo(id);
-    setToDoCheckboxes((prev) => [...prev, { ...newToDo, isEdit: true }]);
+    editCard('todos', [...todos, { ...newToDo, isEdit: true }]);
   };
 
   const closeTodo = (categoryId: number) => (todoId: number) => {
     localStorageApi.deleteTodo(categoryId, todoId);
-    setToDoCheckboxes((prev) =>
-      prev.filter((checkbox) => checkbox.id !== todoId),
+    editCard(
+      'todos',
+      todos.filter((checkbox) => checkbox.id !== todoId),
     );
   };
 
   const sendInArchive = (categoryId: number) => (todoId: number) => {
-    localStorageApi.sendTodoInArchive(categoryId, todoId);
-    setToDoCheckboxes((prev) =>
-      prev.filter((checkbox) => checkbox.id !== todoId),
+    localStorageApi.patchTodo<boolean>(categoryId, todoId, 'inArchive', true);
+    editCard(
+      'todos',
+      todos.filter((checkbox) => checkbox.id !== todoId),
     );
   };
 
@@ -57,12 +58,12 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
       return;
     }
     const reorderTodos = reorder(
-      toDoCheckboxes,
+      todos,
       result.source.index,
       result.destination.index,
     );
-    setToDoCheckboxes(reorderTodos);
-    localStorageApi.setOrderedTodos(id, reorderTodos);
+    editCard('todos', reorderTodos);
+    localStorageApi.patchCategory<IGroupTodo[]>(id, 'todos', reorderTodos);
   };
 
   return (
@@ -71,7 +72,7 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
         <Droppable droppableId="droppable">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {toDoCheckboxes.map(
+              {todos.map(
                 (todo: IGroupTodo, index: number) =>
                   !todo.inArchive && (
                     <Draggable
@@ -97,7 +98,6 @@ export const CardContent: React.FC<CardContentProps> = ({ todos, id }) => {
                             textColor={todo.textColor}
                             textStyle={todo.textStyle}
                             subTasks={todo.subTasks}
-                            isEdit={todo.isEdit}
                           />
                         </div>
                       )}

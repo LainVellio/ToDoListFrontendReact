@@ -54,7 +54,7 @@ export interface SubCheckboxProps extends ITodo {
   todoId: number;
   categoryId: number;
   setCheckedSubTask(isChecked: boolean): void;
-  closeTodo(id: number): void;
+  deleteTodo(id: number): void;
   sendInArchive(categoryId: number): void;
 }
 
@@ -65,14 +65,13 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   text,
   textColor,
   isCompleted,
-  isEdit = false,
   textStyle,
   setCheckedSubTask,
-  closeTodo,
+  deleteTodo,
 }) => {
-  const [editMode, setEditMode] = useState(isEdit);
   const [label, setLabel] = useState(text);
   const [isFocus, setIsFocus] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [colorText, setColorText] = useState<EColors>(textColor);
   const [checkboxTextStyle, setTextStyle] = useState(textStyle);
   const ref = useRef(null);
@@ -83,27 +82,39 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   };
   const onEdit = () => {
     setEditMode(!editMode);
-    localStorageApi.changeTextSubTodo(categoryId, todoId, id, label);
+    localStorageApi.patchSubTodo<string>(categoryId, todoId, id, 'text', label);
   };
 
   const closeMenu = () => {
-    localStorageApi.changeTextSubTodo(categoryId, todoId, id, label);
-    label === '' && closeTodo(id);
+    localStorageApi.patchSubTodo<string>(categoryId, todoId, id, 'text', label);
+    label === '' && deleteTodo(id);
     setEditMode(false);
   };
 
   const changeTextColor = (color: EColors) => {
     setColorText(color);
-    localStorageApi.changeTextColorSubTodo(categoryId, todoId, id, color);
+    localStorageApi.patchSubTodo<EColors>(
+      categoryId,
+      todoId,
+      id,
+      'textColor',
+      color,
+    );
   };
 
   const changeTextStyle = (textStyle: ETextStyle) => {
     setTextStyle(textStyle);
-    localStorageApi.changeTextStyleSubTodo(categoryId, todoId, id, textStyle);
+    localStorageApi.patchSubTodo<ETextStyle>(
+      categoryId,
+      todoId,
+      id,
+      'textStyle',
+      textStyle,
+    );
   };
 
   const onDelete = () => {
-    closeTodo(id);
+    deleteTodo(id);
   };
 
   return (
@@ -135,7 +146,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
             setLabel={setLabel}
             changeTextColor={changeTextColor}
             changeTextStyle={changeTextStyle}
-            closeTodo={closeTodo}
+            closeTodo={deleteTodo}
             setEditMode={setEditMode}
             useOutsideClick={useOutsideClick.bind(null, ref)}
             closeMenu={closeMenu}

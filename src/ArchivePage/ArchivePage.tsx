@@ -46,7 +46,7 @@ export const ArchivePage = () => {
   };
 
   const backTodo = (categoryId: number, todoId: number) => {
-    localStorageApi.backTodoInMainPage(categoryId, todoId);
+    localStorageApi.patchTodo<boolean>(categoryId, todoId, 'inArchive', false);
     setCategories(filterTodos(todoId));
   };
 

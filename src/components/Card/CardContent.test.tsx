@@ -1,11 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle } from '../../interfaces';
+import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
 import { CardContent, reorder } from './CardContent';
 import localStorageApi from '../../api/localStorageAPI';
 
 const data = {
   id: 1,
+  editCard: jest.fn(),
   todos: [
     {
       id: 1,
@@ -149,7 +150,7 @@ describe('CardContent component', () => {
     expect(initialArray[0].id).toEqual(1);
     const newArray = reorder(initialArray, 0, 1);
     expect(newArray[0].id).toEqual(2);
-    localStorageApi.setOrderedTodos(1, newArray);
+    localStorageApi.patchCategory<IGroupTodo[]>(1, 'todos', newArray);
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].id,
     ).toEqual(2);

@@ -6,29 +6,29 @@ import { Card, CardContent as CardContentWrapper } from '@material-ui/core';
 
 export interface CardProps extends ICategory {
   closeCard(categoryId: number): void;
-  isEdit?: boolean;
+  editCard(key: string, value: unknown): void;
 }
 
 export const TodoCard: React.FC<CardProps> = ({
   id,
   title,
   todos,
-  isEdit = false,
   colorHeader,
   closeCard,
+  editCard,
 }) => {
   return (
     <div data-testid="card">
       <Card>
         <CardContentWrapper>
           <CardHeader
-            title={title}
-            isEdit={isEdit}
-            closeCard={closeCard}
             id={id}
+            title={title}
             colorHeader={colorHeader}
+            closeCard={closeCard}
+            editCard={editCard}
           />
-          <CardContent id={id} todos={todos} />
+          <CardContent id={id} todos={todos} editCard={editCard} />
         </CardContentWrapper>
       </Card>
     </div>

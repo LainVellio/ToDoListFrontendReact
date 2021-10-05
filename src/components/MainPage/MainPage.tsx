@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ICategory } from '../../interfaces';
-import localStorageApi, { getCategories } from '../../api/localStorageAPI';
+import localStorageApi from '../../api/localStorageAPI';
 import { TodoCard } from '../Card/TodoCard';
 
 import AddIcon from '@material-ui/icons/Add';
@@ -53,21 +53,26 @@ const NewCardButton = styled.div`
   }
 `;
 
-interface Card extends ICategory {
-  isEdit?: boolean;
-}
-
 export const MainPage = () => {
-  const [categories, setCategories] = useState<Array<Card>>(getCategories());
+  const [categories, setCategories] = useState<Array<ICategory>>(
+    localStorageApi.getCategories(),
+  );
 
   const createCard = () => {
     const newCategory = localStorageApi.postCategory('');
     setCategories((prev) => [...prev, { ...newCategory, isEdit: true }]);
   };
-
   const closeCard = (categoryId: number) => {
     localStorageApi.deleteCategory(categoryId);
     setCategories((prev) => prev.filter((c) => c.id !== categoryId));
+  };
+
+  const editCard = (categoryId: number) => (key: string, value: unknown) => {
+    setCategories((prev) =>
+      prev.map((category) =>
+        category.id === categoryId ? { ...category, [key]: value } : category,
+      ),
+    );
   };
 
   return (
@@ -77,12 +82,12 @@ export const MainPage = () => {
           <TodoCard
             data-testid="toDoCard"
             key={category.id}
-            title={category.title}
-            closeCard={closeCard}
             id={category.id}
-            todos={category.todos}
-            isEdit={category.isEdit}
+            title={category.title}
             colorHeader={category.colorHeader}
+            todos={category.todos}
+            editCard={editCard(category.id)}
+            closeCard={closeCard}
           />
         ))}
         <NewCardButton>

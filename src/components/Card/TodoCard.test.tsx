@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { EColors, ETextStyle } from '../../interfaces';
 import { TodoCard, CardProps } from './TodoCard';
 
-const closeCard = jest.fn();
 const data: CardProps = {
   id: 1,
   title: 'title',
@@ -19,7 +18,8 @@ const data: CardProps = {
     },
   ],
   colorHeader: EColors.blue,
-  closeCard: closeCard,
+  closeCard: jest.fn(),
+  editCard: jest.fn(),
 };
 
 describe('Card component', () => {

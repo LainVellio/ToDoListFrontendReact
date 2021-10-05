@@ -13,7 +13,7 @@ const CheckboxEditMenuWrap = styled.div<{
   .inputCheckbox {
     position: relative;
     font-weight: ${(props) => props.textStyle};
-    width: 240px;
+    width: 230px;
     height: 20px;
     margin-left: -2px;
     font-size: 16px;
