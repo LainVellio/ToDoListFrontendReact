@@ -9,7 +9,7 @@ export interface ITodo {
 }
 
 export interface IGroupTodo extends ITodo {
-  subTasks: Array<ITodo>;
+  subTodos: Array<ITodo>;
 }
 
 export interface ICategory {

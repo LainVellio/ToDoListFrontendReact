@@ -3,9 +3,9 @@ import styled from 'styled-components';
 
 import localStorageApi from '../api/localStorageAPI';
 import { ICategory } from '../interfaces';
+import { TodoArchive } from './TodoArchive';
 
 import { Paper } from '@material-ui/core';
-import { TodoArchive } from './TodoArchive';
 
 const ArchivePageWrapper = styled.div`
   width: 500px;
@@ -69,7 +69,7 @@ export const ArchivePage = () => {
                   id={todo.id}
                   categoryId={category.id}
                   text={todo.text}
-                  subTodos={todo.subTasks}
+                  subTodos={todo.subTodos}
                   timeCompleted={todo.timeCompleted || null}
                   backTodo={backTodo}
                   deleteTodo={deleteTodo}

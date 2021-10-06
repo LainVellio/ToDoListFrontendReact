@@ -2,11 +2,11 @@ import { SubTaskCheckbox } from './SubTaskCheckbox';
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import localStorageApi from '../../api/localStorageAPI';
-import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
+import { useSubTodos, useTodo } from '../../Context';
+import { useOutsideClick } from '../../utils/useOutsideClick';
+import { EColors, ETextStyle, ITodo } from '../../interfaces';
 import { DeleteMenu } from './DeleteMenu';
 import { EditMenu } from './EditMenu';
-import { useOutsideClick } from '../../utils/useOutsideClick';
 
 import AddIcon from '@material-ui/icons/Add';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -59,136 +59,102 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   }
 `;
 
-export interface GroupCheckboxProps extends IGroupTodo {
+export interface GroupCheckboxProps {
+  id: number;
   categoryId: number;
-  isEdit?: boolean;
-  closeTodo(id: number): void;
+  deleteTodo(id: number): void;
   sendInArchive(categoryId: number): void;
 }
 
 export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
   id,
   categoryId,
-  text,
-  textColor,
-  isCompleted,
-  subTasks,
-  textStyle,
-  isEdit = false,
-  closeTodo,
+  deleteTodo,
   sendInArchive,
 }) => {
-  const [subCheckboxes, setSubCheckboxes] = useState(subTasks);
+  const [todo, setTodo] = useTodo(categoryId, id);
+  const [todoEdit, setTodoEdit] = useState(todo);
+  const [subTodos, setSubTodos] = useSubTodos(categoryId, id);
+  const { isCompleted } = todo;
+  const { text, textColor, textStyle } = todoEdit;
+
   const [groupIsOpen, setGroupIsOpen] = useState(false);
-  const [isChecked, setIsChecked] = useState(isCompleted);
   const [isFocus, setIsFocus] = useState(false);
-  const [editMode, setEditMode] = useState(isEdit);
+  const [editMode, setEditMode] = useState(text === '' ? true : false);
   const [deleteMenu, setDeleteMenu] = useState(false);
-  const [label, setLabel] = useState(text);
-  const [colorText, setColorText] = useState<EColors>(textColor);
-  const [checkboxTextStyle, setTextStyle] = useState(textStyle);
   const ref = useRef(null);
 
   useEffect(() => {
-    if (subCheckboxes.length > 0) {
-      if (subCheckboxes.every((subCheckbox) => subCheckbox.isCompleted)) {
-        localStorageApi.checkedTodo(categoryId, id);
-        setIsChecked(true);
+    if (!editMode) {
+      text === '' ? deleteTodo(id) : setTodo(todoEdit);
+    }
+  }, [editMode]);
+
+  useEffect(() => {
+    if (subTodos.length > 0) {
+      if (subTodos.every((subTask: ITodo) => subTask.isCompleted)) {
+        setTodo({ ...todo, isCompleted: true });
       } else {
-        localStorageApi.checkedTodo(categoryId, id);
-        setIsChecked(false);
+        setTodo({ ...todo, isCompleted: false });
       }
     }
-  }, [categoryId, id, subCheckboxes]);
+  }, [subTodos]);
 
   const onChecked = () => {
-    localStorageApi.checkedTodo(categoryId, id);
-    setIsChecked(!isChecked);
-    isChecked
-      ? setSubCheckboxes((prev) =>
-          prev.map((subCheckbox) => {
-            subCheckbox.isCompleted &&
-              localStorageApi.checkedSubTodo(categoryId, id, subCheckbox.id);
-            return { ...subCheckbox, isCompleted: false };
-          }),
+    setTodo({ ...todo, isCompleted: !isCompleted });
+    isCompleted
+      ? setSubTodos(
+          subTodos.map((subTask: ITodo) =>
+            subTask.isCompleted ? { ...subTask, isCompleted: false } : subTask,
+          ),
         )
-      : setSubCheckboxes((prev) =>
-          prev.map((subCheckbox) => {
-            !subCheckbox.isCompleted &&
-              localStorageApi.checkedSubTodo(categoryId, id, subCheckbox.id);
-            return { ...subCheckbox, isCompleted: true };
-          }),
+      : setSubTodos(
+          subTodos.map((subTask: ITodo) =>
+            !subTask.isCompleted ? { ...subTask, isCompleted: true } : subTask,
+          ),
         );
   };
 
-  const setCheckedSubTask = (id: number) => (isCompleted: boolean) => {
-    setSubCheckboxes((prev) =>
-      prev.map((subCheckbox) =>
-        subCheckbox.id === id
-          ? { ...subCheckbox, isCompleted: isCompleted }
-          : subCheckbox,
-      ),
-    );
-  };
-
   const onEdit = () => {
-    setEditMode(!editMode);
     setDeleteMenu(false);
-    localStorageApi.patchTodo<string>(categoryId, id, 'text', label);
+    setEditMode(!editMode);
   };
   const onDeleteMenu = () => {
-    setDeleteMenu(!deleteMenu);
     setEditMode(false);
+    setDeleteMenu(!deleteMenu);
   };
   const addSubTask = () => {
     setGroupIsOpen(true);
-    const newSubTodo = localStorageApi.postSubTodo(categoryId, id);
-    setSubCheckboxes([...subCheckboxes, { ...newSubTodo }]);
-    setEditMode(true);
-  };
-
-  const changeTextColor = (color: EColors) => {
-    setColorText(color);
-    localStorageApi.patchTodo<EColors>(categoryId, id, 'textColor', color);
-  };
-  const changeTextStyle = (textStyle: ETextStyle) => {
-    setTextStyle(textStyle);
-    localStorageApi.patchTodo<ETextStyle>(
-      categoryId,
-      id,
-      'textStyle',
-      textStyle,
-    );
-  };
-  const closeMenu = () => {
-    localStorageApi.patchTodo<string>(categoryId, id, 'text', label);
-    label === '' && closeTodo(id);
-    setEditMode(false);
-  };
-
-  const deleteSubTodo =
-    (categoryId: number, todoId: number) => (subTodoId: number) => {
-      localStorageApi.deleteSubTodo(categoryId, todoId, subTodoId);
-      setSubCheckboxes((prev) =>
-        prev.filter((subCheckbox) => subCheckbox.id !== subTodoId),
-      );
+    const newSubTodo = {
+      text: '',
+      id: Date.now(),
+      isCompleted: false,
+      textColor: EColors.black,
+      textStyle: ETextStyle.normal,
+      inArchive: false,
+      timeCompleted: null,
     };
+    setSubTodos([...subTodos, { ...newSubTodo }]);
+  };
+  const deleteSubTodo = (subTodoId: number) => {
+    setSubTodos(subTodos.filter((subTodo: ITodo) => subTodo.id !== subTodoId));
+  };
 
   return (
     <div>
       <CheckboxWrap
         ref={ref}
-        textColor={colorText}
+        textColor={textColor}
         data-testid="checkbox"
-        textStyle={checkboxTextStyle}
+        textStyle={textStyle}
         onMouseEnter={() => setIsFocus(true)}
         onMouseLeave={() => setIsFocus(false)}
       >
         <div
           data-testid="checkboxWrapper"
-          className={`checkbox ${isChecked ? 'label-text__checked' : ''}`}
+          className={`checkbox ${isCompleted ? 'label-text__checked' : ''}`}
         >
-          {subCheckboxes.length > 0 && (
+          {subTodos.length > 0 && (
             <div
               className="arrowIcon"
               onClick={() => setGroupIsOpen(!groupIsOpen)}
@@ -198,34 +164,27 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
           )}
           <Checkbox
             onClick={onChecked}
-            checked={isChecked}
+            checked={isCompleted}
             name="checkedB"
             color="primary"
           />
 
           {editMode ? (
             <EditMenu
-              label={label}
-              isChecked={isChecked}
-              checkboxTextStyle={checkboxTextStyle}
-              colorText={colorText}
-              setLabel={setLabel}
-              changeTextColor={changeTextColor}
-              changeTextStyle={changeTextStyle}
-              closeTodo={closeTodo}
+              todo={todoEdit}
+              setTodo={setTodoEdit}
               setEditMode={setEditMode}
               useOutsideClick={useOutsideClick.bind(null, ref)}
-              closeMenu={closeMenu}
             />
           ) : (
-            <div className="label">{label}</div>
+            <div className="label">{text}</div>
           )}
           {deleteMenu && (
             <DeleteMenu
+              id={id}
               sendInArchive={sendInArchive}
               setDeleteMenu={setDeleteMenu}
-              closeTodo={closeTodo}
-              id={id}
+              deleteTodo={deleteTodo}
               useOutsideClick={useOutsideClick.bind(null, ref)}
             />
           )}
@@ -253,20 +212,13 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
         )}
       </CheckboxWrap>
       {groupIsOpen &&
-        subCheckboxes.map((subTodo) => (
+        subTodos.map((subTodo: ITodo) => (
           <SubTaskCheckbox
-            categoryId={categoryId}
             key={subTodo.id}
-            todoId={id}
             id={subTodo.id}
-            text={subTodo.text}
-            isCompleted={subTodo.isCompleted}
-            textColor={subTodo.textColor}
-            textStyle={subTodo.textStyle}
-            inArchive={subTodo.inArchive}
-            deleteTodo={deleteSubTodo(categoryId, id)}
-            sendInArchive={sendInArchive}
-            setCheckedSubTask={setCheckedSubTask(subTodo.id)}
+            todoId={id}
+            categoryId={categoryId}
+            deleteSubTodo={deleteSubTodo}
           />
         ))}
     </div>

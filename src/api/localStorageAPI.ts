@@ -18,7 +18,6 @@ const localStorageApi = {
     return this.getCategories().find((category) => category.id === categoryId)!;
   },
   setCategory(changeCategory: ICategory) {
-    console.log(changeCategory);
     const categories = this.getCategories().map((category) =>
       category.id === changeCategory.id ? changeCategory : category,
     );
@@ -54,6 +53,10 @@ const localStorageApi = {
     );
   },
 
+  setTodos(categoryId: number, todos: IGroupTodo[]) {
+    const category = this.getCategory(categoryId);
+    this.setCategory({ ...category, todos });
+  },
   getTodo(categoryId: number, todoId: number): IGroupTodo {
     return this.getCategory(categoryId)!.todos.find(
       (todo) => todo.id === todoId,
@@ -78,7 +81,7 @@ const localStorageApi = {
       textStyle: ETextStyle.normal,
       inArchive: false,
       timeCompleted: null,
-      subTasks: [],
+      subTodos: [],
     };
     const category = this.getCategory(categoryId)!;
     this.setCategory({ ...category, todos: [...category.todos, newTodo] });
@@ -107,13 +110,13 @@ const localStorageApi = {
 
   getSubTodo(categoryId: number, todoId: number, subTodoId: number): ITodo {
     const todo = this.getTodo(categoryId, todoId);
-    return todo.subTasks.find((todo) => todo.id === subTodoId)!;
+    return todo.subTodos.find((todo) => todo.id === subTodoId)!;
   },
   setSubTodo(categoryId: number, todoId: number, changeSubTodo: ITodo) {
     const todo = this.getTodo(categoryId, todoId);
     const changeTodo = {
       ...todo,
-      subTasks: todo.subTasks.map((subTodo) =>
+      subTasks: todo.subTodos.map((subTodo) =>
         subTodo.id === changeSubTodo.id ? changeSubTodo : subTodo,
       ),
     };
@@ -132,7 +135,7 @@ const localStorageApi = {
     const todo = this.getTodo(categoryId, todoId);
     this.setTodo(categoryId, {
       ...todo,
-      subTasks: [...todo.subTasks, newSubTodo],
+      subTodos: [...todo.subTodos, newSubTodo],
     });
     return this.getSubTodo(categoryId, todoId, newSubTodo.id);
   },
@@ -159,7 +162,7 @@ const localStorageApi = {
     const todo = this.getTodo(categoryId, todoId)!;
     this.setTodo(categoryId, {
       ...todo,
-      subTasks: todo.subTasks.filter((subTodo) => subTodo.id !== subTodoId),
+      subTodos: todo.subTodos.filter((subTodo) => subTodo.id !== subTodoId),
     });
   },
 };

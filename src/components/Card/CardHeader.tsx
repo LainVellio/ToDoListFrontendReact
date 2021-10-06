@@ -1,11 +1,11 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EColors } from '../../interfaces';
+import { useCategory } from '../../Context';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { useOutsideClick } from '../../utils/useOutsideClick';
-import { useCategory } from '../../Context';
 
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
@@ -46,31 +46,35 @@ const CardHeaderWrapper = styled.div<{ colorHeader: EColors }>`
 
 export interface CardHeaderProps {
   id: number;
-  closeCard(id: number): void;
+  deleteCard(id: number): void;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ id, closeCard }) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({ id, deleteCard }) => {
   const [category, setCategory] = useCategory(id);
-  const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState(category.title);
+  const [editMode, setEditMode] = useState(title === '' ? true : false);
+  const [colorHeader, setColorHeader] = useState(category.colorHeader);
   const ref = useRef(null);
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
-  const finishEdit = (colorHeader = category.colorHeader) => {
-    setCategory({ ...category, title, colorHeader });
-    setEditMode(false);
-  };
+  useEffect(() => {
+    if (!editMode) {
+      title === ''
+        ? deleteCard(id)
+        : setCategory({ ...category, title, colorHeader });
+    }
+  }, [editMode]);
 
-  useOutsideClick(ref, finishEdit, editMode);
+  useOutsideClick(ref, () => setEditMode(false), editMode);
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.key === 'Enter' && finishEdit();
+    event.key === 'Enter' && setEditMode(false);
   };
   const changeColor = (color: EColors) => {
-    finishEdit(color);
+    setColorHeader(color);
+    setEditMode(false);
   };
   const onClickEditButton = () => {
     setEditMode(!editMode);
-    editMode && finishEdit();
   };
 
   return (
@@ -111,7 +115,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ id, closeCard }) => {
         <button
           data-testid="deleteButton"
           className="button"
-          onClick={() => closeCard(id)}
+          onClick={() => deleteCard(id)}
         >
           <CloseIcon className="icon" />
         </button>

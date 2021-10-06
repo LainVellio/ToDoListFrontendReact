@@ -25,7 +25,7 @@ const DeleteMenuWrapper = styled.div`
 
 interface DeleteMenuProps {
   id: number;
-  closeTodo(categoryId: number): void;
+  deleteTodo(categoryId: number): void;
   setDeleteMenu(deleteMenu: boolean): void;
   useOutsideClick(callback: Function): void;
   sendInArchive(categoryId: number): void;
@@ -33,7 +33,7 @@ interface DeleteMenuProps {
 
 export const DeleteMenu: React.FC<DeleteMenuProps> = ({
   id,
-  closeTodo,
+  deleteTodo,
   sendInArchive,
   setDeleteMenu,
   useOutsideClick,
@@ -55,7 +55,7 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
           </div>
           <div
             onClick={() => {
-              closeTodo(id);
+              deleteTodo(id);
             }}
             className="elementMenu delete"
           >

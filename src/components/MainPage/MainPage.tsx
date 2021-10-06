@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { useAllCategories } from '../../Context';
 import { TodoCard } from '../Card/TodoCard';
-import { EColors } from '../../interfaces';
+import { EColors, ICategory } from '../../interfaces';
 
 import AddIcon from '@material-ui/icons/Add';
 
@@ -64,14 +64,9 @@ export const MainPage = () => {
     };
     setAllCategories([...categories, { ...newCategory, isEdit: true }]);
   };
-  const closeCard = (categoryId: number) => {
-    setAllCategories(categories.filter((c: any) => c.id !== categoryId));
-  };
-  const editCard = (categoryId: number) => (key: string, value: unknown) => {
+  const deleteCard = (categoryId: number) => {
     setAllCategories(
-      categories.map((category: any) =>
-        category.id === categoryId ? { ...category, [key]: value } : category,
-      ),
+      categories.filter((category: ICategory) => category.id !== categoryId),
     );
   };
 
@@ -83,9 +78,7 @@ export const MainPage = () => {
             data-testid="toDoCard"
             id={category.id}
             key={category.id}
-            todos={category.todos}
-            editCard={editCard(category.id)}
-            closeCard={closeCard}
+            deleteCard={deleteCard}
           />
         ))}
         <NewCardButton>

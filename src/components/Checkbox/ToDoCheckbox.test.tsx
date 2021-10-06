@@ -11,7 +11,7 @@ const data: GroupCheckboxProps = {
   isCompleted: false,
   inArchive: false,
   categoryId: 1,
-  subTasks: [],
+  subTodos: [],
   closeTodo: jest.fn(),
   sendInArchive: jest.fn(),
 };

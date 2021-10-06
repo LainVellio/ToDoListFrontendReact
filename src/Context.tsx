@@ -1,6 +1,12 @@
 import React from 'react';
 import localStorageApi from './api/localStorageAPI';
-import { EColors, ETextStyle, ICategory } from './interfaces';
+import {
+  EColors,
+  ETextStyle,
+  ICategory,
+  IGroupTodo,
+  ITodo,
+} from './interfaces';
 
 const initialCategories = [
   {
@@ -44,7 +50,14 @@ export function useCategories() {
   }
   return context;
 }
-
+export function useAllCategories() {
+  const [categories, setCategories] = useCategories();
+  const setAllCategories = (changeCategories: ICategory[]) => {
+    localStorageApi.setCategories(changeCategories);
+    setCategories(changeCategories);
+  };
+  return [categories, setAllCategories];
+}
 export function useCategory(id: number) {
   const [categories, setCategories] = useCategories();
   const category = categories.find((category: ICategory) => category.id === id);
@@ -59,13 +72,50 @@ export function useCategory(id: number) {
   return [category, setCategory];
 }
 
-export function useAllCategories() {
-  const [categories, setCategories] = useCategories();
-  const setAllCategories = (changeCategories: ICategory[]) => {
-    localStorageApi.setCategories(changeCategories);
-    setCategories(changeCategories);
+export function useTodos(categoryId: number) {
+  const [category, setCategory] = useCategory(categoryId);
+  const setTodos = (todos: IGroupTodo[]) => {
+    localStorageApi.setTodos(categoryId, todos);
+    setCategory({ ...category, todos });
   };
-  return [categories, setAllCategories];
+  return [category.todos, setTodos];
+}
+export function useTodo(categoryId: number, todoId: number) {
+  const [todos, setTodos] = useTodos(categoryId);
+  const todo = todos.find((todo: IGroupTodo) => todo.id === todoId);
+  const setTodo = (changeTodo: IGroupTodo) => {
+    localStorageApi.setTodo(categoryId, changeTodo);
+    setTodos(
+      todos.map((todo: IGroupTodo) => (todo.id === todoId ? changeTodo : todo)),
+    );
+  };
+  return [todo, setTodo];
+}
+
+export function useSubTodos(categoryId: number, todoId: number) {
+  const [todo, setTodo] = useTodo(categoryId, todoId);
+  const setSubTodos = (subTodos: ITodo[]) => {
+    localStorageApi.setTodo(categoryId, { ...todo, subTodos });
+    setTodo({ ...todo, subTodos });
+  };
+  return [todo.subTodos, setSubTodos];
+}
+export function useSubTodo(
+  categoryId: number,
+  todoId: number,
+  subTodoId: number,
+) {
+  const [subTodos, setSubTodos] = useSubTodos(categoryId, todoId);
+  const subTodo = subTodos.find((subTodo: ITodo) => subTodo.id === subTodoId);
+  const setSubTodo = (changeSubTodo: ITodo) => {
+    localStorageApi.setSubTodo(categoryId, todoId, changeSubTodo);
+    setSubTodos(
+      subTodos.map((subTodo: ITodo) =>
+        subTodo.id === subTodoId ? changeSubTodo : subTodo,
+      ),
+    );
+  };
+  return [subTodo, setSubTodo];
 }
 
 function Provider({ children }: ProviderProps) {
@@ -73,7 +123,6 @@ function Provider({ children }: ProviderProps) {
     localStorageApi.getCategories(),
   );
   const value = [categories, setCategories];
-
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

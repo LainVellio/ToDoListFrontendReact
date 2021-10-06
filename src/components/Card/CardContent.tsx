@@ -5,8 +5,8 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 
-import localStorageApi from '../../api/localStorageAPI';
-import { IGroupTodo } from '../../interfaces';
+import { useTodos } from '../../Context';
+import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
 import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
 
@@ -23,34 +23,23 @@ export const reorder = (
 
 export interface CardContentProps {
   id: number;
-  todos: Array<IGroupTodo>;
-  editCard(key: string, value: unknown): void;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({
-  todos,
-  id,
-  editCard,
-}) => {
+export const CardContent: React.FC<CardContentProps> = ({ id }) => {
+  const [todos, setTodos] = useTodos(id);
+
   const createTodo = () => {
-    const newToDo = localStorageApi.postTodo(id);
-    editCard('todos', [...todos, { ...newToDo, isEdit: true }]);
-  };
-
-  const closeTodo = (categoryId: number) => (todoId: number) => {
-    localStorageApi.deleteTodo(categoryId, todoId);
-    editCard(
-      'todos',
-      todos.filter((checkbox) => checkbox.id !== todoId),
-    );
-  };
-
-  const sendInArchive = (categoryId: number) => (todoId: number) => {
-    localStorageApi.patchTodo<boolean>(categoryId, todoId, 'inArchive', true);
-    editCard(
-      'todos',
-      todos.filter((checkbox) => checkbox.id !== todoId),
-    );
+    const newTodo = {
+      text: '',
+      id: Date.now(),
+      isCompleted: false,
+      textColor: EColors.black,
+      textStyle: ETextStyle.normal,
+      inArchive: false,
+      timeCompleted: null,
+      subTodos: [],
+    };
+    setTodos([...todos, newTodo]);
   };
 
   const onDragEnd = (result: DropResult) => {
@@ -62,8 +51,19 @@ export const CardContent: React.FC<CardContentProps> = ({
       result.source.index,
       result.destination.index,
     );
-    editCard('todos', reorderTodos);
-    localStorageApi.patchCategory<IGroupTodo[]>(id, 'todos', reorderTodos);
+    setTodos(reorderTodos);
+  };
+
+  const sendInArchive = (todoId: number) => {
+    setTodos(
+      todos.map((todo: IGroupTodo) =>
+        todo.id === todoId ? { ...todo, inArchive: true } : todo,
+      ),
+    );
+  };
+
+  const deleteTodo = (todoId: number) => {
+    setTodos(todos.filter((todo: IGroupTodo) => todo.id !== todoId));
   };
 
   return (
@@ -88,16 +88,10 @@ export const CardContent: React.FC<CardContentProps> = ({
                         >
                           <GroupCheckbox
                             key={todo.id}
-                            inArchive={todo.inArchive}
                             id={todo.id}
                             categoryId={id}
-                            text={todo.text}
-                            isCompleted={todo.isCompleted}
-                            closeTodo={closeTodo(id)}
-                            sendInArchive={sendInArchive(id)}
-                            textColor={todo.textColor}
-                            textStyle={todo.textStyle}
-                            subTasks={todo.subTasks}
+                            deleteTodo={deleteTodo}
+                            sendInArchive={sendInArchive}
                           />
                         </div>
                       )}

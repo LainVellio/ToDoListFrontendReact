@@ -1,7 +1,7 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useRef } from 'react';
 import styled from 'styled-components';
 
-import { EColors, ETextStyle } from '../../interfaces';
+import { EColors, ETextStyle, IGroupTodo, ITodo } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { MenuWrapper } from './MenuWrapper';
@@ -48,29 +48,17 @@ const CheckboxEditMenuWrap = styled.div<{
 `;
 
 export interface CheckboxEditMenuProps {
-  label: string;
-  isChecked: boolean;
-  colorText: EColors;
-  checkboxTextStyle: ETextStyle;
-  useOutsideClick(callback: Function): void;
-  setLabel(label: string): void;
-  changeTextColor(colorText: EColors): void;
-  changeTextStyle(textStyle: ETextStyle): void;
-  closeTodo(id: number): void;
+  todo: IGroupTodo | ITodo;
+  setTodo(todo: IGroupTodo | ITodo): void;
   setEditMode(editMode: boolean): void;
-  closeMenu: Function;
+  useOutsideClick(callback: Function): void;
 }
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
-  label,
-  colorText,
-  isChecked,
-  checkboxTextStyle,
+  todo,
+  setTodo,
+  setEditMode,
   useOutsideClick,
-  setLabel,
-  changeTextColor,
-  changeTextStyle,
-  closeMenu,
 }) => {
   const colors: Array<EColors> = [
     EColors.red,
@@ -78,35 +66,49 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     EColors.green,
     EColors.black,
   ];
+  const { text, textColor, textStyle, isCompleted } = todo;
+  const ref = useRef(null);
+
+  const setText = (text: string) => {
+    setTodo({ ...todo, text });
+  };
+  const setTextColor = (textColor: EColors) => {
+    setTodo({ ...todo, textColor });
+  };
+  const setTextStyle = (textStyle: ETextStyle) => {
+    setTodo({ ...todo, textStyle });
+  };
 
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.key === 'Enter' && closeMenu();
+    event.key === 'Enter' && setEditMode(false);
   };
-  useOutsideClick(closeMenu);
+  useOutsideClick(() => setEditMode(false));
 
   return (
-    <div data-testid="editMenu">
-      <CheckboxEditMenuWrap textColor={colorText} textStyle={checkboxTextStyle}>
+    <div ref={ref} data-testid="editMenu">
+      <CheckboxEditMenuWrap textColor={textColor} textStyle={textStyle}>
         <InputEdit
-          value={label}
+          value={text}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setLabel(e.target.value)
+            setText(e.target.value)
           }
-          className={`inputCheckbox ${isChecked ? 'label-text__checked' : ''}`}
+          className={`inputCheckbox ${
+            isCompleted ? 'label-text__checked' : ''
+          }`}
           onKeyPress={InputKeyPress}
         />
-        {!isChecked && (
+        {!isCompleted && (
           <MenuWrapper topShift={30}>
             <ColorsCircles
               colors={colors}
-              currentColor={colorText}
-              setColor={changeTextColor}
+              currentColor={textColor}
+              setColor={setTextColor}
               className="colorCircles"
             />
-            {checkboxTextStyle !== ETextStyle.bold ? (
+            {textStyle !== ETextStyle.bold ? (
               <div
                 onClick={() => {
-                  changeTextStyle(ETextStyle.bold);
+                  setTextStyle(ETextStyle.bold);
                 }}
                 className="B"
               >
@@ -115,7 +117,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
             ) : (
               <div
                 onClick={() => {
-                  changeTextStyle(ETextStyle.normal);
+                  setTextStyle(ETextStyle.normal);
                 }}
                 className="B"
               >

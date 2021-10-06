@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import localStorageApi from '../../api/localStorageAPI';
-import { EColors, ETextStyle, ITodo } from '../../interfaces';
+import { EColors } from '../../interfaces';
+import { useSubTodo } from '../../Context';
 import { EditMenu } from './EditMenu';
 import { useOutsideClick } from '../../utils/useOutsideClick';
 
@@ -50,79 +50,50 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     word-wrap: break-word;
   }
 `;
-export interface SubCheckboxProps extends ITodo {
+export interface SubCheckboxProps {
+  id: number;
   todoId: number;
   categoryId: number;
-  setCheckedSubTask(isChecked: boolean): void;
-  deleteTodo(id: number): void;
-  sendInArchive(categoryId: number): void;
+  deleteSubTodo(id: number): void;
 }
 
 export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   id,
   todoId,
   categoryId,
-  text,
-  textColor,
-  isCompleted,
-  textStyle,
-  setCheckedSubTask,
-  deleteTodo,
+  deleteSubTodo,
 }) => {
-  const [label, setLabel] = useState(text);
+  const [subTodo, setSubTodo] = useSubTodo(categoryId, todoId, id);
+  const [subTodoEdit, setSubTodoEdit] = useState(subTodo);
+  const { isCompleted } = subTodo;
+  const { text, textColor, textStyle } = subTodoEdit;
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [colorText, setColorText] = useState<EColors>(textColor);
-  const [checkboxTextStyle, setTextStyle] = useState(textStyle);
   const ref = useRef(null);
 
+  useEffect(() => {
+    if (!editMode) {
+      text === '' && deleteSubTodo(id);
+      setSubTodo(subTodoEdit);
+    }
+  }, [editMode]);
+
   const onChecked = () => {
-    localStorageApi.checkedSubTodo(categoryId, todoId, id);
-    setCheckedSubTask(!isCompleted);
+    setSubTodo({ ...subTodo, isCompleted: !isCompleted });
   };
   const onEdit = () => {
     setEditMode(!editMode);
-    localStorageApi.patchSubTodo<string>(categoryId, todoId, id, 'text', label);
   };
-
-  const closeMenu = () => {
-    localStorageApi.patchSubTodo<string>(categoryId, todoId, id, 'text', label);
-    label === '' && deleteTodo(id);
-    setEditMode(false);
-  };
-
-  const changeTextColor = (color: EColors) => {
-    setColorText(color);
-    localStorageApi.patchSubTodo<EColors>(
-      categoryId,
-      todoId,
-      id,
-      'textColor',
-      color,
-    );
-  };
-
-  const changeTextStyle = (textStyle: ETextStyle) => {
-    setTextStyle(textStyle);
-    localStorageApi.patchSubTodo<ETextStyle>(
-      categoryId,
-      todoId,
-      id,
-      'textStyle',
-      textStyle,
-    );
-  };
-
   const onDelete = () => {
-    deleteTodo(id);
+    deleteSubTodo(id);
   };
 
   return (
     <CheckboxWrap
       ref={ref}
-      textColor={colorText}
+      textColor={textColor}
       data-testid="checkbox"
-      textStyle={checkboxTextStyle}
+      textStyle={textStyle}
       onMouseEnter={() => setIsFocus(true)}
       onMouseLeave={() => setIsFocus(false)}
     >
@@ -139,20 +110,13 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
 
         {editMode ? (
           <EditMenu
-            label={label}
-            isChecked={isCompleted}
-            checkboxTextStyle={checkboxTextStyle}
-            colorText={colorText}
-            setLabel={setLabel}
-            changeTextColor={changeTextColor}
-            changeTextStyle={changeTextStyle}
-            closeTodo={deleteTodo}
+            todo={subTodoEdit}
+            setTodo={setSubTodoEdit}
             setEditMode={setEditMode}
             useOutsideClick={useOutsideClick.bind(null, ref)}
-            closeMenu={closeMenu}
           />
         ) : (
-          <div className="label">{label}</div>
+          <div className="label">{text}</div>
         )}
       </div>
 

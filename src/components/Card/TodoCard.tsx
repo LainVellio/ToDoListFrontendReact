@@ -1,4 +1,3 @@
-import { IGroupTodo } from '../../interfaces';
 import { CardContent } from './CardContent';
 import { CardHeader } from './CardHeader';
 
@@ -6,23 +5,16 @@ import { Card, CardContent as CardContentWrapper } from '@material-ui/core';
 
 export interface CardProps {
   id: number;
-  todos: IGroupTodo[];
-  closeCard(categoryId: number): void;
-  editCard(key: string, value: unknown): void;
+  deleteCard(categoryId: number): void;
 }
 
-export const TodoCard: React.FC<CardProps> = ({
-  id,
-  todos,
-  closeCard,
-  editCard,
-}) => {
+export const TodoCard: React.FC<CardProps> = ({ id, deleteCard }) => {
   return (
     <div data-testid="card">
       <Card>
         <CardContentWrapper>
-          <CardHeader id={id} closeCard={closeCard} />
-          <CardContent id={id} todos={todos} editCard={editCard} />
+          <CardHeader id={id} deleteCard={deleteCard} />
+          <CardContent id={id} />
         </CardContentWrapper>
       </Card>
     </div>
