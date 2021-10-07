@@ -1,42 +1,25 @@
 import { GroupCheckboxProps, GroupCheckbox } from './GroupCheckbox';
+import { EColors, ETextStyle } from '../../interfaces';
+import Provider from '../../Context';
+
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle } from '../../interfaces';
+import { items } from '../MainPage/MainPage.test';
 
 const data: GroupCheckboxProps = {
   id: 1,
-  text: 'text',
-  textColor: EColors.black,
-  textStyle: ETextStyle.normal,
-  isCompleted: false,
-  inArchive: false,
   categoryId: 1,
-  subTodos: [],
-  closeTodo: jest.fn(),
+  deleteTodo: jest.fn(),
   sendInArchive: jest.fn(),
 };
 
-const items = [
-  {
-    title: 'title',
-    id: 1,
-    colorHeader: EColors.blue,
-    todos: [
-      {
-        text: 'text',
-        id: 1,
-        isCompleted: false,
-        textColor: EColors.black,
-        textStyle: ETextStyle.normal,
-        inArchive: true,
-      },
-    ],
-  },
-];
-
 const renderComponent = () => {
   localStorage.setItem('categories', JSON.stringify(items));
-  render(<GroupCheckbox {...data} />);
+  render(
+    <Provider>
+      <GroupCheckbox {...data} />
+    </Provider>,
+  );
 };
 
 describe('ToDoCheckbox component', () => {
@@ -48,11 +31,11 @@ describe('ToDoCheckbox component', () => {
   it('should checked work', () => {
     renderComponent();
     userEvent.click(screen.getByRole('checkbox'));
-    expect(screen.getByRole('checkbox')).toBeChecked();
+    expect(screen.getAllByRole('checkbox')[0]).toBeChecked();
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].isCompleted,
     ).toBeTruthy();
-    expect(screen.getByTestId('checkboxWrapper')).toHaveClass(
+    expect(screen.getAllByTestId('checkboxWrapper')[0]).toHaveClass(
       'label-text__checked',
     );
   });
@@ -81,11 +64,14 @@ describe('ToDoCheckbox component', () => {
     userEvent.click(screen.getByTestId('editCheckbox'));
     userEvent.click(screen.getByText('B'));
     expect(screen.getByText('N')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('editCheckbox'));
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textStyle,
     ).toBe(ETextStyle.bold);
+    userEvent.click(screen.getByTestId('editCheckbox'));
     userEvent.click(screen.getByText('N'));
     expect(screen.getByText('B')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('editCheckbox'));
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textStyle,
     ).toBe(ETextStyle.normal);
@@ -104,6 +90,7 @@ describe('ToDoCheckbox component', () => {
     expect(screen.getAllByTestId('circle')).toHaveLength(3);
     userEvent.click(screen.getAllByTestId('circle')[0]);
     expect(screen.getByTestId('checkbox')).toHaveStyle(`color: ${EColors.red}`);
+    userEvent.click(screen.getByTestId('editCheckbox'));
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].textColor,
     ).toBe(EColors.red);

@@ -1,45 +1,44 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle } from '../../interfaces';
+
+import Provider from '../../Context';
+import { items } from '../MainPage/MainPage.test';
 import { TodoCard, CardProps } from './TodoCard';
 
 const data: CardProps = {
   id: 1,
-  todos: [
-    {
-      id: 1,
-      text: 'text',
-      textColor: EColors.black,
-      textStyle: ETextStyle.normal,
-      isCompleted: false,
-      inArchive: false,
-      subTasks: [],
-    },
-  ],
-  closeCard: jest.fn(),
-  editCard: jest.fn(),
+  deleteCard: jest.fn(),
+};
+
+const renderComponent = () => {
+  localStorage.setItem('categories', JSON.stringify(items));
+  render(
+    <Provider>
+      <TodoCard {...data} />
+    </Provider>,
+  );
 };
 
 describe('Card component', () => {
   it('Render Card work', () => {
     expect(screen.queryByText(/title/i)).toBeNull();
-    render(<TodoCard {...data} />);
+    renderComponent();
     expect(screen.getByText(/title/i)).toBeInTheDocument();
-    expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    expect(screen.getByText(/text/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('checkbox')[0]).toBeInTheDocument();
+    expect(screen.getByText(/text1/i)).toBeInTheDocument();
   });
 
   it('Switching Edit mode on click outside works', () => {
-    render(<TodoCard {...data} />);
+    renderComponent();
     expect(screen.queryByRole('textbox')).toBeNull();
     userEvent.click(screen.getByTestId('editButton'));
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('checkbox'));
+    userEvent.click(screen.getAllByRole('checkbox')[0]);
     expect(screen.queryByRole('textbox')).toBeNull();
   });
 
   it('Close Edit mode on press Enter works', () => {
-    render(<TodoCard {...data} />);
+    renderComponent();
     expect(screen.queryByRole('textbox')).toBeNull();
     userEvent.click(screen.getByTestId('editButton'));
     expect(screen.getByRole('textbox')).toBeInTheDocument();

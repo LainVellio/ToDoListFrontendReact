@@ -4,11 +4,12 @@ export interface ITodo {
   textColor: EColors;
   textStyle: ETextStyle;
   isCompleted: boolean;
-  inArchive: boolean;
-  timeCompleted?: Date | null;
 }
 
 export interface IGroupTodo extends ITodo {
+  isOpen: boolean;
+  inArchive: boolean;
+  timeCompleted?: Date | null;
   subTodos: Array<ITodo>;
 }
 

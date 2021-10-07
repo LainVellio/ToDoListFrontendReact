@@ -49,6 +49,7 @@ const CheckboxEditMenuWrap = styled.div<{
 
 export interface CheckboxEditMenuProps {
   todo: IGroupTodo | ITodo;
+  isCompleted: boolean;
   setTodo(todo: IGroupTodo | ITodo): void;
   setEditMode(editMode: boolean): void;
   useOutsideClick(callback: Function): void;
@@ -56,6 +57,7 @@ export interface CheckboxEditMenuProps {
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   todo,
+  isCompleted,
   setTodo,
   setEditMode,
   useOutsideClick,
@@ -66,7 +68,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     EColors.green,
     EColors.black,
   ];
-  const { text, textColor, textStyle, isCompleted } = todo;
+  const { text, textColor, textStyle } = todo;
   const ref = useRef(null);
 
   const setText = (text: string) => {

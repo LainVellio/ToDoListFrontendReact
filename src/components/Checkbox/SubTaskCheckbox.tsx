@@ -68,13 +68,14 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   const { isCompleted } = subTodo;
   const { text, textColor, textStyle } = subTodoEdit;
   const [isFocus, setIsFocus] = useState(false);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(text === '' ? true : false);
   const ref = useRef(null);
 
   useEffect(() => {
     if (!editMode) {
-      text === '' && deleteSubTodo(id);
-      setSubTodo(subTodoEdit);
+      text === ''
+        ? deleteSubTodo(id)
+        : setSubTodo({ ...subTodoEdit, isCompleted });
     }
   }, [editMode]);
 
@@ -111,6 +112,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
         {editMode ? (
           <EditMenu
             todo={subTodoEdit}
+            isCompleted={isCompleted}
             setTodo={setSubTodoEdit}
             setEditMode={setEditMode}
             useOutsideClick={useOutsideClick.bind(null, ref)}

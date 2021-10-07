@@ -1,37 +1,22 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
-import { CardContent, reorder } from './CardContent';
-import localStorageApi from '../../api/localStorageAPI';
 
-const data = {
+import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
+import { CardContent, CardContentProps, reorder } from './CardContent';
+import { items } from '../MainPage/MainPage.test';
+import Provider from '../../Context';
+
+const data: CardContentProps = {
   id: 1,
-  editCard: jest.fn(),
-  todos: [
-    {
-      id: 1,
-      text: 'text',
-      textColor: EColors.black,
-      textStyle: ETextStyle.normal,
-      isCompleted: false,
-      inArchive: false,
-      subTasks: [],
-    },
-    {
-      id: 2,
-      text: 'text2',
-      textColor: EColors.black,
-      textStyle: ETextStyle.normal,
-      isCompleted: false,
-      inArchive: false,
-      subTasks: [],
-    },
-  ],
 };
 
 const renderComponent = () => {
-  render(<CardContent {...data} />);
-  localStorage.setItem('categories', JSON.stringify([data]));
+  localStorage.setItem('categories', JSON.stringify(items));
+  render(
+    <Provider>
+      <CardContent {...data} />
+    </Provider>,
+  );
 };
 
 describe('CardContent component', () => {
@@ -39,7 +24,7 @@ describe('CardContent component', () => {
     expect(screen.queryByRole('checkbox')).toBeNull();
     renderComponent();
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    expect(screen.getByText(/text2/i)).toBeInTheDocument();
+    expect(screen.getByText(/text1/i)).toBeInTheDocument();
   });
 
   it('Create todo work', () => {
@@ -54,19 +39,19 @@ describe('CardContent component', () => {
 
   it('should deleteMenu open and close work', () => {
     renderComponent();
-    userEvent.hover(screen.getByText('text'));
+    userEvent.hover(screen.getByText(/text1/i));
     userEvent.click(screen.getByTestId('deleteMenu'));
     expect(screen.getByText(/в архив/i)).toBeInTheDocument();
     expect(screen.getByText(/удалить/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText('text2'));
+    userEvent.click(screen.getByTestId('deleteMenu'));
     expect(screen.queryByText(/в архив/i)).toBeNull();
     expect(screen.queryByText(/удалить/i)).toBeNull();
   });
 
-  it('Close todo work', () => {
+  it('Delete todo work', () => {
     renderComponent();
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    userEvent.hover(screen.getByText('text'));
+    userEvent.hover(screen.getByText(/text1/i));
     userEvent.click(screen.getByTestId('deleteMenu'));
     userEvent.click(screen.getByText(/Удалить/i));
     expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
@@ -78,7 +63,7 @@ describe('CardContent component', () => {
   it('Send todo to archive work', () => {
     renderComponent();
     expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    userEvent.hover(screen.getByText('text'));
+    userEvent.hover(screen.getByText(/text1/i));
     userEvent.click(screen.getByTestId('deleteMenu'));
     userEvent.click(screen.getByText(/в архив/i));
     expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
@@ -118,7 +103,7 @@ describe('CardContent component', () => {
   });
 
   it('function reorder work', () => {
-    const initialArray = [
+    const initialArray: IGroupTodo[] = [
       {
         id: 1,
         text: '1',
@@ -126,7 +111,8 @@ describe('CardContent component', () => {
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: false,
-        subTasks: [],
+        subTodos: [],
+        isOpen: false,
       },
       {
         id: 2,
@@ -135,7 +121,8 @@ describe('CardContent component', () => {
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: false,
-        subTasks: [],
+        subTodos: [],
+        isOpen: false,
       },
       {
         id: 3,
@@ -144,15 +131,12 @@ describe('CardContent component', () => {
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
         inArchive: false,
-        subTasks: [],
+        subTodos: [],
+        isOpen: false,
       },
     ];
     expect(initialArray[0].id).toEqual(1);
     const newArray = reorder(initialArray, 0, 1);
     expect(newArray[0].id).toEqual(2);
-    localStorageApi.patchCategory<IGroupTodo[]>(1, 'todos', newArray);
-    expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].id,
-    ).toEqual(2);
   });
 });

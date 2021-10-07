@@ -37,6 +37,7 @@ export const CardContent: React.FC<CardContentProps> = ({ id }) => {
       textStyle: ETextStyle.normal,
       inArchive: false,
       timeCompleted: null,
+      isOpen: false,
       subTodos: [],
     };
     setTodos([...todos, newTodo]);

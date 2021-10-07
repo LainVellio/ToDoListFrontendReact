@@ -22,6 +22,7 @@ const initialCategories = [
         isCompleted: false,
         inArchive: false,
         timeCompleted: null,
+        isOpen: false,
         subTasks: [
           {
             id: 1,
@@ -94,9 +95,9 @@ export function useTodo(categoryId: number, todoId: number) {
 
 export function useSubTodos(categoryId: number, todoId: number) {
   const [todo, setTodo] = useTodo(categoryId, todoId);
-  const setSubTodos = (subTodos: ITodo[]) => {
-    localStorageApi.setTodo(categoryId, { ...todo, subTodos });
-    setTodo({ ...todo, subTodos });
+  const setSubTodos = (changeSubTodos: ITodo[]) => {
+    localStorageApi.setTodo(categoryId, { ...todo, subTodos: changeSubTodos });
+    setTodo({ ...todo, isOpen: true, subTodos: changeSubTodos });
   };
   return [todo.subTodos, setSubTodos];
 }
@@ -122,7 +123,7 @@ function Provider({ children }: ProviderProps) {
   const [categories, setCategories] = React.useState<ICategory[]>(
     localStorageApi.getCategories(),
   );
-  const value = [categories, setCategories];
+  const value = React.useMemo(() => [categories, setCategories], [categories]);
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

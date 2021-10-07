@@ -1,26 +1,91 @@
-import { MainPage } from './MainPage';
-import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors } from '../../interfaces';
+import { render, screen } from '@testing-library/react';
 
-const data = [
+import { MainPage } from './MainPage';
+import { EColors, ETextStyle, ICategory } from '../../interfaces';
+import Provider from '../../Context';
+
+export const items: ICategory[] = [
   {
     title: 'title1',
     id: 1,
     colorHeader: EColors.blue,
-    todos: [],
+    todos: [
+      {
+        id: 1,
+        text: 'text1',
+        textColor: EColors.black,
+        textStyle: ETextStyle.normal,
+        isCompleted: false,
+        timeCompleted: null,
+        isOpen: false,
+        inArchive: false,
+        subTodos: [
+          {
+            id: 1,
+            text: 'text',
+            textColor: EColors.black,
+            textStyle: ETextStyle.normal,
+            isCompleted: false,
+          },
+        ],
+      },
+      {
+        id: 2,
+        text: 'text2',
+        textColor: EColors.black,
+        textStyle: ETextStyle.normal,
+        isCompleted: false,
+        timeCompleted: null,
+        isOpen: false,
+        inArchive: false,
+        subTodos: [
+          {
+            id: 1,
+            text: 'text',
+            textColor: EColors.black,
+            textStyle: ETextStyle.normal,
+            isCompleted: false,
+          },
+        ],
+      },
+    ],
   },
   {
     title: 'title2',
     id: 2,
     colorHeader: EColors.blue,
-    todos: [],
+    todos: [
+      {
+        id: 1,
+        text: 'text1',
+        textColor: EColors.black,
+        textStyle: ETextStyle.normal,
+        isCompleted: false,
+        timeCompleted: null,
+        isOpen: false,
+        inArchive: false,
+        subTodos: [
+          {
+            id: 1,
+            text: 'text',
+            textColor: EColors.black,
+            textStyle: ETextStyle.normal,
+            isCompleted: false,
+          },
+        ],
+      },
+    ],
   },
 ];
 
 const renderPage = () => {
-  localStorage.setItem('categories', JSON.stringify(data));
-  render(<MainPage />);
+  localStorage.setItem('categories', JSON.stringify(items));
+  render(
+    <Provider>
+      <MainPage />
+    </Provider>,
+  );
 };
 
 describe('MainPage component', () => {

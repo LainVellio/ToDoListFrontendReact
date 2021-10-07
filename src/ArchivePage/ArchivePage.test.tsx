@@ -1,39 +1,71 @@
 import { ArchivePage } from './ArchivePage';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle } from '../interfaces';
+import { EColors, ETextStyle, ICategory } from '../interfaces';
+import Provider from '../Context';
 
-const data = [
+export const items: ICategory[] = [
   {
     title: 'title1',
     id: 1,
     colorHeader: EColors.blue,
     todos: [
       {
-        text: 'text1',
         id: 1,
-        isCompleted: true,
+        text: 'text1',
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
+        isCompleted: false,
+        timeCompleted: null,
+        isOpen: false,
         inArchive: true,
-        subTasks: [],
+        subTodos: [
+          {
+            id: 1,
+            text: 'text',
+            textColor: EColors.black,
+            textStyle: ETextStyle.normal,
+            isCompleted: false,
+          },
+        ],
       },
+    ],
+  },
+  {
+    title: 'title2',
+    id: 2,
+    colorHeader: EColors.blue,
+    todos: [
       {
+        id: 1,
         text: 'text2',
-        id: 2,
-        isCompleted: true,
         textColor: EColors.black,
         textStyle: ETextStyle.normal,
+        isCompleted: false,
+        timeCompleted: null,
+        isOpen: false,
         inArchive: true,
-        subTasks: [],
+        subTodos: [
+          {
+            id: 1,
+            text: 'text',
+            textColor: EColors.black,
+            textStyle: ETextStyle.normal,
+            isCompleted: false,
+          },
+        ],
       },
     ],
   },
 ];
 
 const renderPage = () => {
-  localStorage.setItem('categories', JSON.stringify(data));
-  render(<ArchivePage />);
+  localStorage.setItem('categories', JSON.stringify(items));
+  render(
+    <Provider>
+      <ArchivePage />
+    </Provider>,
+  );
 };
 
 describe('ArchivePage component', () => {
@@ -60,13 +92,13 @@ describe('ArchivePage component', () => {
     expect(screen.getByText(/text1/i)).toBeInTheDocument();
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos,
-    ).toHaveLength(2);
+    ).toHaveLength(1);
     userEvent.hover(screen.getByText(/text1/i));
     userEvent.click(screen.getAllByTestId('deleteArchiveTodo')[0]);
     expect(screen.queryByText(/text1/i)).toBeNull();
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos,
-    ).toHaveLength(1);
+    ).toHaveLength(0);
   });
 
   it('should focus on Todo work', () => {

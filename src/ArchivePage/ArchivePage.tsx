@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import localStorageApi from '../api/localStorageAPI';
-import { ICategory } from '../interfaces';
+import { useAllCategories } from '../Context';
+import { ICategory, IGroupTodo } from '../interfaces';
 import { TodoArchive } from './TodoArchive';
 
 import { Paper } from '@material-ui/core';
@@ -29,53 +28,65 @@ const ArchivePageWrapper = styled.div`
 `;
 
 export const ArchivePage = () => {
-  const [categories, setCategories] = useState<Array<ICategory>>([]);
-  useEffect(() => {
-    const categories = localStorageApi.getCategoriesInArchive();
-    setCategories(categories);
-  }, []);
-
-  const filterTodos = (todoId: number) => {
-    const filteredCategories = categories.map((category) => {
-      return {
-        ...category,
-        todos: category.todos.filter((todo) => todo.id !== todoId),
-      };
-    });
-    return filteredCategories.filter((category) => category.todos.length !== 0);
-  };
+  const [categories, setAllCategories] = useAllCategories();
+  const categoriesInArchive = categories.filter((category: ICategory) =>
+    category.todos.some((todo) => todo.inArchive),
+  );
 
   const backTodo = (categoryId: number, todoId: number) => {
-    localStorageApi.patchTodo<boolean>(categoryId, todoId, 'inArchive', false);
-    setCategories(filterTodos(todoId));
+    const changeCategories = categories.map((category: ICategory) =>
+      category.id === categoryId
+        ? {
+            ...category,
+            todos: category.todos.map((todo: IGroupTodo) =>
+              todo.id === todoId ? { ...todo, inArchive: false } : todo,
+            ),
+          }
+        : category,
+    );
+    setAllCategories(changeCategories);
   };
 
   const deleteTodo = (categoryId: number, todoId: number) => {
-    localStorageApi.deleteTodo(categoryId, todoId);
-    setCategories(filterTodos(todoId));
+    const changeCategories = categories.map((category: ICategory) =>
+      category.id === categoryId
+        ? {
+            ...category,
+            todos: category.todos.filter(
+              (todo: IGroupTodo) => todo.id !== todoId,
+            ),
+          }
+        : category,
+    );
+    setAllCategories(changeCategories);
   };
 
   return (
     <ArchivePageWrapper>
       <h1 className="header">Archive</h1>
-      {categories.length !== 0 ? (
+      {categoriesInArchive.length !== 0 ? (
         <Paper className="paper">
-          {categories.map((category, index) => (
+          {categoriesInArchive.map((category: ICategory, index: number) => (
             <div key={category.id}>
               <h2 className="categoryTitle">{category.title}</h2>
-              {category.todos.map((todo) => (
-                <TodoArchive
-                  key={todo.id}
-                  id={todo.id}
-                  categoryId={category.id}
-                  text={todo.text}
-                  subTodos={todo.subTodos}
-                  timeCompleted={todo.timeCompleted || null}
-                  backTodo={backTodo}
-                  deleteTodo={deleteTodo}
-                />
-              ))}
-              {index + 1 < categories.length && <div className="divider" />}
+              {category.todos.map(
+                (todo) =>
+                  todo.inArchive && (
+                    <TodoArchive
+                      key={todo.id}
+                      id={todo.id}
+                      categoryId={category.id}
+                      text={todo.text}
+                      subTodos={todo.subTodos}
+                      timeCompleted={todo.timeCompleted || null}
+                      backTodo={backTodo}
+                      deleteTodo={deleteTodo}
+                    />
+                  ),
+              )}
+              {index + 1 < categoriesInArchive.length && (
+                <div className="divider" />
+              )}
             </div>
           ))}
         </Paper>
