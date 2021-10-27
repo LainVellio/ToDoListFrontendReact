@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
-import { useAllCategories } from '../../Context';
+import { useCategories } from '../../Context';
 import { TodoCard } from '../Card/TodoCard';
-import { EColors, ICategory } from '../../interfaces';
 
 import AddIcon from '@material-ui/icons/Add';
+import { ICategory } from '../../interfaces';
 
 const CardsContainer = styled.div`
   display: grid;
@@ -53,36 +53,20 @@ const NewCardButton = styled.div`
 `;
 
 export const MainPage = () => {
-  const [categories, setAllCategories] = useAllCategories();
-
-  const createCard = () => {
-    const newCategory = {
-      title: '',
-      id: Date.now(),
-      todos: [],
-      colorHeader: EColors.blue,
-    };
-    setAllCategories([...categories, { ...newCategory, isEdit: true }]);
-  };
-  const deleteCard = (categoryId: number) => {
-    setAllCategories(
-      categories.filter((category: ICategory) => category.id !== categoryId),
-    );
-  };
-
+  const { categories, createCategory } = useCategories();
   return (
     <main>
       <CardsContainer>
-        {categories.map((category: any) => (
+        {categories.map((category: ICategory) => (
           <TodoCard
             data-testid="toDoCard"
-            id={category.id}
+            category={category}
             key={category.id}
-            deleteCard={deleteCard}
           />
         ))}
+
         <NewCardButton>
-          <button onClick={createCard} className="button">
+          <button onClick={createCategory} className="button">
             <AddIcon className="addIcon" />
             Добавить новую категорию
           </button>

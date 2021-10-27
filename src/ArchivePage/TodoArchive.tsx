@@ -13,7 +13,7 @@ interface TodoArchiveProps {
   id: number;
   categoryId: number;
   text: string;
-  timeCompleted: Date | null;
+  timeCompleted: number | null;
   subTodos: Array<ITodo>;
   backTodo(categoryId: number, todoId: number): void;
   deleteTodo(categoryId: number, todoId: number): void;
@@ -46,7 +46,7 @@ const TodoArchiveWrapper = styled.div`
   }
 `;
 
-const getTimeCompleted = (timeCompleted: Date) => {
+const getTimeCompleted = (timeCompleted: number) => {
   moment.locale('ru');
   const timeFormat = 'Do MMMM YYYY в HH:mm';
   const endTime = moment().add(1, 'week');

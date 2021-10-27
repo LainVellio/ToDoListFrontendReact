@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EColors } from '../../interfaces';
-import { useCategory } from '../../Context';
+import { EColors, ICategory } from '../../interfaces';
+import { useCategories, useCategory } from '../../Context';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { useOutsideClick } from '../../utils/useOutsideClick';
@@ -45,23 +45,26 @@ const CardHeaderWrapper = styled.div<{ colorHeader: EColors }>`
 `;
 
 export interface CardHeaderProps {
-  id: number;
-  deleteCard(id: number): void;
+  category: ICategory;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ id, deleteCard }) => {
-  const [category, setCategory] = useCategory(id);
+export const CardHeader: React.FC<CardHeaderProps> = ({ category }) => {
+  const { setCategoryProperty } = useCategory(category);
+  const { deleteCategory } = useCategories();
   const [title, setTitle] = useState(category.title);
   const [editMode, setEditMode] = useState(title === '' ? true : false);
-  const [colorHeader, setColorHeader] = useState(category.colorHeader);
+  const colorHeader = category.colorHeader;
+  const id = category.id;
   const ref = useRef(null);
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
   useEffect(() => {
     if (!editMode) {
-      title === ''
-        ? deleteCard(id)
-        : setCategory({ ...category, title, colorHeader });
+      if (title === '') {
+        deleteCategory(id);
+      } else {
+        setCategoryProperty({ title });
+      }
     }
   }, [editMode]);
 
@@ -69,19 +72,20 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ id, deleteCard }) => {
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && setEditMode(false);
   };
-  const changeColor = (color: EColors) => {
-    setColorHeader(color);
-    setEditMode(false);
-  };
   const onClickEditButton = () => {
     setEditMode(!editMode);
+  };
+
+  const changeColor = (colorHeader: EColors) => {
+    setCategoryProperty({ colorHeader });
+    setEditMode(false);
   };
 
   return (
     <CardHeaderWrapper
       data-testid="cardHeader"
       ref={ref}
-      colorHeader={category.colorHeader}
+      colorHeader={colorHeader}
     >
       {editMode ? (
         <>
@@ -96,7 +100,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ id, deleteCard }) => {
           <ColorsCircles
             className="colorCircles"
             colors={colors}
-            currentColor={category.colorHeader}
+            currentColor={colorHeader}
             setColor={changeColor}
             hasBorder={true}
           />
@@ -115,7 +119,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ id, deleteCard }) => {
         <button
           data-testid="deleteButton"
           className="button"
-          onClick={() => deleteCard(id)}
+          onClick={() => deleteCategory(id)}
         >
           <CloseIcon className="icon" />
         </button>

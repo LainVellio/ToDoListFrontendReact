@@ -7,10 +7,8 @@ import userEvent from '@testing-library/user-event';
 import { items } from '../MainPage/MainPage.test';
 
 const data: GroupCheckboxProps = {
-  id: 1,
   categoryId: 1,
-  deleteTodo: jest.fn(),
-  sendInArchive: jest.fn(),
+  todo: items[0].todos[0],
 };
 
 const renderComponent = () => {
@@ -31,7 +29,7 @@ describe('ToDoCheckbox component', () => {
   it('should checked work', () => {
     renderComponent();
     userEvent.click(screen.getByRole('checkbox'));
-    expect(screen.getAllByRole('checkbox')[0]).toBeChecked();
+    expect(screen.getByRole('checkbox')).toBeChecked();
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].isCompleted,
     ).toBeTruthy();

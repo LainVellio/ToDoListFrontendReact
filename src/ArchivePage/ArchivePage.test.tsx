@@ -1,8 +1,9 @@
-import { ArchivePage } from './ArchivePage';
-import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EColors, ETextStyle, ICategory } from '../interfaces';
+import { render, screen } from '@testing-library/react';
+
 import Provider from '../Context';
+import { ArchivePage } from './ArchivePage';
+import { EColors, ETextStyle, ICategory } from '../interfaces';
 
 export const items: ICategory[] = [
   {

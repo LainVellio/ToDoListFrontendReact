@@ -1,3 +1,8 @@
+type SingleProperty<T, K extends keyof T> = K extends any
+  ? { [Prop in K]: T[Prop] }
+  : never;
+type UnionOfProperties<T> = { [K in keyof T]: SingleProperty<T, K> }[keyof T];
+
 export interface ITodo {
   id: number;
   text: string;
@@ -9,7 +14,7 @@ export interface ITodo {
 export interface IGroupTodo extends ITodo {
   isOpen: boolean;
   inArchive: boolean;
-  timeCompleted?: Date | null;
+  timeCompleted?: number | null;
   subTodos: Array<ITodo>;
 }
 
@@ -19,6 +24,8 @@ export interface ICategory {
   colorHeader: EColors;
   todos: Array<IGroupTodo>;
 }
+export type ICategoryProperties = UnionOfProperties<ICategory>;
+export type IGroupTodoProperties = UnionOfProperties<IGroupTodo>;
 
 export interface INewCategoryTodo {
   title: string;

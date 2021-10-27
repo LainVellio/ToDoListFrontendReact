@@ -6,7 +6,7 @@ import {
 } from 'react-beautiful-dnd';
 
 import { useTodos } from '../../Context';
-import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
+import { ICategory, IGroupTodo } from '../../interfaces';
 import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
 
@@ -22,26 +22,12 @@ export const reorder = (
 };
 
 export interface CardContentProps {
-  id: number;
+  category: ICategory;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ id }) => {
-  const [todos, setTodos] = useTodos(id);
-
-  const createTodo = () => {
-    const newTodo = {
-      text: '',
-      id: Date.now(),
-      isCompleted: false,
-      textColor: EColors.black,
-      textStyle: ETextStyle.normal,
-      inArchive: false,
-      timeCompleted: null,
-      isOpen: false,
-      subTodos: [],
-    };
-    setTodos([...todos, newTodo]);
-  };
+export const CardContent: React.FC<CardContentProps> = ({ category }) => {
+  const { setTodos, createTodo } = useTodos(category);
+  const todos = category.todos;
 
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) {
@@ -53,18 +39,6 @@ export const CardContent: React.FC<CardContentProps> = ({ id }) => {
       result.destination.index,
     );
     setTodos(reorderTodos);
-  };
-
-  const sendInArchive = (todoId: number) => {
-    setTodos(
-      todos.map((todo: IGroupTodo) =>
-        todo.id === todoId ? { ...todo, inArchive: true } : todo,
-      ),
-    );
-  };
-
-  const deleteTodo = (todoId: number) => {
-    setTodos(todos.filter((todo: IGroupTodo) => todo.id !== todoId));
   };
 
   return (
@@ -89,10 +63,8 @@ export const CardContent: React.FC<CardContentProps> = ({ id }) => {
                         >
                           <GroupCheckbox
                             key={todo.id}
-                            id={todo.id}
-                            categoryId={id}
-                            deleteTodo={deleteTodo}
-                            sendInArchive={sendInArchive}
+                            categoryId={category.id}
+                            todo={todo}
                           />
                         </div>
                       )}

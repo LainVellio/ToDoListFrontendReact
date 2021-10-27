@@ -7,7 +7,7 @@ import { items } from '../MainPage/MainPage.test';
 import Provider from '../../Context';
 
 const data: CardContentProps = {
-  id: 1,
+  category: items[0],
 };
 
 const renderComponent = () => {

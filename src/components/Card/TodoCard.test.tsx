@@ -6,8 +6,7 @@ import { items } from '../MainPage/MainPage.test';
 import { TodoCard, CardProps } from './TodoCard';
 
 const data: CardProps = {
-  id: 1,
-  deleteCard: jest.fn(),
+  category: items[0],
 };
 
 const renderComponent = () => {

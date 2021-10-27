@@ -2,19 +2,19 @@ import { CardContent } from './CardContent';
 import { CardHeader } from './CardHeader';
 
 import { Card, CardContent as CardContentWrapper } from '@material-ui/core';
+import { ICategory } from '../../interfaces';
 
 export interface CardProps {
-  id: number;
-  deleteCard(categoryId: number): void;
+  category: ICategory;
 }
 
-export const TodoCard: React.FC<CardProps> = ({ id, deleteCard }) => {
+export const TodoCard: React.FC<CardProps> = ({ category }) => {
   return (
     <div data-testid="card">
       <Card>
         <CardContentWrapper>
-          <CardHeader id={id} deleteCard={deleteCard} />
-          <CardContent id={id} />
+          <CardHeader category={category} />
+          <CardContent category={category} />
         </CardContentWrapper>
       </Card>
     </div>

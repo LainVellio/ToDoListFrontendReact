@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { useSubTodos, useTodo } from '../../Context';
 import { SubTaskCheckbox } from './SubTaskCheckbox';
 import { useOutsideClick } from '../../utils/useOutsideClick';
-import { EColors, ETextStyle, ITodo } from '../../interfaces';
+import { IGroupTodo, ITodo } from '../../interfaces';
 import { DeleteMenu } from './DeleteMenu';
 import { EditMenu } from './EditMenu';
 
@@ -60,21 +60,17 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
 `;
 
 export interface GroupCheckboxProps {
-  id: number;
   categoryId: number;
-  deleteTodo(id: number): void;
-  sendInArchive(categoryId: number): void;
+  todo: IGroupTodo;
 }
 
 export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
-  id,
   categoryId,
-  deleteTodo,
-  sendInArchive,
+  todo,
 }) => {
-  const [todo, setTodo] = useTodo(categoryId, id);
-  const [todoEdit, setTodoEdit] = useState(todo);
-  const [subTodos, setSubTodos] = useSubTodos(categoryId, id);
+  const { setTodoProperties, deleteTodo } = useTodo(categoryId, todo);
+  const { setSubTodos, createSubTodo } = useSubTodos(categoryId, todo);
+  const [todoEdit, setTodoEdit] = useState<IGroupTodo | ITodo>(todo);
   const { isCompleted, isOpen } = todo;
   const { text, textColor, textStyle } = todoEdit;
 
@@ -82,16 +78,25 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
   const [editMode, setEditMode] = useState(text === '' ? true : false);
   const [deleteMenu, setDeleteMenu] = useState(false);
   const ref = useRef(null);
+  const subTodos = todo.subTodos;
+  const id = todo.id;
 
   const checkedTodo = (isCompleted: boolean) => {
-    setTodo({ ...todo, isCompleted: isCompleted, timeCompleted: Date.now() });
+    const timeCompleted = isCompleted ? Date.now() : null;
+    setTodoProperties({ isCompleted, timeCompleted });
   };
 
   useEffect(() => {
     if (!editMode) {
       text === ''
-        ? deleteTodo(id)
-        : setTodo({ ...todoEdit, isCompleted, isOpen });
+        ? deleteTodo()
+        : setTodoProperties({
+            isCompleted,
+            isOpen,
+            text,
+            textColor,
+            textStyle,
+          });
     }
   }, [editMode]);
 
@@ -134,25 +139,6 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
     setEditMode(false);
     setDeleteMenu(!deleteMenu);
   };
-  const setGroupIsOpen = (isOpen: boolean) => {
-    setTodo({ ...todo, isOpen });
-  };
-
-  const addSubTask = () => {
-    const newSubTodo = {
-      text: '',
-      id: Date.now(),
-      isCompleted: false,
-      textColor: EColors.black,
-      textStyle: ETextStyle.normal,
-      inArchive: false,
-      timeCompleted: null,
-    };
-    setSubTodos([...subTodos, newSubTodo]);
-  };
-  const deleteSubTodo = (subTodoId: number) => {
-    setSubTodos(subTodos.filter((subTodo: ITodo) => subTodo.id !== subTodoId));
-  };
 
   return (
     <div>
@@ -169,13 +155,16 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
           className={`checkbox ${isCompleted ? 'label-text__checked' : ''}`}
         >
           {subTodos.length > 0 && (
-            <div className="arrowIcon" onClick={() => setGroupIsOpen(!isOpen)}>
+            <div
+              className="arrowIcon"
+              onClick={() => setTodoProperties({ isOpen: !isOpen })}
+            >
               {isOpen ? <ArrowDropDownIcon /> : <ArrowRightIcon />}
             </div>
           )}
           <Checkbox
             onClick={onChecked}
-            checked={isCompleted}
+            checked={true}
             name="checkedB"
             color="primary"
           />
@@ -194,7 +183,9 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
           {deleteMenu && (
             <DeleteMenu
               id={id}
-              sendInArchive={sendInArchive}
+              sendInArchive={() => {
+                setTodoProperties({ inArchive: true });
+              }}
               setDeleteMenu={setDeleteMenu}
               deleteTodo={deleteTodo}
               useOutsideClick={useOutsideClick.bind(null, ref)}
@@ -207,7 +198,9 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
             <AddIcon
               data-testid="addSubTask"
               className="addSubTaskIcon"
-              onClick={addSubTask}
+              onClick={() => {
+                createSubTodo();
+              }}
             />
 
             <EditIcon
@@ -227,10 +220,9 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
         subTodos.map((subTodo: ITodo) => (
           <SubTaskCheckbox
             key={subTodo.id}
-            id={subTodo.id}
+            subTodo={subTodo}
             todoId={id}
             categoryId={categoryId}
-            deleteSubTodo={deleteSubTodo}
           />
         ))}
     </div>

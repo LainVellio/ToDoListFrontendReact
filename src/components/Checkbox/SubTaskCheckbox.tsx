@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EColors } from '../../interfaces';
+import { EColors, ITodo } from '../../interfaces';
 import { useSubTodo } from '../../Context';
 import { EditMenu } from './EditMenu';
 import { useOutsideClick } from '../../utils/useOutsideClick';
@@ -51,19 +51,21 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   }
 `;
 export interface SubCheckboxProps {
-  id: number;
+  subTodo: ITodo;
   todoId: number;
   categoryId: number;
-  deleteSubTodo(id: number): void;
 }
 
 export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
-  id,
+  subTodo,
   todoId,
   categoryId,
-  deleteSubTodo,
 }) => {
-  const [subTodo, setSubTodo] = useSubTodo(categoryId, todoId, id);
+  const { setSubTodoProperties, deleteSubTodo } = useSubTodo(
+    categoryId,
+    todoId,
+    subTodo,
+  );
   const [subTodoEdit, setSubTodoEdit] = useState(subTodo);
   const { isCompleted } = subTodo;
   const { text, textColor, textStyle } = subTodoEdit;
@@ -74,20 +76,10 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   useEffect(() => {
     if (!editMode) {
       text === ''
-        ? deleteSubTodo(id)
-        : setSubTodo({ ...subTodoEdit, isCompleted });
+        ? deleteSubTodo()
+        : setSubTodoProperties({ isCompleted, text, textColor, textStyle });
     }
   }, [editMode]);
-
-  const onChecked = () => {
-    setSubTodo({ ...subTodo, isCompleted: !isCompleted });
-  };
-  const onEdit = () => {
-    setEditMode(!editMode);
-  };
-  const onDelete = () => {
-    deleteSubTodo(id);
-  };
 
   return (
     <CheckboxWrap
@@ -103,7 +95,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
         className={`checkbox ${isCompleted ? 'label-text__checked' : ''}`}
       >
         <Checkbox
-          onClick={onChecked}
+          onClick={() => setSubTodoProperties({ isCompleted: !isCompleted })}
           checked={isCompleted}
           name="checkedB"
           color="primary"
@@ -127,12 +119,12 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
           <EditIcon
             data-testid="editCheckbox"
             className="iconCheckbox"
-            onClick={onEdit}
+            onClick={() => setEditMode(!editMode)}
           />
           <DeleteOutlineIcon
             data-testid="deleteMenu"
             className="iconCheckbox deleteIcon"
-            onClick={onDelete}
+            onClick={() => deleteSubTodo()}
           />
         </div>
       )}

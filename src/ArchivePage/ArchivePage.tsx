@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useAllCategories } from '../Context';
+import { useCategories } from '../Context';
 import { ICategory, IGroupTodo } from '../interfaces';
 import { TodoArchive } from './TodoArchive';
 
@@ -28,7 +28,7 @@ const ArchivePageWrapper = styled.div`
 `;
 
 export const ArchivePage = () => {
-  const [categories, setAllCategories] = useAllCategories();
+  const { categories, saveCategories } = useCategories();
   const categoriesInArchive = categories.filter((category: ICategory) =>
     category.todos.some((todo) => todo.inArchive),
   );
@@ -44,7 +44,7 @@ export const ArchivePage = () => {
           }
         : category,
     );
-    setAllCategories(changeCategories);
+    saveCategories(changeCategories);
   };
 
   const deleteTodo = (categoryId: number, todoId: number) => {
@@ -58,7 +58,7 @@ export const ArchivePage = () => {
           }
         : category,
     );
-    setAllCategories(changeCategories);
+    saveCategories(changeCategories);
   };
 
   return (
