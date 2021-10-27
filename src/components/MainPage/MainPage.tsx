@@ -1,10 +1,10 @@
 import styled from 'styled-components';
 
+import { ICategory } from '../../interfaces';
 import { useCategories } from '../../Context';
 import { TodoCard } from '../Card/TodoCard';
 
 import AddIcon from '@material-ui/icons/Add';
-import { ICategory } from '../../interfaces';
 
 const CardsContainer = styled.div`
   display: grid;
@@ -60,7 +60,7 @@ export const MainPage = () => {
         {categories.map((category: ICategory) => (
           <TodoCard
             data-testid="toDoCard"
-            category={category}
+            categoryId={category.id}
             key={category.id}
           />
         ))}

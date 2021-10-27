@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EColors, ITodo } from '../../interfaces';
+import { useOutsideClick } from '../../utils/useOutsideClick';
+import { EColors } from '../../interfaces';
 import { useSubTodo } from '../../Context';
 import { EditMenu } from './EditMenu';
-import { useOutsideClick } from '../../utils/useOutsideClick';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
+import checkEmpty from '../../utils/checkEmpty';
 
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   display: flex;
@@ -51,20 +52,20 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   }
 `;
 export interface SubCheckboxProps {
-  subTodo: ITodo;
+  subTodoId: number;
   todoId: number;
   categoryId: number;
 }
 
 export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
-  subTodo,
+  subTodoId,
   todoId,
   categoryId,
 }) => {
-  const { setSubTodoProperties, deleteSubTodo } = useSubTodo(
+  const { subTodo, setSubTodoProperties, deleteSubTodo } = useSubTodo(
     categoryId,
     todoId,
-    subTodo,
+    subTodoId,
   );
   const [subTodoEdit, setSubTodoEdit] = useState(subTodo);
   const { isCompleted } = subTodo;
@@ -74,12 +75,22 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!editMode) {
-      text === ''
-        ? deleteSubTodo()
-        : setSubTodoProperties({ isCompleted, text, textColor, textStyle });
-    }
+    !editMode &&
+      checkEmpty(
+        text,
+        deleteSubTodo,
+        setSubTodoProperties.bind(null, {
+          isCompleted,
+          text,
+          textColor,
+          textStyle,
+        }),
+      );
   }, [editMode]);
+
+  const onChecked = () => {
+    setSubTodoProperties({ isCompleted: !isCompleted });
+  };
 
   return (
     <CheckboxWrap
@@ -95,7 +106,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
         className={`checkbox ${isCompleted ? 'label-text__checked' : ''}`}
       >
         <Checkbox
-          onClick={() => setSubTodoProperties({ isCompleted: !isCompleted })}
+          onClick={onChecked}
           checked={isCompleted}
           name="checkedB"
           color="primary"

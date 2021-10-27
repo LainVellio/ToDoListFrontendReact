@@ -5,8 +5,8 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 
-import { useTodos } from '../../Context';
-import { ICategory, IGroupTodo } from '../../interfaces';
+import { useCategory } from '../../Context';
+import { IGroupTodo } from '../../interfaces';
 import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
 import { CreateTodoButton } from './CreateTodoButton';
 
@@ -22,11 +22,12 @@ export const reorder = (
 };
 
 export interface CardContentProps {
-  category: ICategory;
+  categoryId: number;
 }
 
-export const CardContent: React.FC<CardContentProps> = ({ category }) => {
-  const { setTodos, createTodo } = useTodos(category);
+export const CardContent: React.FC<CardContentProps> = ({ categoryId }) => {
+  const { category, setCategoryProperties, createTodo } =
+    useCategory(categoryId);
   const todos = category.todos;
 
   const onDragEnd = (result: DropResult) => {
@@ -38,7 +39,7 @@ export const CardContent: React.FC<CardContentProps> = ({ category }) => {
       result.source.index,
       result.destination.index,
     );
-    setTodos(reorderTodos);
+    setCategoryProperties({ todos: reorderTodos });
   };
 
   return (
@@ -63,8 +64,8 @@ export const CardContent: React.FC<CardContentProps> = ({ category }) => {
                         >
                           <GroupCheckbox
                             key={todo.id}
-                            categoryId={category.id}
-                            todo={todo}
+                            todoId={todo.id}
+                            categoryId={categoryId}
                           />
                         </div>
                       )}

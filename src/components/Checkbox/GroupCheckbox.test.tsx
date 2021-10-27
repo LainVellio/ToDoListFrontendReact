@@ -8,7 +8,7 @@ import { items } from '../MainPage/MainPage.test';
 
 const data: GroupCheckboxProps = {
   categoryId: 1,
-  todo: items[0].todos[0],
+  todoId: 1,
 };
 
 const renderComponent = () => {
@@ -29,7 +29,7 @@ describe('ToDoCheckbox component', () => {
   it('should checked work', () => {
     renderComponent();
     userEvent.click(screen.getByRole('checkbox'));
-    expect(screen.getByRole('checkbox')).toBeChecked();
+    expect(screen.getAllByRole('checkbox')[0]).toBeChecked();
     expect(
       JSON.parse(localStorage.getItem('categories')!)[0].todos[0].isCompleted,
     ).toBeTruthy();

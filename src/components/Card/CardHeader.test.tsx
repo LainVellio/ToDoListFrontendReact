@@ -7,7 +7,7 @@ import { items } from '../MainPage/MainPage.test';
 import { CardHeader, CardHeaderProps } from './CardHeader';
 
 const data: CardHeaderProps = {
-  category: items[0],
+  categoryId: 1,
 };
 
 const renderComponent = () => {
@@ -45,14 +45,6 @@ describe('CardHeader component', () => {
     userEvent.click(screen.getByTestId('editButton'));
     expect(screen.getByRole('textbox')).toHaveClass('inputCard');
     expect(screen.getByRole('textbox')).toHaveStyle('font-size: 1.25rem');
-  });
-
-  it('Delete card on click works', () => {
-    renderComponent();
-    expect(screen.getByText(/title/i)).toBeInTheDocument();
-    expect(screen.getByTestId('deleteButton')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('deleteButton'));
-    // expect(screen.queryByText('textbox')).toBeNull();
   });
 
   it('Change header colors work', () => {

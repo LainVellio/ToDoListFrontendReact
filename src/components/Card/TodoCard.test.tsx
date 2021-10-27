@@ -6,7 +6,7 @@ import { items } from '../MainPage/MainPage.test';
 import { TodoCard, CardProps } from './TodoCard';
 
 const data: CardProps = {
-  category: items[0],
+  categoryId: 1,
 };
 
 const renderComponent = () => {

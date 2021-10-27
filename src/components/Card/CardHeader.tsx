@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EColors, ICategory } from '../../interfaces';
+import { EColors } from '../../interfaces';
 import { useCategories, useCategory } from '../../Context';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
@@ -45,11 +45,11 @@ const CardHeaderWrapper = styled.div<{ colorHeader: EColors }>`
 `;
 
 export interface CardHeaderProps {
-  category: ICategory;
+  categoryId: number;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ category }) => {
-  const { setCategoryProperty } = useCategory(category);
+export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
+  const { category, setCategoryProperties } = useCategory(categoryId);
   const { deleteCategory } = useCategories();
   const [title, setTitle] = useState(category.title);
   const [editMode, setEditMode] = useState(title === '' ? true : false);
@@ -63,7 +63,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ category }) => {
       if (title === '') {
         deleteCategory(id);
       } else {
-        setCategoryProperty({ title });
+        setCategoryProperties({ title });
       }
     }
   }, [editMode]);
@@ -77,7 +77,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ category }) => {
   };
 
   const changeColor = (colorHeader: EColors) => {
-    setCategoryProperty({ colorHeader });
+    setCategoryProperties({ colorHeader });
     setEditMode(false);
   };
 

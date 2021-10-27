@@ -46,6 +46,27 @@ interface ProviderProps {
 }
 const Context = React.createContext<any>(initialCategories);
 
+function findItem<T extends ICategory | IGroupTodo | ITodo>(
+  items: Array<T>,
+  id: number,
+) {
+  return items.find((item: T) => item.id === id)!;
+}
+function getChangeItems<T extends ICategory | IGroupTodo | ITodo>(
+  items: Array<T>,
+  changeItem: T,
+) {
+  return items.map((item: T) =>
+    item.id === changeItem.id ? changeItem : item,
+  );
+}
+function getFilteredItems<T extends ICategory | IGroupTodo | ITodo>(
+  items: Array<T>,
+  id: number,
+) {
+  return items.filter((item: T) => item.id !== id);
+}
+
 export function useCategories() {
   const context = React.useContext(Context);
   if (!context) {
@@ -54,23 +75,17 @@ export function useCategories() {
   return context;
 }
 
-export function useCategory(category: ICategory) {
+export function useCategory(categoryId: number) {
   const { categories, saveCategories } = useCategories();
-  const setCategoryProperty = (property: ICategoryProperties) => {
+  const category = findItem<ICategory>(categories, categoryId);
+  const todos = category.todos;
+
+  const setCategoryProperties = (property: ICategoryProperties) => {
     const changeCategory = { ...category, ...property };
-    const changeCategories = categories.map((category: ICategory) =>
-      category.id === changeCategory.id ? changeCategory : category,
-    );
+    const changeCategories = getChangeItems(categories, changeCategory);
     saveCategories(changeCategories);
   };
-  return { setCategoryProperty };
-}
 
-export function useTodos(category: ICategory) {
-  const { setCategoryProperty } = useCategory(category);
-  const setTodos = (todos: IGroupTodo[]) => {
-    setCategoryProperty({ todos });
-  };
   const createTodo = () => {
     const newTodo = {
       text: '',
@@ -83,38 +98,20 @@ export function useTodos(category: ICategory) {
       isOpen: false,
       subTodos: [],
     };
-    setCategoryProperty({ todos: [...category.todos, newTodo] });
+    setCategoryProperties({ todos: [...todos, newTodo] });
   };
-  return { setTodos, createTodo };
+
+  return { category, createTodo, setCategoryProperties };
 }
 
-export function useTodo(categoryId: number, todo: IGroupTodo) {
-  const { categories } = useCategories();
-  const category = categories.find(
-    (category: ICategory) => category.id === categoryId,
-  );
-  const { setTodos } = useTodos(category);
+export function useTodo(categoryId: number, todoId: number) {
+  const { category } = useCategory(categoryId);
+  const todos = category.todos;
+  const { setCategoryProperties } = useCategory(categoryId);
 
-  const setTodoProperties = (property: IGroupTodoProperties) => {
-    const changeTodo = { ...todo, ...property };
-    const changeTodos = category.todos.map((todo: IGroupTodo) =>
-      todo.id === changeTodo.id ? changeTodo : todo,
-    );
-    setTodos(changeTodos);
-  };
+  const todo = findItem<IGroupTodo>(todos, todoId);
+  const subTodos = todo.subTodos;
 
-  const deleteTodo = () => {
-    setTodos(category.todos.filter((t: IGroupTodo) => t.id !== todo.id));
-  };
-
-  return { setTodoProperties, deleteTodo };
-}
-
-export function useSubTodos(categoryId: number, todo: IGroupTodo) {
-  const { setTodoProperties } = useTodo(categoryId, todo);
-  const setSubTodos = (subTodos: ITodo[]) => {
-    setTodoProperties({ isOpen: true, subTodos });
-  };
   const createSubTodo = () => {
     const newSubTodo = {
       text: '',
@@ -125,37 +122,60 @@ export function useSubTodos(categoryId: number, todo: IGroupTodo) {
       inArchive: false,
       timeCompleted: null,
     };
+
     setTodoProperties({
-      subTodos: [...todo.subTodos, newSubTodo],
+      subTodos: [...subTodos, newSubTodo],
       isOpen: true,
     });
   };
-  return { setSubTodos, createSubTodo };
+
+  const setTodoProperties = (property: IGroupTodoProperties) => {
+    const changeTodo = { ...todo, ...property };
+    setCategoryProperties({ todos: getChangeItems(todos, changeTodo) });
+  };
+
+  const deleteTodo = () => {
+    setCategoryProperties({ todos: getFilteredItems(todos, todoId) });
+  };
+
+  return {
+    todo,
+    createSubTodo,
+    setTodoProperties,
+    deleteTodo,
+  };
 }
 
-export function useSubTodo(categoryId: number, todoId: number, subTodo: ITodo) {
-  const { categories } = useCategories();
-  const todo = categories
-    .find((c: ICategory) => c.id === categoryId)
-    .todos.find((t: IGroupTodo) => t.id === todoId);
-  const { setSubTodos } = useSubTodos(categoryId, todo);
+export function useSubTodo(
+  categoryId: number,
+  todoId: number,
+  subTodoId: number,
+) {
+  const { todo, setTodoProperties } = useTodo(categoryId, todoId);
+  const subTodos = todo.subTodos;
+  const subTodo = findItem<ITodo>(subTodos, subTodoId);
+
   const setSubTodoProperties = (property: any) => {
     const changeSubTodo = { ...subTodo, ...property };
-    const changeSubTodos = todo.subTodos.map((subTodo: IGroupTodo) =>
-      subTodo.id === changeSubTodo.id ? changeSubTodo : subTodo,
-    );
-    setSubTodos(changeSubTodos);
+    setTodoProperties({ subTodos: getChangeItems(subTodos, changeSubTodo) });
   };
+
   const deleteSubTodo = () => {
-    setSubTodos(todo.subTodos.filter((s: ITodo) => s.id !== subTodo.id));
+    setTodoProperties({ subTodos: getFilteredItems(subTodos, subTodoId) });
   };
-  return { setSubTodoProperties, deleteSubTodo };
+
+  return {
+    subTodo,
+    setSubTodoProperties,
+    deleteSubTodo,
+  };
 }
 
 function Provider({ children }: ProviderProps) {
   const [categories, setCategories] = React.useState<ICategory[]>(
     localStorageApi.getCategories(),
   );
+
   const saveCategories = (changeCategories: ICategory[]) => {
     setCategories(changeCategories);
     localStorageApi.setCategories(changeCategories);
@@ -173,15 +193,15 @@ function Provider({ children }: ProviderProps) {
   };
 
   const deleteCategory = (categoryId: number) => {
-    const changeCategories = categories.filter(
-      (category: ICategory) => category.id !== categoryId,
-    );
+    const changeCategories = getFilteredItems(categories, categoryId);
     saveCategories(changeCategories);
   };
+
   const value = React.useMemo(
     () => ({ categories, saveCategories, createCategory, deleteCategory }),
     [categories],
   );
+
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { useSubTodos, useTodo } from '../../Context';
-import { SubTaskCheckbox } from './SubTaskCheckbox';
+import { useTodo } from '../../Context';
+import checkEmpty from '../../utils/checkEmpty';
 import { useOutsideClick } from '../../utils/useOutsideClick';
+import { SubTaskCheckbox } from './SubTaskCheckbox';
 import { IGroupTodo, ITodo } from '../../interfaces';
 import { DeleteMenu } from './DeleteMenu';
 import { EditMenu } from './EditMenu';
@@ -61,17 +62,20 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
 
 export interface GroupCheckboxProps {
   categoryId: number;
-  todo: IGroupTodo;
+  todoId: number;
 }
 
 export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
   categoryId,
-  todo,
+  todoId,
 }) => {
-  const { setTodoProperties, deleteTodo } = useTodo(categoryId, todo);
-  const { setSubTodos, createSubTodo } = useSubTodos(categoryId, todo);
+  const { todo, createSubTodo, setTodoProperties, deleteTodo } = useTodo(
+    categoryId,
+    todoId,
+  );
+
   const [todoEdit, setTodoEdit] = useState<IGroupTodo | ITodo>(todo);
-  const { isCompleted, isOpen } = todo;
+  const { id, isCompleted, isOpen } = todo;
   const { text, textColor, textStyle } = todoEdit;
 
   const [isFocus, setIsFocus] = useState(false);
@@ -79,57 +83,39 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
   const [deleteMenu, setDeleteMenu] = useState(false);
   const ref = useRef(null);
   const subTodos = todo.subTodos;
-  const id = todo.id;
 
   const checkedTodo = (isCompleted: boolean) => {
     const timeCompleted = isCompleted ? Date.now() : null;
-    setTodoProperties({ isCompleted, timeCompleted });
+    const changeSubTodos = subTodos.map((subTodo: ITodo) => ({
+      ...subTodo,
+      isCompleted,
+    }));
+    setTodoProperties({ isCompleted, timeCompleted, subTodos: changeSubTodos });
   };
 
   useEffect(() => {
-    if (!editMode) {
-      text === ''
-        ? deleteTodo()
-        : setTodoProperties({
-            isCompleted,
-            isOpen,
-            text,
-            textColor,
-            textStyle,
-          });
-    }
+    !editMode &&
+      checkEmpty(
+        text,
+        deleteTodo,
+        setTodoProperties.bind(null, {
+          isCompleted,
+          isOpen,
+          text,
+          textColor,
+          textStyle,
+        }),
+      );
   }, [editMode]);
 
   useEffect(() => {
     if (subTodos.length > 0) {
-      if (subTodos.every((subTask: ITodo) => subTask.isCompleted)) {
-        checkedTodo(true);
-      } else {
-        checkedTodo(false);
-      }
+      console.log('pic');
+      subTodos.every((subTask: ITodo) => subTask.isCompleted)
+        ? setTodoProperties({ isCompleted: true })
+        : setTodoProperties({ isCompleted: false });
     }
   }, [subTodos]);
-
-  const onChecked = () => {
-    checkedTodo(!isCompleted);
-    if (subTodos.length > 0) {
-      isCompleted
-        ? setSubTodos(
-            subTodos.map((subTask: ITodo) =>
-              subTask.isCompleted
-                ? { ...subTask, isCompleted: false }
-                : subTask,
-            ),
-          )
-        : setSubTodos(
-            subTodos.map((subTask: ITodo) =>
-              !subTask.isCompleted
-                ? { ...subTask, isCompleted: true }
-                : subTask,
-            ),
-          );
-    }
-  };
 
   const onEdit = () => {
     setDeleteMenu(false);
@@ -163,8 +149,8 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
             </div>
           )}
           <Checkbox
-            onClick={onChecked}
-            checked={true}
+            onClick={() => checkedTodo(!isCompleted)}
+            checked={isCompleted}
             name="checkedB"
             color="primary"
           />
@@ -220,7 +206,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
         subTodos.map((subTodo: ITodo) => (
           <SubTaskCheckbox
             key={subTodo.id}
-            subTodo={subTodo}
+            subTodoId={subTodo.id}
             todoId={id}
             categoryId={categoryId}
           />
