@@ -45,7 +45,7 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
     setDeleteMenu(false);
   };
 
-  useCatchKeydown(['Escape'], closeMenu);
+  useCatchKeydown('Escape', closeMenu);
   useOutsideClick(outsideRef, closeMenu, true);
 
   return (

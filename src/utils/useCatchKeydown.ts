@@ -1,9 +1,14 @@
 import { useEffect } from 'react';
 
-export const useCatchKeydown = (keys: string[], callback: () => void) => {
+export const useCatchKeydown = (
+  keys: string[] | string,
+  callback: () => void,
+) => {
   useEffect(() => {
     const onKeypress = (event: KeyboardEvent) => {
-      keys.map((key: string) => event.key === key && callback());
+      typeof keys === 'string'
+        ? keys
+        : keys.map((key: string) => event.key === key && callback());
     };
     document.addEventListener('keydown', onKeypress);
     return () => {
