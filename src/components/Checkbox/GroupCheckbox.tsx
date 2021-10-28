@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { useTodo } from '../../Context';
 import checkEmpty from '../../utils/checkEmpty';
 import { SubTaskCheckbox } from './SubTaskCheckbox';
-import { IGroupTodo, ITodo } from '../../interfaces';
+import { ITodo, ITodoEdit, ITodoEditProperties } from '../../interfaces';
+import { useTodo } from '../../Context';
 import { DeleteMenu } from './DeleteMenu';
 import { EditMenu } from './EditMenu';
 
@@ -63,7 +63,6 @@ export interface GroupCheckboxProps {
   categoryId: number;
   todoId: number;
 }
-
 export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
   categoryId,
   todoId,
@@ -73,7 +72,15 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
     todoId,
   );
 
-  const [todoEdit, setTodoEdit] = useState<IGroupTodo | ITodo>(todo);
+  const [todoEdit, setTodoEdit] = useReducer<
+    Reducer<ITodoEdit, ITodoEditProperties>
+  >(
+    (todoEdit: ITodoEdit, property: ITodoEditProperties) => ({
+      ...todoEdit,
+      ...property,
+    }),
+    todo,
+  );
   const { id, isCompleted, isOpen } = todo;
   const { text, textColor, textStyle } = todoEdit;
 
@@ -109,7 +116,6 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
 
   useEffect(() => {
     if (subTodos.length > 0) {
-      console.log('pic');
       subTodos.every((subTask: ITodo) => subTask.isCompleted)
         ? setTodoProperties({ isCompleted: true })
         : setTodoProperties({ isCompleted: false });
@@ -156,7 +162,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
 
           {editMode ? (
             <EditMenu
-              todo={todoEdit}
+              todoEdit={todoEdit}
               setTodo={setTodoEdit}
               setEditMode={setEditMode}
               outsideRef={ref}

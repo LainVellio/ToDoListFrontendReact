@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { EColors } from '../../interfaces';
-import { useSubTodo } from '../../Context';
+import { EColors, ITodoEdit, ITodoEditProperties } from '../../interfaces';
 import checkEmpty from '../../utils/checkEmpty';
+import { useSubTodo } from '../../Context';
 import { EditMenu } from './EditMenu';
 
 import Checkbox from '@material-ui/core/Checkbox';
@@ -66,8 +66,16 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
     todoId,
     subTodoId,
   );
-  const [subTodoEdit, setSubTodoEdit] = useState(subTodo);
   const { isCompleted } = subTodo;
+  const [subTodoEdit, setSubTodoEdit] = useReducer<
+    Reducer<ITodoEdit, ITodoEditProperties>
+  >(
+    (todoEdit: ITodoEdit, property: ITodoEditProperties) => ({
+      ...todoEdit,
+      ...property,
+    }),
+    subTodo,
+  );
   const { text, textColor, textStyle } = subTodoEdit;
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(text === '' ? true : false);
@@ -113,7 +121,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
 
         {editMode ? (
           <EditMenu
-            todo={subTodoEdit}
+            todoEdit={subTodoEdit}
             isCompleted={isCompleted}
             setTodo={setSubTodoEdit}
             setEditMode={setEditMode}

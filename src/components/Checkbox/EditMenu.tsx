@@ -2,7 +2,12 @@ import React, { RefObject } from 'react';
 import { ChangeEvent, useRef } from 'react';
 import styled from 'styled-components';
 
-import { EColors, ETextStyle, IGroupTodo, ITodo } from '../../interfaces';
+import {
+  EColors,
+  ETextStyle,
+  ITodoEdit,
+  ITodoEditProperties,
+} from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { MenuWrapper } from './MenuWrapper';
@@ -50,15 +55,15 @@ const CheckboxEditMenuWrap = styled.div<{
 `;
 
 export interface CheckboxEditMenuProps {
-  todo: IGroupTodo | ITodo;
+  todoEdit: ITodoEdit;
   isCompleted: boolean;
-  setTodo(todo: IGroupTodo | ITodo): void;
+  setTodo(properties: ITodoEditProperties): void;
   setEditMode(editMode: boolean): void;
   outsideRef: RefObject<HTMLDivElement>;
 }
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
-  todo,
+  todoEdit,
   isCompleted,
   setTodo,
   setEditMode,
@@ -70,17 +75,11 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     EColors.green,
     EColors.black,
   ];
-  const { text, textColor, textStyle } = todo;
+  const { text, textColor, textStyle } = todoEdit;
   const ref = useRef<HTMLDivElement>(null);
 
-  const setText = (text: string) => {
-    setTodo({ ...todo, text });
-  };
   const setTextColor = (textColor: EColors) => {
-    setTodo({ ...todo, textColor });
-  };
-  const setTextStyle = (textStyle: ETextStyle) => {
-    setTodo({ ...todo, textStyle });
+    setTodo({ textColor });
   };
 
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -94,7 +93,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
         <InputEdit
           value={text}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setText(e.target.value)
+            setTodo({ text: e.target.value })
           }
           className={`inputCheckbox ${
             isCompleted ? 'label-text__checked' : ''
@@ -112,7 +111,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
             {textStyle !== ETextStyle.bold ? (
               <div
                 onClick={() => {
-                  setTextStyle(ETextStyle.bold);
+                  setTodo({ textStyle: ETextStyle.bold });
                 }}
                 className="B"
               >
@@ -121,7 +120,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
             ) : (
               <div
                 onClick={() => {
-                  setTextStyle(ETextStyle.normal);
+                  setTodo({ textStyle: ETextStyle.normal });
                 }}
                 className="B"
               >

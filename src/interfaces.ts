@@ -9,12 +9,16 @@ export interface ICategory {
   colorHeader: EColors;
   todos: Array<IGroupTodo>;
 }
+export type ICategoryProperties = UnionOfProperties<ICategory>;
+
 export interface IGroupTodo extends ITodo {
   isOpen: boolean;
   inArchive: boolean;
   timeCompleted: number | null;
   subTodos: Array<ITodo>;
 }
+export type IGroupTodoProperties = UnionOfProperties<IGroupTodo>;
+
 export interface ITodo {
   id: number;
   text: string;
@@ -22,6 +26,7 @@ export interface ITodo {
   textStyle: ETextStyle;
   isCompleted: boolean;
 }
+export type ISubTodoProperties = UnionOfProperties<ITodo>;
 
 export interface IContext {
   categories: ICategory[];
@@ -46,9 +51,12 @@ export interface UseSubTodo {
   deleteSubTodo: () => void;
 }
 
-export type ICategoryProperties = UnionOfProperties<ICategory>;
-export type IGroupTodoProperties = UnionOfProperties<IGroupTodo>;
-export type ISubTodoProperties = UnionOfProperties<ITodo>;
+export interface ITodoEdit {
+  text: string;
+  textColor: EColors;
+  textStyle: ETextStyle;
+}
+export type ITodoEditProperties = UnionOfProperties<ITodoEdit>;
 
 export enum ETextStyle {
   bold = '900',
