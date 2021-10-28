@@ -1,3 +1,4 @@
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 
@@ -100,7 +101,9 @@ describe('MainPage component', () => {
     expect(screen.getAllByTestId('card')).toHaveLength(2);
     userEvent.click(screen.getByText(/добавить новую категорию/i));
     expect(screen.getAllByTestId('card')).toHaveLength(3);
-    expect(JSON.parse(localStorage.getItem('categories')!)).toHaveLength(3);
+    expect(JSON.parse(localStorage.getItem('categories') || '')).toHaveLength(
+      3,
+    );
   });
 
   it('should deleteCard work', () => {
@@ -108,6 +111,8 @@ describe('MainPage component', () => {
     expect(screen.getAllByTestId('card')).toHaveLength(2);
     userEvent.click(screen.getAllByTestId('deleteButton')[0]);
     expect(screen.getAllByTestId('card')).toHaveLength(1);
-    expect(JSON.parse(localStorage.getItem('categories')!)).toHaveLength(1);
+    expect(JSON.parse(localStorage.getItem('categories') || '')).toHaveLength(
+      1,
+    );
   });
 });

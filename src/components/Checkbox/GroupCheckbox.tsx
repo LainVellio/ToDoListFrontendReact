@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { useTodo } from '../../Context';
 import checkEmpty from '../../utils/checkEmpty';
-import { useOutsideClick } from '../../utils/useOutsideClick';
 import { SubTaskCheckbox } from './SubTaskCheckbox';
 import { IGroupTodo, ITodo } from '../../interfaces';
 import { DeleteMenu } from './DeleteMenu';
@@ -160,7 +159,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
               todo={todoEdit}
               setTodo={setTodoEdit}
               setEditMode={setEditMode}
-              useOutsideClick={useOutsideClick.bind(null, ref)}
+              outsideRef={ref}
               isCompleted={isCompleted}
             />
           ) : (
@@ -174,7 +173,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
               }}
               setDeleteMenu={setDeleteMenu}
               deleteTodo={deleteTodo}
-              useOutsideClick={useOutsideClick.bind(null, ref)}
+              outsideRef={ref}
             />
           )}
         </div>

@@ -1,3 +1,4 @@
+import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 
@@ -84,7 +85,8 @@ describe('ArchivePage component', () => {
     userEvent.click(screen.getAllByTestId('backTodoToMainPage')[0]);
     expect(screen.queryByText(/text1/i)).toBeNull();
     expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].inArchive,
+      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
+        .inArchive,
     ).toBeFalsy();
   });
 
@@ -92,13 +94,13 @@ describe('ArchivePage component', () => {
     renderPage();
     expect(screen.getByText(/text1/i)).toBeInTheDocument();
     expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos,
+      JSON.parse(localStorage.getItem('categories') || '')[0].todos,
     ).toHaveLength(1);
     userEvent.hover(screen.getByText(/text1/i));
     userEvent.click(screen.getAllByTestId('deleteArchiveTodo')[0]);
     expect(screen.queryByText(/text1/i)).toBeNull();
     expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos,
+      JSON.parse(localStorage.getItem('categories') || '')[0].todos,
     ).toHaveLength(0);
   });
 

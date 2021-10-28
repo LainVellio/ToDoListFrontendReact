@@ -1,3 +1,4 @@
+import React from 'react';
 import { ChangeEvent, useRef } from 'react';
 import styled from 'styled-components';
 
@@ -5,6 +6,7 @@ import { EColors, ETextStyle, IGroupTodo, ITodo } from '../../interfaces';
 import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { MenuWrapper } from './MenuWrapper';
+import { useOutsideClick } from '../../utils/useOutsideClick';
 
 const CheckboxEditMenuWrap = styled.div<{
   textColor: string;
@@ -52,7 +54,7 @@ export interface CheckboxEditMenuProps {
   isCompleted: boolean;
   setTodo(todo: IGroupTodo | ITodo): void;
   setEditMode(editMode: boolean): void;
-  useOutsideClick(callback: Function): void;
+  outsideRef: any;
 }
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
@@ -60,7 +62,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   isCompleted,
   setTodo,
   setEditMode,
-  useOutsideClick,
+  outsideRef,
 }) => {
   const colors: Array<EColors> = [
     EColors.red,
@@ -84,7 +86,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     event.key === 'Enter' && setEditMode(false);
   };
-  useOutsideClick(() => setEditMode(false));
+  useOutsideClick(outsideRef, () => setEditMode(false), true);
 
   return (
     <div ref={ref} data-testid="editMenu">

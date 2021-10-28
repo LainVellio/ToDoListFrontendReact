@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useOutsideClick } from '../../utils/useOutsideClick';
 
 import { MenuWrapper } from './MenuWrapper';
 
@@ -27,8 +28,8 @@ interface DeleteMenuProps {
   id: number;
   deleteTodo(categoryId: number): void;
   setDeleteMenu(deleteMenu: boolean): void;
-  useOutsideClick(callback: Function): void;
   sendInArchive(categoryId: number): void;
+  outsideRef: any;
 }
 
 export const DeleteMenu: React.FC<DeleteMenuProps> = ({
@@ -36,12 +37,12 @@ export const DeleteMenu: React.FC<DeleteMenuProps> = ({
   deleteTodo,
   sendInArchive,
   setDeleteMenu,
-  useOutsideClick,
+  outsideRef,
 }) => {
   const closeMenu = () => {
     setDeleteMenu(false);
   };
-  useOutsideClick(closeMenu);
+  useOutsideClick(outsideRef, closeMenu, true);
 
   return (
     <DeleteMenuWrapper>

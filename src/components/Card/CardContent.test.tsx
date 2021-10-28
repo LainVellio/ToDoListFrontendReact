@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -33,7 +34,7 @@ describe('CardContent component', () => {
     userEvent.click(screen.getByText(/добавить новую задачу/i));
     expect(screen.getAllByRole('checkbox')).toHaveLength(3);
     expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos,
+      JSON.parse(localStorage.getItem('categories') || '')[0].todos,
     ).toHaveLength(3);
   });
 
@@ -56,7 +57,7 @@ describe('CardContent component', () => {
     userEvent.click(screen.getByText(/Удалить/i));
     expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
     expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos,
+      JSON.parse(localStorage.getItem('categories') || '')[0].todos,
     ).toHaveLength(1);
   });
 
@@ -68,7 +69,8 @@ describe('CardContent component', () => {
     userEvent.click(screen.getByText(/в архив/i));
     expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
     expect(
-      JSON.parse(localStorage.getItem('categories')!)[0].todos[0].inArchive,
+      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
+        .inArchive,
     ).toBeTruthy();
   });
 
@@ -113,6 +115,7 @@ describe('CardContent component', () => {
         inArchive: false,
         subTodos: [],
         isOpen: false,
+        timeCompleted: null,
       },
       {
         id: 2,
@@ -123,6 +126,7 @@ describe('CardContent component', () => {
         inArchive: false,
         subTodos: [],
         isOpen: false,
+        timeCompleted: null,
       },
       {
         id: 3,
@@ -133,6 +137,7 @@ describe('CardContent component', () => {
         inArchive: false,
         subTodos: [],
         isOpen: false,
+        timeCompleted: null,
       },
     ];
     expect(initialArray[0].id).toEqual(1);

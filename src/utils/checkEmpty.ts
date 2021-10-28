@@ -1,8 +1,8 @@
 const checkEmpty = (
   text: string,
-  deleteFunction: Function,
-  setFunction: Function,
-) => {
+  deleteFunction: () => void,
+  setFunction: () => void,
+): void => {
   text === '' ? deleteFunction() : setFunction();
 };
 

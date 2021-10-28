@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { EColors } from '../../interfaces';
@@ -51,10 +51,10 @@ export interface CardHeaderProps {
 export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
   const { category, setCategoryProperties } = useCategory(categoryId);
   const { deleteCategory } = useCategories();
-  const [title, setTitle] = useState(category.title);
+  const [title, setTitle] = useState(category?.title);
   const [editMode, setEditMode] = useState(title === '' ? true : false);
-  const colorHeader = category.colorHeader;
-  const id = category.id;
+  const colorHeader = category?.colorHeader;
+  const id = category?.id;
   const ref = useRef(null);
   const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 

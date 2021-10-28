@@ -1,15 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { useOutsideClick } from '../../utils/useOutsideClick';
 import { EColors } from '../../interfaces';
 import { useSubTodo } from '../../Context';
+import checkEmpty from '../../utils/checkEmpty';
 import { EditMenu } from './EditMenu';
 
 import Checkbox from '@material-ui/core/Checkbox';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
-import checkEmpty from '../../utils/checkEmpty';
 
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   display: flex;
@@ -118,7 +117,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
             isCompleted={isCompleted}
             setTodo={setSubTodoEdit}
             setEditMode={setEditMode}
-            useOutsideClick={useOutsideClick.bind(null, ref)}
+            outsideRef={ref}
           />
         ) : (
           <div className="label">{text}</div>

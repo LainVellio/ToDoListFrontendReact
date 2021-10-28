@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 
 export const useOutsideClick = (
   ref: any,
-  callback: Function,
-  editMode: boolean = true,
-) => {
+  callback: () => void,
+  editMode: boolean,
+): any => {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (ref.current && !ref.current.contains(event.target)) {

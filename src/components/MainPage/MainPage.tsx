@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 
 import { ICategory } from '../../interfaces';
@@ -52,7 +53,7 @@ const NewCardButton = styled.div`
   }
 `;
 
-export const MainPage = () => {
+export const MainPage: React.FC = () => {
   const { categories, createCategory } = useCategories();
   return (
     <main>

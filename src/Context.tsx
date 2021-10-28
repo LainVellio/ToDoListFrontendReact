@@ -7,10 +7,14 @@ import {
   ICategoryProperties,
   IGroupTodo,
   IGroupTodoProperties,
+  ISubTodoProperties,
   ITodo,
+  UseCategory,
+  UseSubTodo,
+  UseTodo,
 } from './interfaces';
 
-const initialCategories = [
+export const initialCategories = [
   {
     id: 1,
     title: '',
@@ -25,7 +29,7 @@ const initialCategories = [
         inArchive: false,
         timeCompleted: null,
         isOpen: false,
-        subTasks: [
+        subTodos: [
           {
             id: 1,
             text: '',
@@ -46,16 +50,10 @@ interface ProviderProps {
 }
 const Context = React.createContext<any>(initialCategories);
 
-function findItem<T extends ICategory | IGroupTodo | ITodo>(
-  items: Array<T>,
-  id: number,
-) {
-  return items.find((item: T) => item.id === id)!;
-}
 function getChangeItems<T extends ICategory | IGroupTodo | ITodo>(
-  items: Array<T>,
+  items: T[],
   changeItem: T,
-) {
+): T[] {
   return items.map((item: T) =>
     item.id === changeItem.id ? changeItem : item,
   );
@@ -67,7 +65,7 @@ function getFilteredItems<T extends ICategory | IGroupTodo | ITodo>(
   return items.filter((item: T) => item.id !== id);
 }
 
-export function useCategories() {
+export function useCategories(): any {
   const context = React.useContext(Context);
   if (!context) {
     throw new Error(`useCount must be used within a CountProvider`);
@@ -75,10 +73,12 @@ export function useCategories() {
   return context;
 }
 
-export function useCategory(categoryId: number) {
+export function useCategory(categoryId: number): UseCategory {
   const { categories, saveCategories } = useCategories();
-  const category = findItem<ICategory>(categories, categoryId);
-  const todos = category.todos;
+  const category =
+    categories.find((c: ICategory) => c.id === categoryId) ||
+    initialCategories[0];
+  const todos = category ? category.todos : null;
 
   const setCategoryProperties = (property: ICategoryProperties) => {
     const changeCategory = { ...category, ...property };
@@ -98,18 +98,20 @@ export function useCategory(categoryId: number) {
       isOpen: false,
       subTodos: [],
     };
-    setCategoryProperties({ todos: [...todos, newTodo] });
+    setCategoryProperties({ todos: [...(todos || []), newTodo] });
   };
 
   return { category, createTodo, setCategoryProperties };
 }
 
-export function useTodo(categoryId: number, todoId: number) {
+export function useTodo(categoryId: number, todoId: number): UseTodo {
   const { category } = useCategory(categoryId);
   const todos = category.todos;
   const { setCategoryProperties } = useCategory(categoryId);
 
-  const todo = findItem<IGroupTodo>(todos, todoId);
+  const todo =
+    todos.find((todo: IGroupTodo) => todo.id === todoId) ||
+    initialCategories[0].todos[0];
   const subTodos = todo.subTodos;
 
   const createSubTodo = () => {
@@ -124,7 +126,7 @@ export function useTodo(categoryId: number, todoId: number) {
     };
 
     setTodoProperties({
-      subTodos: [...subTodos, newSubTodo],
+      subTodos: [...(subTodos || []), newSubTodo],
       isOpen: true,
     });
   };
@@ -150,18 +152,24 @@ export function useSubTodo(
   categoryId: number,
   todoId: number,
   subTodoId: number,
-) {
+): UseSubTodo {
   const { todo, setTodoProperties } = useTodo(categoryId, todoId);
   const subTodos = todo.subTodos;
-  const subTodo = findItem<ITodo>(subTodos, subTodoId);
+  const subTodo =
+    subTodos.find((subTodo: ITodo) => subTodo.id === subTodoId) ||
+    initialCategories[0].todos[0].subTodos[0];
 
-  const setSubTodoProperties = (property: any) => {
+  const setSubTodoProperties = (property: ISubTodoProperties) => {
     const changeSubTodo = { ...subTodo, ...property };
-    setTodoProperties({ subTodos: getChangeItems(subTodos, changeSubTodo) });
+    setTodoProperties({
+      subTodos: getChangeItems(subTodos || [], changeSubTodo),
+    });
   };
 
   const deleteSubTodo = () => {
-    setTodoProperties({ subTodos: getFilteredItems(subTodos, subTodoId) });
+    setTodoProperties({
+      subTodos: getFilteredItems(subTodos || [], subTodoId),
+    });
   };
 
   return {
@@ -171,7 +179,7 @@ export function useSubTodo(
   };
 }
 
-function Provider({ children }: ProviderProps) {
+function Provider({ children }: ProviderProps): any {
   const [categories, setCategories] = React.useState<ICategory[]>(
     localStorageApi.getCategories(),
   );

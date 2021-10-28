@@ -1,3 +1,3 @@
-export const getCheckedSymbol = (isCompleted: boolean) => {
+export const getCheckedSymbol = (isCompleted: boolean): string => {
   return isCompleted ? '✔' : '✘';
 };
