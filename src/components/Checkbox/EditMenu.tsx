@@ -1,5 +1,4 @@
-import React, { RefObject } from 'react';
-import { ChangeEvent, useRef } from 'react';
+import React, { RefObject, ChangeEvent, useRef } from 'react';
 import styled from 'styled-components';
 
 import {
@@ -12,6 +11,7 @@ import { InputEdit } from '../Form/InputEdit';
 import { ColorsCircles } from '../ColorCircle/ColorCircles';
 import { MenuWrapper } from './MenuWrapper';
 import { useOutsideClick } from '../../utils/useOutsideClick';
+import useCatchKeydown from '../../utils/useCatchKeydown';
 
 const CheckboxEditMenuWrap = styled.div<{
   textColor: string;
@@ -46,7 +46,6 @@ const CheckboxEditMenuWrap = styled.div<{
     cursor: pointer;
     margin-left: 10px;
   }
-
   @media screen and (max-width: 400px) {
     .inputCheckbox {
       width: 200px;
@@ -82,9 +81,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     setTodo({ textColor });
   };
 
-  const InputKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    event.key === 'Enter' && setEditMode(false);
-  };
+  useCatchKeydown(['Enter', 'Escape'], () => setEditMode(false));
   useOutsideClick(outsideRef, () => setEditMode(false), true);
 
   return (
@@ -98,7 +95,6 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
           className={`inputCheckbox ${
             isCompleted ? 'label-text__checked' : ''
           }`}
-          onKeyPress={InputKeyPress}
         />
         {!isCompleted && (
           <MenuWrapper topShift={30}>

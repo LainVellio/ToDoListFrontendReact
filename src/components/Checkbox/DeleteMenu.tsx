@@ -1,5 +1,7 @@
 import React, { RefObject } from 'react';
 import styled from 'styled-components';
+
+import useCatchKeydown from '../../utils/useCatchKeydown';
 import { useOutsideClick } from '../../utils/useOutsideClick';
 
 import { MenuWrapper } from './MenuWrapper';
@@ -26,22 +28,24 @@ const DeleteMenuWrapper = styled.div`
 
 interface DeleteMenuProps {
   id: number;
-  deleteTodo(categoryId: number): void;
-  setDeleteMenu(deleteMenu: boolean): void;
-  sendInArchive(categoryId: number): void;
   outsideRef: RefObject<HTMLDivElement>;
+  deleteTodo(categoryId: number): void;
+  sendInArchive(categoryId: number): void;
+  setDeleteMenu(deleteMenu: boolean): void;
 }
 
 export const DeleteMenu: React.FC<DeleteMenuProps> = ({
   id,
+  outsideRef,
   deleteTodo,
   sendInArchive,
   setDeleteMenu,
-  outsideRef,
 }) => {
   const closeMenu = () => {
     setDeleteMenu(false);
   };
+
+  useCatchKeydown(['Escape'], closeMenu);
   useOutsideClick(outsideRef, closeMenu, true);
 
   return (
