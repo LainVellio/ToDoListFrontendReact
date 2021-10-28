@@ -58,11 +58,11 @@ export const ColorsCircles: React.FC<ColorCirclesProps> = ({
       (color) =>
         currentColor !== color && (
           <ColorCircle
-            className={className}
             key={color}
             color={color}
-            setColor={setColor}
+            className={className}
             border={hasBorder}
+            setColor={setColor}
           />
         ),
     )}

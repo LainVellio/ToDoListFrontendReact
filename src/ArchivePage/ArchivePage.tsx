@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { useCategories } from '../Context';
-import { ICategory, IGroupTodo } from '../interfaces';
+import { ICategory } from '../interfaces';
 import { TodoArchive } from './TodoArchive';
 
 import { Paper } from '@material-ui/core';
@@ -29,38 +29,10 @@ const ArchivePageWrapper = styled.div`
 `;
 
 export const ArchivePage = () => {
-  const { categories, saveCategories } = useCategories();
+  const { categories } = useCategories();
   const categoriesInArchive = categories.filter((category: ICategory) =>
     category.todos.some((todo) => todo.inArchive),
   );
-
-  const backTodo = (categoryId: number, todoId: number) => {
-    const changeCategories = categories.map((category: ICategory) =>
-      category.id === categoryId
-        ? {
-            ...category,
-            todos: category.todos.map((todo: IGroupTodo) =>
-              todo.id === todoId ? { ...todo, inArchive: false } : todo,
-            ),
-          }
-        : category,
-    );
-    saveCategories(changeCategories);
-  };
-
-  const deleteTodo = (categoryId: number, todoId: number) => {
-    const changeCategories = categories.map((category: ICategory) =>
-      category.id === categoryId
-        ? {
-            ...category,
-            todos: category.todos.filter(
-              (todo: IGroupTodo) => todo.id !== todoId,
-            ),
-          }
-        : category,
-    );
-    saveCategories(changeCategories);
-  };
 
   return (
     <ArchivePageWrapper>
@@ -75,13 +47,8 @@ export const ArchivePage = () => {
                   todo.inArchive && (
                     <TodoArchive
                       key={todo.id}
-                      id={todo.id}
                       categoryId={category.id}
-                      text={todo.text}
-                      subTodos={todo.subTodos}
-                      timeCompleted={todo.timeCompleted || null}
-                      backTodo={backTodo}
-                      deleteTodo={deleteTodo}
+                      todoId={todo.id}
                     />
                   ),
               )}

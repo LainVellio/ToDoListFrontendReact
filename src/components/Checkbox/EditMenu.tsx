@@ -56,17 +56,17 @@ const CheckboxEditMenuWrap = styled.div<{
 export interface CheckboxEditMenuProps {
   todoEdit: ITodoEdit;
   isCompleted: boolean;
+  outsideRef: RefObject<HTMLDivElement>;
   setTodo(properties: ITodoEditProperties): void;
   setEditMode(editMode: boolean): void;
-  outsideRef: RefObject<HTMLDivElement>;
 }
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   todoEdit,
   isCompleted,
+  outsideRef,
   setTodo,
   setEditMode,
-  outsideRef,
 }) => {
   const colors: Array<EColors> = [
     EColors.red,

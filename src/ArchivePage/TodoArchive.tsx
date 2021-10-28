@@ -3,21 +3,11 @@ import styled from 'styled-components';
 import moment from 'moment';
 import 'moment/locale/ru';
 
-import { ITodo } from '../interfaces';
+import { useTodo } from '../Context';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import { getCheckedSymbol } from '../utils/getCheckedSymbol';
-
-interface TodoArchiveProps {
-  id: number;
-  categoryId: number;
-  text: string;
-  timeCompleted: number | null;
-  subTodos: Array<ITodo>;
-  backTodo(categoryId: number, todoId: number): void;
-  deleteTodo(categoryId: number, todoId: number): void;
-}
 
 const TodoArchiveWrapper = styled.div`
   display: flex;
@@ -46,6 +36,11 @@ const TodoArchiveWrapper = styled.div`
   }
 `;
 
+interface TodoArchiveProps {
+  categoryId: number;
+  todoId: number;
+}
+
 const getTimeCompleted = (timeCompleted: number) => {
   moment.locale('ru');
   const timeFormat = 'Do MMMM YYYY в HH:mm';
@@ -56,15 +51,12 @@ const getTimeCompleted = (timeCompleted: number) => {
 };
 
 export const TodoArchive: React.FC<TodoArchiveProps> = ({
-  id,
   categoryId,
-  text,
-  subTodos,
-  timeCompleted,
-  backTodo,
-  deleteTodo,
+  todoId,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
+  const { todo, backTodo, deleteTodo } = useTodo(categoryId, todoId);
+  const { text, timeCompleted, subTodos } = todo;
 
   return (
     <TodoArchiveWrapper
@@ -90,12 +82,12 @@ export const TodoArchive: React.FC<TodoArchiveProps> = ({
         <div>
           <ArrowForwardIcon
             data-testid="backTodoToMainPage"
-            onClick={() => backTodo(categoryId, id)}
+            onClick={() => backTodo()}
             className="iconOptions"
           />
           <DeleteOutlineIcon
             data-testid="deleteArchiveTodo"
-            onClick={() => deleteTodo(categoryId, id)}
+            onClick={() => deleteTodo()}
             className="iconOptions delete"
           />
         </div>

@@ -44,6 +44,7 @@ export interface UseTodo {
   createSubTodo: () => void;
   setTodoProperties: (property: IGroupTodoProperties) => void;
   deleteTodo: () => void;
+  backTodo: () => void;
 }
 export interface UseSubTodo {
   subTodo: ITodo;

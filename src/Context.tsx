@@ -86,12 +86,12 @@ export function useCategories(): IContext {
 export function useCategory(categoryId: number): UseCategory {
   const { categories, saveCategories } = useCategories();
   const category =
-    categories.find((c: ICategory) => c.id === categoryId) ||
+    categories.find((category: ICategory) => category.id === categoryId) ||
     initialContext.categories[0];
   const todos = category ? category.todos : null;
 
-  const setCategoryProperties = (property: ICategoryProperties) => {
-    const changeCategory = { ...category, ...property };
+  const setCategoryProperties = (properties: ICategoryProperties) => {
+    const changeCategory = { ...category, ...properties };
     const changeCategories = getChangeItems(categories, changeCategory);
     saveCategories(changeCategories);
   };
@@ -141,8 +141,8 @@ export function useTodo(categoryId: number, todoId: number): UseTodo {
     });
   };
 
-  const setTodoProperties = (property: IGroupTodoProperties) => {
-    const changeTodo = { ...todo, ...property };
+  const setTodoProperties = (properties: IGroupTodoProperties) => {
+    const changeTodo = { ...todo, ...properties };
     setCategoryProperties({ todos: getChangeItems(todos, changeTodo) });
   };
 
@@ -150,11 +150,16 @@ export function useTodo(categoryId: number, todoId: number): UseTodo {
     setCategoryProperties({ todos: getFilteredItems(todos, todoId) });
   };
 
+  const backTodo = () => {
+    setTodoProperties({ inArchive: false });
+  };
+
   return {
     todo,
     createSubTodo,
     setTodoProperties,
     deleteTodo,
+    backTodo,
   };
 }
 
@@ -169,8 +174,8 @@ export function useSubTodo(
     subTodos.find((subTodo: ITodo) => subTodo.id === subTodoId) ||
     initialContext.categories[0].todos[0].subTodos[0];
 
-  const setSubTodoProperties = (property: ISubTodoProperties) => {
-    const changeSubTodo = { ...subTodo, ...property };
+  const setSubTodoProperties = (properties: ISubTodoProperties) => {
+    const changeSubTodo = { ...subTodo, ...properties };
     setTodoProperties({
       subTodos: getChangeItems(subTodos || [], changeSubTodo),
     });
