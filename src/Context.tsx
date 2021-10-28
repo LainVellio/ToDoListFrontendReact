@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import localStorageApi from './api/localStorageAPI';
 import {
   EColors,
@@ -12,43 +12,53 @@ import {
   UseCategory,
   UseSubTodo,
   UseTodo,
+  IContext,
 } from './interfaces';
 
-export const initialCategories = [
-  {
-    id: 1,
-    title: '',
-    colorHeader: EColors.blue,
-    todos: [
-      {
-        id: 1,
-        text: '',
-        textColor: EColors.black,
-        textStyle: ETextStyle.normal,
-        isCompleted: false,
-        inArchive: false,
-        timeCompleted: null,
-        isOpen: false,
-        subTodos: [
-          {
-            id: 1,
-            text: '',
-            textColor: EColors.black,
-            textStyle: ETextStyle.normal,
-            isCompleted: false,
-            inArchive: false,
-            timeCompleted: null,
-          },
-        ],
-      },
-    ],
+const initialContext = {
+  categories: [
+    {
+      id: 1,
+      title: '',
+      colorHeader: EColors.blue,
+      todos: [
+        {
+          id: 1,
+          text: '',
+          textColor: EColors.black,
+          textStyle: ETextStyle.normal,
+          isCompleted: false,
+          inArchive: false,
+          timeCompleted: null,
+          isOpen: false,
+          subTodos: [
+            {
+              id: 1,
+              text: '',
+              textColor: EColors.black,
+              textStyle: ETextStyle.normal,
+              isCompleted: false,
+            },
+          ],
+        },
+      ],
+    },
+  ],
+  saveCategories: () => {
+    return;
   },
-];
+  deleteCategory: () => {
+    return;
+  },
+  createCategory: () => {
+    return;
+  },
+};
 
 interface ProviderProps {
   children: React.ReactNode;
 }
-const Context = React.createContext<any>(initialCategories);
+const Context = React.createContext<IContext>(initialContext);
 
 function getChangeItems<T extends ICategory | IGroupTodo | ITodo>(
   items: T[],
@@ -65,7 +75,7 @@ function getFilteredItems<T extends ICategory | IGroupTodo | ITodo>(
   return items.filter((item: T) => item.id !== id);
 }
 
-export function useCategories(): any {
+export function useCategories(): IContext {
   const context = React.useContext(Context);
   if (!context) {
     throw new Error(`useCount must be used within a CountProvider`);
@@ -77,7 +87,7 @@ export function useCategory(categoryId: number): UseCategory {
   const { categories, saveCategories } = useCategories();
   const category =
     categories.find((c: ICategory) => c.id === categoryId) ||
-    initialCategories[0];
+    initialContext.categories[0];
   const todos = category ? category.todos : null;
 
   const setCategoryProperties = (property: ICategoryProperties) => {
@@ -111,7 +121,7 @@ export function useTodo(categoryId: number, todoId: number): UseTodo {
 
   const todo =
     todos.find((todo: IGroupTodo) => todo.id === todoId) ||
-    initialCategories[0].todos[0];
+    initialContext.categories[0].todos[0];
   const subTodos = todo.subTodos;
 
   const createSubTodo = () => {
@@ -157,7 +167,7 @@ export function useSubTodo(
   const subTodos = todo.subTodos;
   const subTodo =
     subTodos.find((subTodo: ITodo) => subTodo.id === subTodoId) ||
-    initialCategories[0].todos[0].subTodos[0];
+    initialContext.categories[0].todos[0].subTodos[0];
 
   const setSubTodoProperties = (property: ISubTodoProperties) => {
     const changeSubTodo = { ...subTodo, ...property };
@@ -179,7 +189,7 @@ export function useSubTodo(
   };
 }
 
-function Provider({ children }: ProviderProps): any {
+function Provider({ children }: ProviderProps): ReactElement<IContext> {
   const [categories, setCategories] = React.useState<ICategory[]>(
     localStorageApi.getCategories(),
   );

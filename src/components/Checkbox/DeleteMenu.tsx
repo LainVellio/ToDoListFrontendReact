@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import styled from 'styled-components';
 import { useOutsideClick } from '../../utils/useOutsideClick';
 
@@ -29,7 +29,7 @@ interface DeleteMenuProps {
   deleteTodo(categoryId: number): void;
   setDeleteMenu(deleteMenu: boolean): void;
   sendInArchive(categoryId: number): void;
-  outsideRef: any;
+  outsideRef: RefObject<HTMLDivElement>;
 }
 
 export const DeleteMenu: React.FC<DeleteMenuProps> = ({

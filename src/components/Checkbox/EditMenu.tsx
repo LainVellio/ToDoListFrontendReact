@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import { ChangeEvent, useRef } from 'react';
 import styled from 'styled-components';
 
@@ -54,7 +54,7 @@ export interface CheckboxEditMenuProps {
   isCompleted: boolean;
   setTodo(todo: IGroupTodo | ITodo): void;
   setEditMode(editMode: boolean): void;
-  outsideRef: any;
+  outsideRef: RefObject<HTMLDivElement>;
 }
 
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
@@ -71,7 +71,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
     EColors.black,
   ];
   const { text, textColor, textStyle } = todo;
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const setText = (text: string) => {
     setTodo({ ...todo, text });

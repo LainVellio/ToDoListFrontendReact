@@ -1,8 +1,20 @@
-type SingleProperty<T, K extends keyof T> = K extends any
+type SingleProperty<T, K extends keyof T> = K extends unknown
   ? { [Prop in K]: T[Prop] }
   : null;
 type UnionOfProperties<T> = { [K in keyof T]: SingleProperty<T, K> }[keyof T];
 
+export interface ICategory {
+  id: number;
+  title: string;
+  colorHeader: EColors;
+  todos: Array<IGroupTodo>;
+}
+export interface IGroupTodo extends ITodo {
+  isOpen: boolean;
+  inArchive: boolean;
+  timeCompleted: number | null;
+  subTodos: Array<ITodo>;
+}
 export interface ITodo {
   id: number;
   text: string;
@@ -11,13 +23,12 @@ export interface ITodo {
   isCompleted: boolean;
 }
 
-export interface IGroupTodo extends ITodo {
-  isOpen: boolean;
-  inArchive: boolean;
-  timeCompleted: number | null;
-  subTodos: Array<ITodo>;
+export interface IContext {
+  categories: ICategory[];
+  saveCategories: (changeCategories: ICategory[]) => void;
+  deleteCategory: (categoryId: number) => void;
+  createCategory: () => void;
 }
-
 export interface UseCategory {
   category: ICategory;
   createTodo: () => void;
@@ -29,13 +40,6 @@ export interface UseTodo {
   setTodoProperties: (property: IGroupTodoProperties) => void;
   deleteTodo: () => void;
 }
-
-export interface ICategory {
-  id: number;
-  title: string;
-  colorHeader: EColors;
-  todos: Array<IGroupTodo>;
-}
 export interface UseSubTodo {
   subTodo: ITodo;
   setSubTodoProperties: (property: ISubTodoProperties) => void;
@@ -45,16 +49,6 @@ export interface UseSubTodo {
 export type ICategoryProperties = UnionOfProperties<ICategory>;
 export type IGroupTodoProperties = UnionOfProperties<IGroupTodo>;
 export type ISubTodoProperties = UnionOfProperties<ITodo>;
-
-// export interface INewCategoryTodo {
-//   title: string | null;
-//   text: string | null;
-// }
-
-// export interface INewTodo {
-//   categoryId: number | null;
-//   text: string | null;
-// }
 
 export enum ETextStyle {
   bold = '900',
@@ -67,5 +61,3 @@ export enum EColors {
   green = 'green',
   black = 'black',
 }
-
-// export type TNewTodoText = 'todoText' | 'categoryName';
