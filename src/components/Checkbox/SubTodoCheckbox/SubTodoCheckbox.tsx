@@ -73,8 +73,8 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
         {editMode ? (
           <EditMenu
             todoEdit={subTodoEdit}
-            isCompleted={isCompleted}
             setTodo={setSubTodoEdit}
+            isCompleted={isCompleted}
             setEditMode={setEditMode}
             outsideRef={ref}
           />
@@ -93,7 +93,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
           <DeleteOutlineIcon
             data-testid="deleteMenu"
             className="iconCheckbox deleteIcon"
-            onClick={() => deleteSubTodo()}
+            onClick={deleteSubTodo}
           />
         </div>
       )}

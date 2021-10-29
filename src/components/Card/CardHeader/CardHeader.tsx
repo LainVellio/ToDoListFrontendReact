@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useRef, useState } from 'react';
 
 import { EColors } from '../../../interfaces';
-import { useCategories, useCategory } from '../../../Context';
+import { useCategory } from '../../../Context';
 import { InputEdit } from '../../Form/InputEdit';
 import { ColorsCircles } from '../../ColorCircle/ColorCircles';
 import { useOutsideClick } from '../../../utils/useOutsideClick';
@@ -19,8 +19,8 @@ export interface CardHeaderProps {
 const colors: Array<EColors> = [EColors.red, EColors.blue, EColors.green];
 
 export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
-  const { category, setCategoryProperties } = useCategory(categoryId);
-  const { deleteCategory } = useCategories();
+  const { category, setCategoryProperties, deleteCategory } =
+    useCategory(categoryId);
   const [title, setTitle] = useState(category.title);
   const [editMode, setEditMode] = useState(title === '' ? true : false);
   const colorHeader = category.colorHeader;

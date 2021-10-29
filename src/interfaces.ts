@@ -31,13 +31,13 @@ export type ISubTodoProperties = UnionOfProperties<ITodo>;
 export interface IContext {
   categories: ICategory[];
   saveCategories: (changeCategories: ICategory[]) => void;
-  deleteCategory: (categoryId: number) => void;
   createCategory: () => void;
 }
 export interface UseCategory {
   category: ICategory;
   createTodo: () => void;
   setCategoryProperties: (property: ICategoryProperties) => void;
+  deleteCategory: (categoryId: number) => void;
 }
 export interface UseTodo {
   todo: IGroupTodo;

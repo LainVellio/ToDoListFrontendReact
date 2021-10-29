@@ -95,7 +95,6 @@ export function useCategory(categoryId: number): UseCategory {
     const changeCategories = getChangeItems(categories, changeCategory);
     saveCategories(changeCategories);
   };
-
   const createTodo = () => {
     const newTodo = {
       text: '',
@@ -110,8 +109,12 @@ export function useCategory(categoryId: number): UseCategory {
     };
     setCategoryProperties({ todos: [...(todos || []), newTodo] });
   };
+  const deleteCategory = (categoryId: number) => {
+    const changeCategories = getFilteredItems(categories, categoryId);
+    saveCategories(changeCategories);
+  };
 
-  return { category, createTodo, setCategoryProperties };
+  return { category, createTodo, setCategoryProperties, deleteCategory };
 }
 
 export function useTodo(categoryId: number, todoId: number): UseTodo {
@@ -140,20 +143,16 @@ export function useTodo(categoryId: number, todoId: number): UseTodo {
       isOpen: true,
     });
   };
-
   const setTodoProperties = (properties: IGroupTodoProperties) => {
     const changeTodo = { ...todo, ...properties };
     setCategoryProperties({ todos: getChangeItems(todos, changeTodo) });
   };
-
   const deleteTodo = () => {
     setCategoryProperties({ todos: getFilteredItems(todos, todoId) });
   };
-
   const backTodo = () => {
     setTodoProperties({ inArchive: false });
   };
-
   return {
     todo,
     createSubTodo,
@@ -180,13 +179,11 @@ export function useSubTodo(
       subTodos: getChangeItems(subTodos || [], changeSubTodo),
     });
   };
-
   const deleteSubTodo = () => {
     setTodoProperties({
       subTodos: getFilteredItems(subTodos || [], subTodoId),
     });
   };
-
   return {
     subTodo,
     setSubTodoProperties,
@@ -203,7 +200,6 @@ function Provider({ children }: ProviderProps): ReactElement<IContext> {
     setCategories(changeCategories);
     localStorageApi.setCategories(changeCategories);
   };
-
   const createCategory = () => {
     const newCategory = {
       title: '',
@@ -215,16 +211,10 @@ function Provider({ children }: ProviderProps): ReactElement<IContext> {
     saveCategories([...categories, newCategory]);
   };
 
-  const deleteCategory = (categoryId: number) => {
-    const changeCategories = getFilteredItems(categories, categoryId);
-    saveCategories(changeCategories);
-  };
-
   const value = React.useMemo(
-    () => ({ categories, saveCategories, createCategory, deleteCategory }),
+    () => ({ categories, createCategory, saveCategories }),
     [categories],
   );
-
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 
