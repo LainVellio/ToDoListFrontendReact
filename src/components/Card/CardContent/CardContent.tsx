@@ -6,10 +6,10 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 
-import { useCategory } from '../../Context';
-import { IGroupTodo } from '../../interfaces';
-import { GroupCheckbox } from '../Checkbox/GroupCheckbox';
-import { CreateTodoButton } from './CreateTodoButton';
+import { useCategory } from '../../../Context';
+import { IGroupTodo } from '../../../interfaces';
+import { GroupCheckbox } from '../../Checkbox/GroupCheckbox/GroupCheckbox';
+import { CreateTodoButton } from '../CreateTodoButton/CreateTodoButton';
 
 export const reorder = (
   list: Array<IGroupTodo>,

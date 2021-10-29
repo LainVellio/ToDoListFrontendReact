@@ -2,10 +2,10 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { EColors, ETextStyle, IGroupTodo } from '../../interfaces';
+import { EColors, ETextStyle, IGroupTodo } from '../../../interfaces';
 import { CardContent, CardContentProps, reorder } from './CardContent';
-import { items } from '../MainPage/MainPage.test';
-import Provider from '../../Context';
+import { items } from '../../MainPage/MainPage.test';
+import Provider from '../../../Context';
 
 const data: CardContentProps = {
   categoryId: 1,

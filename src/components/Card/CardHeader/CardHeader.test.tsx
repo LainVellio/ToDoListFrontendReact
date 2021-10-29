@@ -2,9 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Provider from '../../Context';
-import { EColors } from '../../interfaces';
-import { items } from '../MainPage/MainPage.test';
+import Provider from '../../../Context';
+import { EColors } from '../../../interfaces';
+import { items } from '../../MainPage/MainPage.test';
 import { CardHeader, CardHeaderProps } from './CardHeader';
 
 const data: CardHeaderProps = {

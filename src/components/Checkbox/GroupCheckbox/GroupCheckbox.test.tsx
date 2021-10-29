@@ -1,11 +1,11 @@
 import React from 'react';
 import { GroupCheckboxProps, GroupCheckbox } from './GroupCheckbox';
-import { EColors, ETextStyle } from '../../interfaces';
-import Provider from '../../Context';
+import { EColors, ETextStyle } from '../../../interfaces';
+import Provider from '../../../Context';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { items } from '../MainPage/MainPage.test';
+import { items } from '../../MainPage/MainPage.test';
 
 const data: GroupCheckboxProps = {
   categoryId: 1,

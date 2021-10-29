@@ -1,57 +1,18 @@
 import React, { RefObject, ChangeEvent, useRef } from 'react';
-import styled from 'styled-components';
 
 import {
   EColors,
   ETextStyle,
   ITodoEdit,
   ITodoEditProperties,
-} from '../../interfaces';
-import { InputEdit } from '../Form/InputEdit';
-import { ColorsCircles } from '../ColorCircle/ColorCircles';
-import { MenuWrapper } from './MenuWrapper';
-import { useOutsideClick } from '../../utils/useOutsideClick';
-import useCatchKeydown from '../../utils/useCatchKeydown';
+} from '../../../interfaces';
+import { InputEdit } from '../../Form/InputEdit';
+import { ColorsCircles } from '../../ColorCircle/ColorCircles';
+import { MenuWrapper } from '../MenuWrapper';
+import { useOutsideClick } from '../../../utils/useOutsideClick';
+import useCatchKeydown from '../../../utils/useCatchKeydown';
 
-const CheckboxEditMenuWrap = styled.div<{
-  textColor: string;
-  textStyle: string;
-}>`
-  .inputCheckbox {
-    position: relative;
-    font-weight: ${(props) => props.textStyle};
-    width: 230px;
-    height: 20px;
-    margin-left: -2px;
-    font-size: 16px;
-    font-family: 'Roboto', 'Helvetica';
-    border: none;
-    color: ${(props) => props.textColor};
-    z-index: 2;
-  }
-  .colorCircles {
-    width: 20px;
-    height: 20px;
-    margin: 3px 7px 7px 3px;
-  }
-  .B {
-    font-size: 20px;
-    margin-left: 10px;
-    cursor: pointer;
-    font-family: 'Roboto', 'Helvetica';
-    color: black;
-    font-weight: ${(props) => (props.textStyle === '400' ? '900' : '400')};
-  }
-  .addSubTaskIcon {
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  @media screen and (max-width: 400px) {
-    .inputCheckbox {
-      width: 200px;
-    }
-  }
-`;
+import CheckboxEditMenuWrap from './EditMenu.style';
 
 export interface CheckboxEditMenuProps {
   todoEdit: ITodoEdit;
@@ -61,6 +22,13 @@ export interface CheckboxEditMenuProps {
   setEditMode(editMode: boolean): void;
 }
 
+const colors: Array<EColors> = [
+  EColors.red,
+  EColors.blue,
+  EColors.green,
+  EColors.black,
+];
+
 export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   todoEdit,
   isCompleted,
@@ -68,12 +36,6 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   setTodo,
   setEditMode,
 }) => {
-  const colors: Array<EColors> = [
-    EColors.red,
-    EColors.blue,
-    EColors.green,
-    EColors.black,
-  ];
   const { text, textColor, textStyle } = todoEdit;
   const ref = useRef<HTMLDivElement>(null);
 

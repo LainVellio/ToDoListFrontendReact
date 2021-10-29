@@ -1,63 +1,19 @@
 import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react';
-import styled from 'styled-components';
 
-import checkEmpty from '../../utils/checkEmpty';
-import { SubTaskCheckbox } from './SubTaskCheckbox';
-import { ITodo, ITodoEdit, ITodoEditProperties } from '../../interfaces';
-import { useTodo } from '../../Context';
-import { DeleteMenu } from './DeleteMenu';
-import { EditMenu } from './EditMenu';
+import { ITodo, ITodoEdit, ITodoEditProperties } from '../../../interfaces';
+import { SubTaskCheckbox } from '../SubTodoCheckbox/SubTodoCheckbox';
+import { useTodo } from '../../../Context';
+import { DeleteMenu } from '../DeleteMenu/DeleteMenu';
+import { EditMenu } from '../EditMenu/EditMenu';
 
+import CheckboxWrap from './GroupCheckbox.style';
 import AddIcon from '@material-ui/icons/Add';
 import Checkbox from '@material-ui/core/Checkbox';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-
-const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
-  display: flex;
-  justify-content: space-between;
-  color: ${(props) => props.textColor};
-  font-weight: ${(props) => props.textStyle};
-  margin-left: 10px;
-  .label-text__checked {
-    text-decoration: line-through;
-    color: gray;
-    font-weight: normal;
-  }
-  .options {
-    display: flex;
-    align-items: center;
-    color: #8b8b8b;
-    margin-top: 10px;
-    padding: 2px;
-  }
-  .iconCheckbox {
-    cursor: pointer;
-    width: 19px;
-    height: 19px;
-  }
-  .addSubTaskIcon {
-    cursor: pointer;
-  }
-  .checkbox {
-    display: flex;
-    position: relative;
-    align-items: center;
-  }
-  .label {
-    background-color: white;
-    word-wrap: break-word;
-  }
-  .arrowIcon {
-    position: absolute;
-    display: flex;
-    margin-left: -18px;
-    cursor: pointer;
-    color: gray;
-  }
-`;
+import useEmptyDelete from '../../../utils/useEmptyDelete';
 
 export interface GroupCheckboxProps {
   categoryId: number;
@@ -99,21 +55,15 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
     setTodoProperties({ isCompleted, timeCompleted, subTodos: changeSubTodos });
   };
 
-  useEffect(() => {
-    !editMode &&
-      checkEmpty(
-        text,
-        deleteTodo,
-        setTodoProperties.bind(null, {
-          isCompleted,
-          isOpen,
-          text,
-          textColor,
-          textStyle,
-        }),
-      );
-  }, [editMode]);
-
+  useEmptyDelete(editMode, text, deleteTodo, () =>
+    setTodoProperties({
+      isCompleted,
+      isOpen,
+      text,
+      textColor,
+      textStyle,
+    }),
+  );
   useEffect(() => {
     if (subTodos.length > 0) {
       subTodos.every((subTask: ITodo) => subTask.isCompleted)
@@ -173,7 +123,6 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
           )}
           {deleteMenu && (
             <DeleteMenu
-              id={id}
               sendInArchive={() => {
                 setTodoProperties({ inArchive: true });
               }}
@@ -211,9 +160,9 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
         subTodos.map((subTodo: ITodo) => (
           <SubTaskCheckbox
             key={subTodo.id}
-            subTodoId={subTodo.id}
-            todoId={id}
             categoryId={categoryId}
+            todoId={id}
+            subTodoId={subTodo.id}
           />
         ))}
     </div>

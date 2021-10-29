@@ -1,55 +1,15 @@
-import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react';
-import styled from 'styled-components';
+import React, { Reducer, useReducer, useRef, useState } from 'react';
 
-import { EColors, ITodoEdit, ITodoEditProperties } from '../../interfaces';
-import checkEmpty from '../../utils/checkEmpty';
-import { useSubTodo } from '../../Context';
-import { EditMenu } from './EditMenu';
+import { ITodoEdit, ITodoEditProperties } from '../../../interfaces';
+import { useSubTodo } from '../../../Context';
+import { EditMenu } from '../EditMenu/EditMenu';
 
+import CheckboxWrap from './SubTodoCheckbox.style';
 import Checkbox from '@material-ui/core/Checkbox';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
+import useEmptyDelete from '../../../utils/useEmptyDelete';
 
-const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
-  display: flex;
-  justify-content: space-between;
-  height: 30px;
-  margin-left: 25px;
-  color: ${(props) => props.textColor};
-  font-weight: ${(props) => props.textStyle};
-  .label-text__checked {
-    text-decoration: line-through;
-    color: gray;
-    font-weight: normal;
-  }
-  .options {
-    display: flex;
-    align-items: center;
-    color: #8b8b8b;
-    margin-top: 10px;
-    padding: 2px;
-  }
-  .iconCheckbox {
-    cursor: pointer;
-    width: 19px;
-    height: 19px;
-  }
-  .deleteIcon {
-    color: ${EColors.red};
-  }
-  .addSubTaskIcon {
-    cursor: pointer;
-  }
-  .checkbox {
-    display: flex;
-    position: relative;
-    align-items: center;
-  }
-  .label {
-    background-color: white;
-    word-wrap: break-word;
-  }
-`;
 export interface SubCheckboxProps {
   subTodoId: number;
   todoId: number;
@@ -81,23 +41,14 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
   const [editMode, setEditMode] = useState(text === '' ? true : false);
   const ref = useRef(null);
 
-  useEffect(() => {
-    !editMode &&
-      checkEmpty(
-        text,
-        deleteSubTodo,
-        setSubTodoProperties.bind(null, {
-          isCompleted,
-          text,
-          textColor,
-          textStyle,
-        }),
-      );
-  }, [editMode]);
-
-  const onChecked = () => {
-    setSubTodoProperties({ isCompleted: !isCompleted });
-  };
+  useEmptyDelete(editMode, text, deleteSubTodo, () =>
+    setSubTodoProperties({
+      isCompleted,
+      text,
+      textColor,
+      textStyle,
+    }),
+  );
 
   return (
     <CheckboxWrap
@@ -113,7 +64,7 @@ export const SubTaskCheckbox: React.FC<SubCheckboxProps> = ({
         className={`checkbox ${isCompleted ? 'label-text__checked' : ''}`}
       >
         <Checkbox
-          onClick={onChecked}
+          onClick={() => setSubTodoProperties({ isCompleted: !isCompleted })}
           checked={isCompleted}
           name="checkedB"
           color="primary"
