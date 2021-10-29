@@ -9,7 +9,6 @@ import { useOutsideClick } from '../../../utils/useOutsideClick';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import useCatchKeydown from '../../../utils/useCatchKeydown';
 import useEmptyDelete from '../../../utils/useEmptyDelete';
 import CardHeaderWrapper from './CardHeader.style';
 
@@ -33,9 +32,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
     () => deleteCategory(id),
     () => setCategoryProperties({ title }),
   );
-  useCatchKeydown(['Enter', 'Escape'], () => {
-    setEditMode(false);
-  });
+
   useOutsideClick(ref, () => setEditMode(false), editMode);
   const changeColor = (colorHeader: EColors) => {
     setCategoryProperties({ colorHeader });
@@ -55,6 +52,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setTitle(e.target.value)
             }
+            setEditMode={() => setEditMode(false)}
             className="inputCard"
           />
           <ColorsCircles

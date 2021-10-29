@@ -10,7 +10,6 @@ import { InputEdit } from '../../Form/InputEdit';
 import { ColorsCircles } from '../../ColorCircle/ColorCircles';
 import { MenuWrapper } from '../MenuWrapper';
 import { useOutsideClick } from '../../../utils/useOutsideClick';
-import useCatchKeydown from '../../../utils/useCatchKeydown';
 
 import CheckboxEditMenuWrap from './EditMenu.style';
 
@@ -42,8 +41,6 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
   const setTextColor = (textColor: EColors) => {
     setTodo({ textColor });
   };
-
-  useCatchKeydown(['Enter', 'Escape'], () => setEditMode(false));
   useOutsideClick(outsideRef, () => setEditMode(false), true);
 
   return (
@@ -54,6 +51,7 @@ export const EditMenu: React.FC<CheckboxEditMenuProps> = ({
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setTodo({ text: e.target.value })
           }
+          setEditMode={() => setEditMode(false)}
           className={`inputCheckbox ${
             isCompleted ? 'label-text__checked' : ''
           }`}

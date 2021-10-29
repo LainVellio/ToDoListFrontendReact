@@ -54,7 +54,7 @@ export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
     <CheckboxWrap
       ref={ref}
       textColor={textColor}
-      data-testid="checkbox"
+      data-testid="subTodo"
       textStyle={textStyle}
       onMouseEnter={() => setIsFocus(true)}
       onMouseLeave={() => setIsFocus(false)}
@@ -86,7 +86,7 @@ export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
       {isFocus && (
         <div className="options">
           <EditIcon
-            data-testid="editCheckbox"
+            data-testid="editSubCheckbox"
             className="iconCheckbox"
             onClick={() => setEditMode(!editMode)}
           />

@@ -10,23 +10,20 @@ interface DeleteMenuProps {
   outsideRef: RefObject<HTMLDivElement>;
   deleteTodo(): void;
   sendInArchive(): void;
-  setDeleteMenu(deleteMenu: boolean): void;
+  closeDeleteMenu(): void;
 }
 
 export const DeleteMenu: React.FC<DeleteMenuProps> = ({
   outsideRef,
   deleteTodo,
   sendInArchive,
-  setDeleteMenu,
+  closeDeleteMenu,
 }) => {
-  const closeMenu = () => {
-    setDeleteMenu(false);
-  };
-  useCatchKeydown('Escape', closeMenu);
-  useOutsideClick(outsideRef, closeMenu, true);
+  useCatchKeydown('Escape', closeDeleteMenu);
+  useOutsideClick(outsideRef, closeDeleteMenu, true);
 
   return (
-    <DeleteMenuWrapper>
+    <DeleteMenuWrapper data-testid="deleteMenu">
       <MenuWrapper topShift={60}>
         <div className="option">
           <div

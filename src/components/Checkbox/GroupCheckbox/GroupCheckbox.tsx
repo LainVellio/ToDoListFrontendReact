@@ -97,6 +97,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
         >
           {subTodos.length > 0 && (
             <div
+              data-testid="openSubCheckboxes"
               className="arrowIcon"
               onClick={() => setTodoProperties({ isOpen: !isOpen })}
             >
@@ -126,7 +127,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
               sendInArchive={() => {
                 setTodoProperties({ inArchive: true });
               }}
-              setDeleteMenu={setDeleteMenu}
+              closeDeleteMenu={() => setDeleteMenu(false)}
               deleteTodo={deleteTodo}
               outsideRef={ref}
             />
@@ -140,16 +141,16 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
               className="addSubTaskIcon"
               onClick={() => {
                 createSubTodo();
+                setDeleteMenu(false);
               }}
             />
-
             <EditIcon
               data-testid="editCheckbox"
               className="iconCheckbox"
               onClick={onEdit}
             />
             <DeleteOutlineIcon
-              data-testid="deleteMenu"
+              data-testid="openDeleteMenu"
               className="iconCheckbox"
               onClick={onDeleteMenu}
             />

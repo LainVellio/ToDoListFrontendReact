@@ -27,7 +27,7 @@ const {
   queryByText,
   getAllByRole,
 } = screen;
-const { click, type } = userEvent;
+const { click } = userEvent;
 
 describe('Card component', () => {
   it('Render Card work', () => {
@@ -44,15 +44,6 @@ describe('Card component', () => {
     click(getByTestId('editButton'));
     expect(getByRole('textbox')).toBeInTheDocument();
     click(getAllByRole('checkbox')[0]);
-    expect(queryByRole('textbox')).toBeNull();
-  });
-
-  it('Close Edit mode on press Enter works', () => {
-    renderComponent();
-    expect(queryByRole('textbox')).toBeNull();
-    click(getByTestId('editButton'));
-    expect(getByRole('textbox')).toBeInTheDocument();
-    type(getByRole('textbox'), '{enter}');
     expect(queryByRole('textbox')).toBeNull();
   });
 });

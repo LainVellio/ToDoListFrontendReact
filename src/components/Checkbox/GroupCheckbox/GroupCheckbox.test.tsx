@@ -45,7 +45,7 @@ describe('ToDoCheckbox component', () => {
     click(getByRole('checkbox'));
     expect(getAllByRole('checkbox')[0]).toBeChecked();
     expect(testLocalStorage().isCompleted).toBeTruthy();
-    expect(getAllByTestId('checkboxWrapper')[0] || '').toHaveClass(
+    expect(getAllByTestId('checkboxWrapper')[0]).toHaveClass(
       'label-text__checked',
     );
   });
@@ -53,7 +53,7 @@ describe('ToDoCheckbox component', () => {
   it('should edit work', () => {
     renderComponent();
     hover(getByRole('checkbox'));
-    click(getByTestId('deleteMenu'));
+    click(getByTestId('openDeleteMenu'));
     expect(getByText(/удалить/i)).toBeInTheDocument();
     click(getByTestId('editCheckbox'));
     expect(queryByText(/удалить/i)).toBeNull();
@@ -92,5 +92,39 @@ describe('ToDoCheckbox component', () => {
     expect(getByTestId('checkbox')).toHaveStyle(`color: ${EColors.red}`);
     click(getByTestId('editCheckbox'));
     expect(testLocalStorage().textColor).toBe(EColors.red);
+  });
+
+  it('delete empty SubCheckbox work', () => {
+    renderComponent();
+    expect(getAllByRole('checkbox')).toHaveLength(1);
+    click(getAllByTestId('openSubCheckboxes')[0]);
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    hover(getAllByRole('checkbox')[1]);
+    click(getByTestId('editSubCheckbox'));
+    clear(getByRole('textbox'));
+    type(getByRole('textbox'), '{enter}');
+    expect(queryByTestId('openSubCheckboxes')).toBeNull();
+    expect(getAllByRole('checkbox')).toHaveLength(1);
+  });
+
+  it('close delete menu work', () => {
+    renderComponent();
+    expect(queryByTestId('deleteMenu')).toBeNull();
+    hover(getByRole('checkbox'));
+    click(getByTestId('openDeleteMenu'));
+    expect(getByTestId('deleteMenu')).toBeInTheDocument();
+    type(getByTestId('deleteMenu'), '{esc}');
+    expect(queryByTestId('deleteMenu')).toBeNull();
+  });
+
+  it('create new subtodo work', () => {
+    renderComponent();
+    click(getAllByTestId('openSubCheckboxes')[0]);
+    expect(queryByTestId('deleteMenu')).toBeNull();
+    hover(getByTestId('subTodo'));
+    click(getByTestId('openDeleteMenu'));
+    click(getByTestId('addSubTask'));
+    expect(queryByTestId('deleteMenu')).toBeNull();
+    expect(getByRole('textbox')).toBeInTheDocument();
   });
 });

@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
+import useCatchKeydown from '../../utils/useCatchKeydown';
 
 interface InputEditProps extends React.HTMLAttributes<HTMLInputElement> {
   value: string;
+  setEditMode: () => void;
 }
 
 const Input = styled.input`
@@ -15,13 +17,17 @@ export const InputEdit: React.FC<InputEditProps> = ({
   className,
   onChange,
   onBlur,
-}) => (
-  <Input
-    autoFocus
-    type="text"
-    value={value}
-    className={className}
-    onChange={onChange}
-    onBlur={onBlur}
-  />
-);
+  setEditMode,
+}) => {
+  useCatchKeydown(['Enter', 'Escape'], setEditMode);
+  return (
+    <Input
+      autoFocus
+      type="text"
+      value={value}
+      className={className}
+      onChange={onChange}
+      onBlur={onBlur}
+    />
+  );
+};

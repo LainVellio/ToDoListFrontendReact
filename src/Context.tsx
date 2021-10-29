@@ -76,11 +76,7 @@ function getFilteredItems<T extends ICategory | IGroupTodo | ITodo>(
 }
 
 export function useCategories(): IContext {
-  const context = React.useContext(Context);
-  if (!context) {
-    throw new Error(`useCount must be used within a CountProvider`);
-  }
-  return context;
+  return React.useContext(Context);
 }
 
 export function useCategory(categoryId: number): UseCategory {
@@ -88,7 +84,7 @@ export function useCategory(categoryId: number): UseCategory {
   const category =
     categories.find((category: ICategory) => category.id === categoryId) ||
     initialContext.categories[0];
-  const todos = category ? category.todos : null;
+  const todos = category.todos;
 
   const setCategoryProperties = (properties: ICategoryProperties) => {
     const changeCategory = { ...category, ...properties };
@@ -107,7 +103,7 @@ export function useCategory(categoryId: number): UseCategory {
       isOpen: false,
       subTodos: [],
     };
-    setCategoryProperties({ todos: [...(todos || []), newTodo] });
+    setCategoryProperties({ todos: [...todos, newTodo] });
   };
   const deleteCategory = (categoryId: number) => {
     const changeCategories = getFilteredItems(categories, categoryId);
@@ -139,7 +135,7 @@ export function useTodo(categoryId: number, todoId: number): UseTodo {
     };
 
     setTodoProperties({
-      subTodos: [...(subTodos || []), newSubTodo],
+      subTodos: [...subTodos, newSubTodo],
       isOpen: true,
     });
   };
@@ -176,12 +172,12 @@ export function useSubTodo(
   const setSubTodoProperties = (properties: ISubTodoProperties) => {
     const changeSubTodo = { ...subTodo, ...properties };
     setTodoProperties({
-      subTodos: getChangeItems(subTodos || [], changeSubTodo),
+      subTodos: getChangeItems(subTodos, changeSubTodo),
     });
   };
   const deleteSubTodo = () => {
     setTodoProperties({
-      subTodos: getFilteredItems(subTodos || [], subTodoId),
+      subTodos: getFilteredItems(subTodos, subTodoId),
     });
   };
   return {

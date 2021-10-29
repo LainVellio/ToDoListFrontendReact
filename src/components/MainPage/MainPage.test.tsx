@@ -90,8 +90,8 @@ const renderPage = () => {
 };
 const testLocalStorage = () =>
   JSON.parse(localStorage.getItem('categories') || '');
-const { getByText, getAllByTestId } = screen;
-const { click } = userEvent;
+const { getByText, getAllByTestId, getByRole } = screen;
+const { click, clear, type } = userEvent;
 
 describe('MainPage component', () => {
   it('should render MainPage', () => {
@@ -114,5 +114,14 @@ describe('MainPage component', () => {
     click(getAllByTestId('deleteButton')[0]);
     expect(getAllByTestId('card')).toHaveLength(1);
     expect(testLocalStorage()).toHaveLength(1);
+  });
+
+  it('Delete card with empty title work', () => {
+    renderPage();
+    expect(getAllByTestId('card')).toHaveLength(2);
+    click(getAllByTestId('editButton')[0]);
+    clear(getByRole('textbox'));
+    type(getByRole('textbox'), '{enter}');
+    expect(getAllByTestId('card')).toHaveLength(1);
   });
 });

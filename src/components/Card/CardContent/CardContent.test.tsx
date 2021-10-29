@@ -51,10 +51,10 @@ describe('CardContent component', () => {
   it('should deleteMenu open and close work', () => {
     renderComponent();
     hover(getByText(/text1/i));
-    click(getByTestId('deleteMenu'));
+    click(getByTestId('openDeleteMenu'));
     expect(getByText(/в архив/i)).toBeInTheDocument();
     expect(getByText(/удалить/i)).toBeInTheDocument();
-    click(getByTestId('deleteMenu'));
+    click(getByTestId('openDeleteMenu'));
     expect(queryByText(/в архив/i)).toBeNull();
     expect(queryByText(/удалить/i)).toBeNull();
   });
@@ -63,7 +63,7 @@ describe('CardContent component', () => {
     renderComponent();
     expect(getAllByRole('checkbox')).toHaveLength(2);
     hover(getByText(/text1/i));
-    click(getByTestId('deleteMenu'));
+    click(getByTestId('openDeleteMenu'));
     click(getByText(/Удалить/i));
     expect(queryAllByRole('checkbox')).toHaveLength(1);
     expect(testLocalStorage()).toHaveLength(1);
@@ -73,7 +73,7 @@ describe('CardContent component', () => {
     renderComponent();
     expect(getAllByRole('checkbox')).toHaveLength(2);
     hover(getByText(/text1/i));
-    click(getByTestId('deleteMenu'));
+    click(getByTestId('openDeleteMenu'));
     click(getByText(/в архив/i));
     expect(queryAllByRole('checkbox')).toHaveLength(1);
     expect(testLocalStorage()[0].inArchive).toBeTruthy();
