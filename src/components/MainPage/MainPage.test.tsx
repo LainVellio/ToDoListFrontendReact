@@ -88,31 +88,31 @@ const renderPage = () => {
     </Provider>,
   );
 };
+const testLocalStorage = () =>
+  JSON.parse(localStorage.getItem('categories') || '');
+const { getByText, getAllByTestId } = screen;
+const { click } = userEvent;
 
 describe('MainPage component', () => {
   it('should render MainPage', () => {
     renderPage();
-    expect(screen.getByText(/title1/i)).toBeInTheDocument();
-    expect(screen.getByText(/title2/i)).toBeInTheDocument();
+    expect(getByText(/title1/i)).toBeInTheDocument();
+    expect(getByText(/title2/i)).toBeInTheDocument();
   });
 
   it('should createCard work', () => {
     renderPage();
-    expect(screen.getAllByTestId('card')).toHaveLength(2);
-    userEvent.click(screen.getByText(/добавить новую категорию/i));
-    expect(screen.getAllByTestId('card')).toHaveLength(3);
-    expect(JSON.parse(localStorage.getItem('categories') || '')).toHaveLength(
-      3,
-    );
+    expect(getAllByTestId('card')).toHaveLength(2);
+    click(getByText(/добавить новую категорию/i));
+    expect(getAllByTestId('card')).toHaveLength(3);
+    expect(testLocalStorage()).toHaveLength(3);
   });
 
   it('should deleteCard work', () => {
     renderPage();
-    expect(screen.getAllByTestId('card')).toHaveLength(2);
-    userEvent.click(screen.getAllByTestId('deleteButton')[0]);
-    expect(screen.getAllByTestId('card')).toHaveLength(1);
-    expect(JSON.parse(localStorage.getItem('categories') || '')).toHaveLength(
-      1,
-    );
+    expect(getAllByTestId('card')).toHaveLength(2);
+    click(getAllByTestId('deleteButton')[0]);
+    expect(getAllByTestId('card')).toHaveLength(1);
+    expect(testLocalStorage()).toHaveLength(1);
   });
 });

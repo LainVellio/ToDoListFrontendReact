@@ -20,42 +20,52 @@ const renderComponent = () => {
   );
 };
 
+const {
+  getByRole,
+  getByTestId,
+  getByDisplayValue,
+  queryByRole,
+  getAllByTestId,
+  getByText,
+} = screen;
+const { click, clear, type } = userEvent;
+
 describe('CardHeader component', () => {
   it('CardHeader render', () => {
     renderComponent();
-    expect(screen.getByText(/title/i)).toBeInTheDocument();
+    expect(getByText(/title/i)).toBeInTheDocument();
   });
 
   it('Edit mode in header work', () => {
     renderComponent();
-    expect(screen.queryByRole('textbox')).toBeNull();
-    userEvent.click(screen.getByTestId('editButton'));
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(queryByRole('textbox')).toBeNull();
+    click(getByTestId('editButton'));
+    expect(getByRole('textbox')).toBeInTheDocument();
   });
 
   it('Type in InputEdit', () => {
     renderComponent();
-    userEvent.click(screen.getByTestId('editButton'));
-    userEvent.clear(screen.getByRole('textbox'));
-    userEvent.type(screen.getByRole('textbox'), 'Test');
-    expect(screen.getByDisplayValue(/test/i)).toBeInTheDocument();
+    click(getByTestId('editButton'));
+    clear(getByRole('textbox'));
+    type(getByRole('textbox'), 'Test');
+    expect(getByDisplayValue(/test/i)).toBeInTheDocument();
   });
 
   it('Dynamic styles works', () => {
     renderComponent();
-    userEvent.click(screen.getByTestId('editButton'));
-    expect(screen.getByRole('textbox')).toHaveClass('inputCard');
-    expect(screen.getByRole('textbox')).toHaveStyle('font-size: 1.25rem');
+    click(getByTestId('editButton'));
+    expect(getByRole('textbox')).toHaveClass('inputCard');
+    expect(getByRole('textbox')).toHaveStyle('font-size: 1.25rem');
   });
 
   it('Change header colors work', () => {
     renderComponent();
-    expect(screen.getByTestId('cardHeader')).toHaveStyle(
+    expect(getByTestId('cardHeader')).toHaveStyle(
       `background-color: ${EColors.blue}`,
     );
-    userEvent.click(screen.getByTestId('editButton'));
-    userEvent.click(screen.getAllByTestId('circle')[0]);
-    expect(screen.getByTestId('cardHeader')).toHaveStyle(
+    click(getByTestId('editButton'));
+    click(getAllByTestId('circle')[0]);
+    expect(getByTestId('cardHeader')).toHaveStyle(
       `background-color: ${EColors.red}`,
     );
   });

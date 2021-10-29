@@ -19,30 +19,40 @@ const renderComponent = () => {
   );
 };
 
+const {
+  getByRole,
+  getByTestId,
+  getByText,
+  queryByRole,
+  queryByText,
+  getAllByRole,
+} = screen;
+const { click, type } = userEvent;
+
 describe('Card component', () => {
   it('Render Card work', () => {
-    expect(screen.queryByText(/title/i)).toBeNull();
+    expect(queryByText(/title/i)).toBeNull();
     renderComponent();
-    expect(screen.getByText(/title/i)).toBeInTheDocument();
-    expect(screen.getAllByRole('checkbox')[0]).toBeInTheDocument();
-    expect(screen.getByText(/text1/i)).toBeInTheDocument();
+    expect(getByText(/title/i)).toBeInTheDocument();
+    expect(getAllByRole('checkbox')[0]).toBeInTheDocument();
+    expect(getByText(/text1/i)).toBeInTheDocument();
   });
 
   it('Switching Edit mode on click outside works', () => {
     renderComponent();
-    expect(screen.queryByRole('textbox')).toBeNull();
-    userEvent.click(screen.getByTestId('editButton'));
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('checkbox')[0]);
-    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(queryByRole('textbox')).toBeNull();
+    click(getByTestId('editButton'));
+    expect(getByRole('textbox')).toBeInTheDocument();
+    click(getAllByRole('checkbox')[0]);
+    expect(queryByRole('textbox')).toBeNull();
   });
 
   it('Close Edit mode on press Enter works', () => {
     renderComponent();
-    expect(screen.queryByRole('textbox')).toBeNull();
-    userEvent.click(screen.getByTestId('editButton'));
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
-    userEvent.type(screen.getByRole('textbox'), '{enter}');
-    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(queryByRole('textbox')).toBeNull();
+    click(getByTestId('editButton'));
+    expect(getByRole('textbox')).toBeInTheDocument();
+    type(getByRole('textbox'), '{enter}');
+    expect(queryByRole('textbox')).toBeNull();
   });
 });

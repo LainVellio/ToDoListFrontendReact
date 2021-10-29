@@ -20,88 +20,93 @@ const renderComponent = () => {
   );
 };
 
+const testLocalStorage = () =>
+  JSON.parse(localStorage.getItem('categories') || '')[0].todos;
+const {
+  queryAllByRole,
+  getByTestId,
+  getByText,
+  queryByTestId,
+  queryByText,
+  getAllByRole,
+  getByRole,
+} = screen;
+const { hover, click, clear, type } = userEvent;
+
 describe('CardContent component', () => {
   it('Render CardContent', () => {
-    expect(screen.queryByRole('checkbox')).toBeNull();
     renderComponent();
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    expect(screen.getByText(/text1/i)).toBeInTheDocument();
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    expect(getByText(/text1/i)).toBeInTheDocument();
   });
 
   it('Create todo work', () => {
     renderComponent();
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    userEvent.click(screen.getByText(/добавить новую задачу/i));
-    expect(screen.getAllByRole('checkbox')).toHaveLength(3);
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos,
-    ).toHaveLength(3);
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    click(getByText(/добавить новую задачу/i));
+    expect(getAllByRole('checkbox')).toHaveLength(3);
+    expect(testLocalStorage()).toHaveLength(3);
   });
 
   it('should deleteMenu open and close work', () => {
     renderComponent();
-    userEvent.hover(screen.getByText(/text1/i));
-    userEvent.click(screen.getByTestId('deleteMenu'));
-    expect(screen.getByText(/в архив/i)).toBeInTheDocument();
-    expect(screen.getByText(/удалить/i)).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('deleteMenu'));
-    expect(screen.queryByText(/в архив/i)).toBeNull();
-    expect(screen.queryByText(/удалить/i)).toBeNull();
+    hover(getByText(/text1/i));
+    click(getByTestId('deleteMenu'));
+    expect(getByText(/в архив/i)).toBeInTheDocument();
+    expect(getByText(/удалить/i)).toBeInTheDocument();
+    click(getByTestId('deleteMenu'));
+    expect(queryByText(/в архив/i)).toBeNull();
+    expect(queryByText(/удалить/i)).toBeNull();
   });
 
   it('Delete todo work', () => {
     renderComponent();
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    userEvent.hover(screen.getByText(/text1/i));
-    userEvent.click(screen.getByTestId('deleteMenu'));
-    userEvent.click(screen.getByText(/Удалить/i));
-    expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos,
-    ).toHaveLength(1);
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    hover(getByText(/text1/i));
+    click(getByTestId('deleteMenu'));
+    click(getByText(/Удалить/i));
+    expect(queryAllByRole('checkbox')).toHaveLength(1);
+    expect(testLocalStorage()).toHaveLength(1);
   });
 
   it('Send todo to archive work', () => {
     renderComponent();
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    userEvent.hover(screen.getByText(/text1/i));
-    userEvent.click(screen.getByTestId('deleteMenu'));
-    userEvent.click(screen.getByText(/в архив/i));
-    expect(screen.queryAllByRole('checkbox')).toHaveLength(1);
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
-        .inArchive,
-    ).toBeTruthy();
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    hover(getByText(/text1/i));
+    click(getByTestId('deleteMenu'));
+    click(getByText(/в архив/i));
+    expect(queryAllByRole('checkbox')).toHaveLength(1);
+    expect(testLocalStorage()[0].inArchive).toBeTruthy();
   });
 
   it('close edit menu on click outside work', () => {
     renderComponent();
-    expect(screen.queryByTestId('editMenu')).toBeNull();
-    userEvent.hover(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(screen.getByTestId('editMenu')).toBeInTheDocument();
-    userEvent.click(screen.getAllByRole('checkbox')[1]);
-    expect(screen.queryByTestId('editMenu')).toBeNull();
+    expect(queryByTestId('editMenu')).toBeNull();
+    hover(getAllByRole('checkbox')[0]);
+    click(getByTestId('editCheckbox'));
+    expect(getByTestId('editMenu')).toBeInTheDocument();
+    click(getAllByRole('checkbox')[1]);
+    expect(queryByTestId('editMenu')).toBeNull();
   });
 
   it('close edit menu when press Enter work', () => {
     renderComponent();
-    expect(screen.queryByTestId('editMenu')).toBeNull();
-    userEvent.hover(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(screen.getByTestId('editMenu')).toBeInTheDocument();
-    userEvent.type(screen.getByRole('textbox'), '{enter}');
-    expect(screen.queryByTestId('editMenu')).toBeNull();
+    expect(queryByTestId('editMenu')).toBeNull();
+    hover(getAllByRole('checkbox')[0]);
+    click(getByTestId('editCheckbox'));
+    expect(getByTestId('editMenu')).toBeInTheDocument();
+    type(getByRole('textbox'), '{enter}');
+    expect(queryByTestId('editMenu')).toBeNull();
   });
 
   it('delete empty checkbox work', () => {
     renderComponent();
-    expect(screen.getAllByRole('checkbox')).toHaveLength(2);
-    userEvent.hover(screen.getAllByRole('checkbox')[0]);
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    userEvent.clear(screen.getByRole('textbox'));
-    userEvent.type(screen.getByRole('textbox'), '{enter}');
-    expect(screen.getAllByRole('checkbox')).toHaveLength(1);
+    expect(getAllByRole('checkbox')).toHaveLength(2);
+    hover(getAllByRole('checkbox')[0]);
+    click(getByTestId('editCheckbox'));
+    clear(getByRole('textbox'));
+    type(getByRole('textbox'), '{enter}');
+    expect(getAllByRole('checkbox')).toHaveLength(1);
   });
 
   it('function reorder work', () => {

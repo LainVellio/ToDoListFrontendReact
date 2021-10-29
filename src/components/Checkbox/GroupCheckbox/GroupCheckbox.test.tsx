@@ -1,10 +1,10 @@
 import React from 'react';
-import { GroupCheckboxProps, GroupCheckbox } from './GroupCheckbox';
-import { EColors, ETextStyle } from '../../../interfaces';
-import Provider from '../../../Context';
-
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+import Provider from '../../../Context';
+import { EColors, ETextStyle } from '../../../interfaces';
+import { GroupCheckboxProps, GroupCheckbox } from './GroupCheckbox';
 import { items } from '../../MainPage/MainPage.test';
 
 const data: GroupCheckboxProps = {
@@ -21,82 +21,76 @@ const renderComponent = () => {
   );
 };
 
+const testLocalStorage = () =>
+  JSON.parse(localStorage.getItem('categories') || '')[0].todos[0];
+const {
+  getByRole,
+  getByTestId,
+  getByText,
+  queryByTestId,
+  queryByText,
+  getAllByRole,
+  getAllByTestId,
+} = screen;
+const { hover, click, clear, type, unhover } = userEvent;
+
 describe('ToDoCheckbox component', () => {
   it('should render ToDoCheckbox', () => {
     renderComponent();
-    expect(screen.getByText(/text/i)).toBeInTheDocument();
+    expect(getByText(/text/i)).toBeInTheDocument();
   });
 
   it('should checked work', () => {
     renderComponent();
-    userEvent.click(screen.getByRole('checkbox'));
-    expect(screen.getAllByRole('checkbox')[0]).toBeChecked();
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
-        .isCompleted,
-    ).toBeTruthy();
-    expect(screen.getAllByTestId('checkboxWrapper')[0] || '').toHaveClass(
+    click(getByRole('checkbox'));
+    expect(getAllByRole('checkbox')[0]).toBeChecked();
+    expect(testLocalStorage().isCompleted).toBeTruthy();
+    expect(getAllByTestId('checkboxWrapper')[0] || '').toHaveClass(
       'label-text__checked',
     );
   });
 
   it('should edit work', () => {
     renderComponent();
-    userEvent.hover(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByTestId('deleteMenu'));
-    expect(screen.getByText(/удалить/i)).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(screen.queryByText(/удалить/i)).toBeNull();
-    userEvent.clear(screen.getByRole('textbox'));
-    userEvent.type(screen.getByRole('textbox'), 'test');
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(screen.getByText(/test/i)).toBeInTheDocument();
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0].text,
-    ).toBe('test');
-    userEvent.unhover(screen.getByRole('checkbox'));
-    expect(screen.queryByTestId('editCheckbox')).toBeNull();
+    hover(getByRole('checkbox'));
+    click(getByTestId('deleteMenu'));
+    expect(getByText(/удалить/i)).toBeInTheDocument();
+    click(getByTestId('editCheckbox'));
+    expect(queryByText(/удалить/i)).toBeNull();
+    clear(getByRole('textbox'));
+    type(getByRole('textbox'), 'test');
+    click(getByTestId('editCheckbox'));
+    expect(getByText(/test/i)).toBeInTheDocument();
+    expect(testLocalStorage().text).toBe('test');
+    unhover(getByRole('checkbox'));
+    expect(queryByTestId('editCheckbox')).toBeNull();
   });
 
   it('change text style work', () => {
     renderComponent();
-    userEvent.hover(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    userEvent.click(screen.getByText('B'));
-    expect(screen.getByText('N')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
-        .textStyle,
-    ).toBe(ETextStyle.bold);
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    userEvent.click(screen.getByText('N'));
-    expect(screen.getByText('B')).toBeInTheDocument();
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
-        .textStyle,
-    ).toBe(ETextStyle.normal);
+    hover(getByRole('checkbox'));
+    click(getByTestId('editCheckbox'));
+    click(getByText('B'));
+    expect(getByText('N')).toBeInTheDocument();
+    click(getByTestId('editCheckbox'));
+    expect(testLocalStorage().textStyle).toBe(ETextStyle.bold);
+    click(getByTestId('editCheckbox'));
+    click(getByText('N'));
+    expect(getByText('B')).toBeInTheDocument();
+    click(getByTestId('editCheckbox'));
+    expect(testLocalStorage().textStyle).toBe(ETextStyle.normal);
   });
 
   it('change text color', () => {
     renderComponent();
-    expect(screen.getByTestId('checkbox')).toHaveStyle(
-      `color: ${EColors.black}`,
-    );
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
-        .textColor,
-    ).toBe(EColors.black);
-    userEvent.hover(screen.getByRole('checkbox'));
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(screen.getAllByTestId('circle')).toHaveLength(3);
-    userEvent.click(screen.getAllByTestId('circle')[0]);
-    expect(screen.getByTestId('checkbox')).toHaveStyle(`color: ${EColors.red}`);
-    userEvent.click(screen.getByTestId('editCheckbox'));
-    expect(
-      JSON.parse(localStorage.getItem('categories') || '')[0].todos[0]
-        .textColor,
-    ).toBe(EColors.red);
+    expect(getByTestId('checkbox')).toHaveStyle(`color: ${EColors.black}`);
+    expect(testLocalStorage().textColor).toBe(EColors.black);
+    hover(getByRole('checkbox'));
+    click(getByTestId('editCheckbox'));
+    expect(getAllByTestId('circle')).toHaveLength(3);
+    click(getAllByTestId('circle')[0]);
+    expect(getByTestId('checkbox')).toHaveStyle(`color: ${EColors.red}`);
+    click(getByTestId('editCheckbox'));
+    expect(testLocalStorage().textColor).toBe(EColors.red);
   });
 });

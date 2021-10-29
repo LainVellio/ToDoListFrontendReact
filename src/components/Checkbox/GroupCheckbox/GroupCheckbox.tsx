@@ -1,10 +1,11 @@
 import React, { Reducer, useEffect, useReducer, useRef, useState } from 'react';
 
 import { ITodo, ITodoEdit, ITodoEditProperties } from '../../../interfaces';
-import { SubTaskCheckbox } from '../SubTodoCheckbox/SubTodoCheckbox';
 import { useTodo } from '../../../Context';
 import { DeleteMenu } from '../DeleteMenu/DeleteMenu';
 import { EditMenu } from '../EditMenu/EditMenu';
+import { SubTodoCheckbox } from '../SubTodoCheckbox/SubTodoCheckbox';
+import useEmptyDelete from '../../../utils/useEmptyDelete';
 
 import CheckboxWrap from './GroupCheckbox.style';
 import AddIcon from '@material-ui/icons/Add';
@@ -13,7 +14,6 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import useEmptyDelete from '../../../utils/useEmptyDelete';
 
 export interface GroupCheckboxProps {
   categoryId: number;
@@ -158,7 +158,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
       </CheckboxWrap>
       {isOpen &&
         subTodos.map((subTodo: ITodo) => (
-          <SubTaskCheckbox
+          <SubTodoCheckbox
             key={subTodo.id}
             categoryId={categoryId}
             todoId={id}
