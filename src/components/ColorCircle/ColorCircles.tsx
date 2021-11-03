@@ -17,20 +17,22 @@ interface CircleProps {
   setColor(color: EColors): void;
 }
 
-const ColorCircle: React.FC<CircleProps> = ({
+export const ColorCircle: React.FC<CircleProps> = ({
   color,
   setColor,
   border = false,
   className,
 }) => {
   return (
-    <Circle
-      data-testid="circle"
-      className={className}
-      onClick={() => setColor(color)}
-      color={color}
-      border={border}
-    />
+    <>
+      <Circle
+        data-testid="circle"
+        className={className}
+        onClick={() => setColor(color)}
+        color={color}
+        border={border}
+      />
+    </>
   );
 };
 

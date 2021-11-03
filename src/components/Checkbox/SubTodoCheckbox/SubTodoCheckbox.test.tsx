@@ -5,11 +5,16 @@ import userEvent from '@testing-library/user-event';
 import Provider from '../../../Context';
 import { items } from '../../MainPage/MainPage.test';
 import { SubCheckboxProps, SubTodoCheckbox } from './SubTodoCheckbox';
+import { EColors, ENumberingType, ETextStyle } from '../../../interfaces';
 
 const data: SubCheckboxProps = {
   categoryId: 1,
   subTodoId: 1,
   todoId: 1,
+  textColor: EColors.black,
+  textStyle: ETextStyle.normal,
+  numberingType: ENumberingType.number,
+  index: 0,
 };
 
 const renderComponent = () => {

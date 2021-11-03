@@ -13,6 +13,7 @@ import {
   UseSubTodo,
   UseTodo,
   IContext,
+  ENumberingType,
 } from './interfaces';
 
 const initialContext = {
@@ -31,6 +32,7 @@ const initialContext = {
           inArchive: false,
           timeCompleted: null,
           isOpen: false,
+          numberingType: ENumberingType.number,
           subTodos: [
             {
               id: 1,
@@ -98,6 +100,7 @@ export function useCategory(categoryId: number): UseCategory {
       isCompleted: false,
       textColor: EColors.black,
       textStyle: ETextStyle.normal,
+      numberingType: ENumberingType.number,
       inArchive: false,
       timeCompleted: null,
       isOpen: false,
@@ -124,14 +127,10 @@ export function useTodo(categoryId: number, todoId: number): UseTodo {
   const subTodos = todo.subTodos;
 
   const createSubTodo = () => {
-    const newSubTodo = {
+    const newSubTodo: ITodo = {
       text: '',
       id: Date.now(),
       isCompleted: false,
-      textColor: EColors.black,
-      textStyle: ETextStyle.normal,
-      inArchive: false,
-      timeCompleted: null,
     };
 
     setTodoProperties({

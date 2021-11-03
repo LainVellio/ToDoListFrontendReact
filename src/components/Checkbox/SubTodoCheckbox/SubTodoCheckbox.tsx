@@ -1,6 +1,12 @@
 import React, { Reducer, useReducer, useRef, useState } from 'react';
 
-import { ITodoEdit, ITodoEditProperties } from '../../../interfaces';
+import {
+  EColors,
+  ENumberingType,
+  ETextStyle,
+  ISubTodoEdit,
+  ISubTodoEditProperties,
+} from '../../../interfaces';
 import { useSubTodo } from '../../../Context';
 import { EditMenu } from '../EditMenu/EditMenu';
 import useEmptyDelete from '../../../utils/useEmptyDelete';
@@ -9,17 +15,26 @@ import CheckboxWrap from './SubTodoCheckbox.style';
 import Checkbox from '@material-ui/core/Checkbox';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
+import getNumberingSymbol from '../../../utils/getNumberingSymbol';
 
 export interface SubCheckboxProps {
   subTodoId: number;
   todoId: number;
+  index: number;
   categoryId: number;
+  textColor: EColors;
+  textStyle: ETextStyle;
+  numberingType: ENumberingType;
 }
 
 export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
   subTodoId,
   todoId,
   categoryId,
+  textColor,
+  textStyle,
+  index,
+  numberingType,
 }) => {
   const { subTodo, setSubTodoProperties, deleteSubTodo } = useSubTodo(
     categoryId,
@@ -28,15 +43,15 @@ export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
   );
   const { isCompleted } = subTodo;
   const [subTodoEdit, setSubTodoEdit] = useReducer<
-    Reducer<ITodoEdit, ITodoEditProperties>
+    Reducer<ISubTodoEdit, ISubTodoEditProperties>
   >(
-    (todoEdit: ITodoEdit, property: ITodoEditProperties) => ({
+    (todoEdit: ISubTodoEdit, property: ISubTodoEditProperties) => ({
       ...todoEdit,
       ...property,
     }),
     subTodo,
   );
-  const { text, textColor, textStyle } = subTodoEdit;
+  const { text } = subTodoEdit;
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(text === '' ? true : false);
   const ref = useRef(null);
@@ -45,8 +60,6 @@ export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
     setSubTodoProperties({
       isCompleted,
       text,
-      textColor,
-      textStyle,
     }),
   );
 
@@ -69,13 +82,18 @@ export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
           name="checkedB"
           color="primary"
         />
-
+        <div className={numberingType}>
+          {getNumberingSymbol(index, numberingType)}
+        </div>
         {editMode ? (
           <EditMenu
-            todoEdit={subTodoEdit}
-            setTodo={setSubTodoEdit}
+            text={subTodoEdit.text}
+            textColor={textColor}
+            textStyle={textStyle}
+            setTodoEdit={setSubTodoEdit}
             isCompleted={isCompleted}
             setEditMode={setEditMode}
+            MenuContent={() => null}
             outsideRef={ref}
           />
         ) : (

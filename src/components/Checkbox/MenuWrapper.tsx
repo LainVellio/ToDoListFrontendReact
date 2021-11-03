@@ -6,12 +6,15 @@ import Paper from '@material-ui/core/Paper';
 const Window = styled.div`
   position: absolute;
   left: 39px;
-  width: 237px;
+  width: 235px;
   height: 50px;
   margin-top: 2px;
   background-color: rgba(0, 0, 0, 0);
   overflow: hidden;
-  border-top: 1px solid #d1d1d1;
+  color: black;
+  font-weight: 400;
+  font-style: normal;
+  /* border-top: 1px solid #d1d1d1; */
   z-index: 2;
 `;
 
@@ -28,7 +31,7 @@ const Menu = styled.div<{ topShift: number }>`
     border-radius: 0px 0px 3px 3px;
     display: flex;
     align-items: center;
-    width: 235px;
+    width: 230px;
   }
   @keyframes menuSlide {
     from {

@@ -3,7 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { render, screen } from '@testing-library/react';
 
 import { MainPage } from './MainPage';
-import { EColors, ETextStyle, ICategory } from '../../interfaces';
+import {
+  EColors,
+  ENumberingType,
+  ETextStyle,
+  ICategory,
+} from '../../interfaces';
 import Provider from '../../Context';
 
 export const items: ICategory[] = [
@@ -21,12 +26,11 @@ export const items: ICategory[] = [
         timeCompleted: null,
         isOpen: false,
         inArchive: false,
+        numberingType: ENumberingType.void,
         subTodos: [
           {
             id: 1,
             text: 'text',
-            textColor: EColors.black,
-            textStyle: ETextStyle.normal,
             isCompleted: false,
           },
         ],
@@ -40,12 +44,11 @@ export const items: ICategory[] = [
         timeCompleted: null,
         isOpen: false,
         inArchive: false,
+        numberingType: ENumberingType.void,
         subTodos: [
           {
             id: 1,
             text: 'text',
-            textColor: EColors.black,
-            textStyle: ETextStyle.normal,
             isCompleted: false,
           },
         ],
@@ -66,12 +69,11 @@ export const items: ICategory[] = [
         timeCompleted: null,
         isOpen: false,
         inArchive: false,
+        numberingType: ENumberingType.void,
         subTodos: [
           {
             id: 1,
             text: 'text',
-            textColor: EColors.black,
-            textStyle: ETextStyle.normal,
             isCompleted: false,
           },
         ],

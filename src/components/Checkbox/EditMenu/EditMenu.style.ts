@@ -7,19 +7,15 @@ const CheckboxEditMenuWrap = styled.div<{
   .inputCheckbox {
     position: relative;
     font-weight: ${(props) => props.textStyle};
-    width: 230px;
+    color: ${(props) => props.textColor};
+    font-style: ${(props) => props.textStyle};
+    width: 225px;
     height: 20px;
     margin-left: -2px;
     font-size: 16px;
     font-family: 'Roboto', 'Helvetica';
     border: none;
-    color: ${(props) => props.textColor};
     z-index: 2;
-  }
-  .colorCircles {
-    width: 20px;
-    height: 20px;
-    margin: 3px 7px 7px 3px;
   }
   .B {
     font-size: 20px;
@@ -27,11 +23,16 @@ const CheckboxEditMenuWrap = styled.div<{
     cursor: pointer;
     font-family: 'Roboto', 'Helvetica';
     color: black;
-    font-weight: ${(props) => (props.textStyle === '400' ? '900' : '400')};
+    font-weight: '400';
   }
   .addSubTaskIcon {
     cursor: pointer;
     margin-left: 10px;
+  }
+  .verticalLine {
+    height: 20px;
+    margin-left: 10px;
+    border-left: 1px solid rgb(197, 197, 197);
   }
   @media screen and (max-width: 400px) {
     .inputCheckbox {

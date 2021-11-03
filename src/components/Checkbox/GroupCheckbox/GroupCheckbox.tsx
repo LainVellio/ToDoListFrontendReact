@@ -14,6 +14,7 @@ import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import TodoMenuContent from './TodoMenuContent';
 
 export interface GroupCheckboxProps {
   categoryId: number;
@@ -38,7 +39,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
     todo,
   );
   const { id, isCompleted, isOpen } = todo;
-  const { text, textColor, textStyle } = todoEdit;
+  const { text, textColor, textStyle, numberingType } = todoEdit;
 
   const [isFocus, setIsFocus] = useState(false);
   const [editMode, setEditMode] = useState(text === '' ? true : false);
@@ -62,6 +63,7 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
       text,
       textColor,
       textStyle,
+      numberingType,
     }),
   );
   useEffect(() => {
@@ -113,10 +115,18 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
 
           {editMode ? (
             <EditMenu
-              todoEdit={todoEdit}
-              setTodo={setTodoEdit}
+              text={text}
+              textColor={textColor}
+              textStyle={textStyle}
+              setTodoEdit={setTodoEdit}
               setEditMode={setEditMode}
               outsideRef={ref}
+              MenuContent={() => (
+                <TodoMenuContent
+                  todoEdit={todoEdit}
+                  setTodoEdit={setTodoEdit}
+                />
+              )}
               isCompleted={isCompleted}
             />
           ) : (
@@ -158,12 +168,16 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
         )}
       </CheckboxWrap>
       {isOpen &&
-        subTodos.map((subTodo: ITodo) => (
+        subTodos.map((subTodo: ITodo, index) => (
           <SubTodoCheckbox
             key={subTodo.id}
             categoryId={categoryId}
             todoId={id}
             subTodoId={subTodo.id}
+            textColor={textColor}
+            textStyle={textStyle}
+            index={index}
+            numberingType={numberingType}
           />
         ))}
     </div>

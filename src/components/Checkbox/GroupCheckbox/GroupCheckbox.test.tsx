@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import Provider from '../../../Context';
-import { EColors, ETextStyle } from '../../../interfaces';
+import { EColors, ENumberingType, ETextStyle } from '../../../interfaces';
 import { GroupCheckboxProps, GroupCheckbox } from './GroupCheckbox';
 import { items } from '../../MainPage/MainPage.test';
 
@@ -92,6 +92,22 @@ describe('ToDoCheckbox component', () => {
     expect(getByTestId('checkbox')).toHaveStyle(`color: ${EColors.red}`);
     click(getByTestId('editCheckbox'));
     expect(testLocalStorage().textColor).toBe(EColors.red);
+  });
+  it('change numbering type work', () => {
+    renderComponent();
+    expect(queryByText('1')).toBeNull();
+    expect(testLocalStorage().numberingType).toBe(ENumberingType.void);
+    hover(getByRole('checkbox'));
+    click(getByTestId('editCheckbox'));
+    click(getByText(/1/i));
+    click(getByTestId('editCheckbox'));
+    click(getByTestId('addSubTask'));
+    expect(getByText(/2/i)).toBeInTheDocument();
+    hover(getAllByRole('checkbox')[0]);
+    click(getByTestId('editCheckbox'));
+    click(getByText('•'));
+    click(getByTestId('editCheckbox'));
+    expect(getByText('•')).toBeInTheDocument();
   });
 
   it('delete empty SubCheckbox work', () => {

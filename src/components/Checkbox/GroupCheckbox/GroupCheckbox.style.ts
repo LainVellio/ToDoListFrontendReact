@@ -5,6 +5,7 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   justify-content: space-between;
   color: ${(props) => props.textColor};
   font-weight: ${(props) => props.textStyle};
+  font-style: ${(props) => props.textStyle};
   margin-left: 10px;
   .label-text__checked {
     text-decoration: line-through;
@@ -41,6 +42,11 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     margin-left: -18px;
     cursor: pointer;
     color: gray;
+  }
+  .colorCircles {
+    width: 20px;
+    height: 20px;
+    margin: 3px 0px 7px 10px;
   }
 `;
 

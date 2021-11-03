@@ -8,6 +8,7 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   margin-left: 25px;
   color: ${(props) => props.textColor};
   font-weight: ${(props) => props.textStyle};
+  font-style: ${(props) => props.textStyle};
   .label-text__checked {
     text-decoration: line-through;
     color: gray;
@@ -17,7 +18,6 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     display: flex;
     align-items: center;
     color: #8b8b8b;
-    margin-top: 10px;
     padding: 2px;
   }
   .iconCheckbox {
@@ -39,6 +39,14 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   .label {
     background-color: white;
     word-wrap: break-word;
+  }
+  .number {
+    margin-right: 5px;
+  }
+  .point {
+    font-size: 30px;
+    margin-bottom: -4px;
+    margin-right: 5px;
   }
 `;
 
