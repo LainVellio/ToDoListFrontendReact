@@ -32,6 +32,17 @@ const CardHeaderWrapper = styled.div<{ colorHeader: EColors }>`
     margin: 0;
     padding: 0;
   }
+  .header {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+  .editButtons {
+    display: flex;
+  }
+
+  .error {
+    border: 2px red solid;
+  }
 `;
 
 export default CardHeaderWrapper;

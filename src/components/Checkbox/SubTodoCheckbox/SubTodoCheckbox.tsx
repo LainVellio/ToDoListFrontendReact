@@ -81,6 +81,7 @@ export const SubTodoCheckbox: React.FC<SubCheckboxProps> = ({
           checked={isCompleted}
           name="checkedB"
           color="primary"
+          className="check"
         />
         <div className={numberingType}>
           {getNumberingSymbol(index, numberingType)}

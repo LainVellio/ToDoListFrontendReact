@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import useEmptyDelete from '../../../utils/useEmptyDelete';
 import CardHeaderWrapper from './CardHeader.style';
+import checkMaxLengthString from '../../../utils/checkMaxLengthString';
 
 export interface CardHeaderProps {
   categoryId: number;
@@ -25,6 +26,8 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
   const colorHeader = category.colorHeader;
   const ref = useRef(null);
   const id = category.id;
+  const [hasError, setError] = useState(false);
+  console.log(hasError);
 
   useEmptyDelete(
     editMode,
@@ -39,6 +42,16 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
     setEditMode(false);
   };
 
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const title = e.target.value;
+    if (checkMaxLengthString(title, 55)) {
+      setTitle(title);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <CardHeaderWrapper
       data-testid="cardHeader"
@@ -49,11 +62,9 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
         <>
           <InputEdit
             value={title}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              setTitle(e.target.value)
-            }
+            onChange={onChange}
             setEditMode={() => setEditMode(false)}
-            className="inputCard"
+            className={`inputCard ${hasError ? 'error' : ''}`}
           />
           <ColorsCircles
             className="colorCircles"
@@ -64,13 +75,18 @@ export const CardHeader: React.FC<CardHeaderProps> = ({ categoryId }) => {
           />
         </>
       ) : (
-        <Typography variant="h6">{title}</Typography>
+        <Typography className="header" variant="h6">
+          {title}
+        </Typography>
       )}
-      <div>
+      <div className="editButtons">
         <button
           className="button"
           data-testid="editButton"
-          onClick={() => setEditMode(!editMode)}
+          onClick={() => {
+            setEditMode(!editMode);
+            setError(false);
+          }}
         >
           <EditIcon className="icon" />
         </button>

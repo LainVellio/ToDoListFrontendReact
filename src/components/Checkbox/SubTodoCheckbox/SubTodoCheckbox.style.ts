@@ -3,8 +3,9 @@ import { EColors } from '../../../interfaces';
 
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
   display: flex;
+  position: relative;
+  align-items: center;
   justify-content: space-between;
-  height: 30px;
   margin-left: 25px;
   color: ${(props) => props.textColor};
   font-weight: ${(props) => props.textStyle};
@@ -19,6 +20,10 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     align-items: center;
     color: #8b8b8b;
     padding: 2px;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+    background-color: white;
   }
   .iconCheckbox {
     cursor: pointer;
@@ -37,8 +42,8 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     align-items: center;
   }
   .label {
-    background-color: white;
     word-wrap: break-word;
+    overflow-wrap: anywhere;
   }
   .number {
     margin-right: 5px;
@@ -47,6 +52,13 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     font-size: 30px;
     margin-bottom: -4px;
     margin-right: 5px;
+  }
+
+  .subTodosContainer {
+    display: flex;
+  }
+  .check {
+    margin: -6px 0 -6px 0;
   }
 `;
 

@@ -2,7 +2,12 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { EColors, ETextStyle, IGroupTodo } from '../../../interfaces';
+import {
+  EColors,
+  ENumberingType,
+  ETextStyle,
+  IGroupTodo,
+} from '../../../interfaces';
 import { CardContent, CardContentProps, reorder } from './CardContent';
 import { items } from '../../MainPage/MainPage.test';
 import Provider from '../../../Context';
@@ -120,6 +125,7 @@ describe('CardContent component', () => {
         inArchive: false,
         subTodos: [],
         isOpen: false,
+        numberingType: ENumberingType.void,
         timeCompleted: null,
       },
       {
@@ -131,6 +137,7 @@ describe('CardContent component', () => {
         inArchive: false,
         subTodos: [],
         isOpen: false,
+        numberingType: ENumberingType.void,
         timeCompleted: null,
       },
       {
@@ -142,6 +149,7 @@ describe('CardContent component', () => {
         inArchive: false,
         subTodos: [],
         isOpen: false,
+        numberingType: ENumberingType.void,
         timeCompleted: null,
       },
     ];

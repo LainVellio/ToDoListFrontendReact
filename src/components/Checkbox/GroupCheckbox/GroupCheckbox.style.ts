@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
+  position: relative;
+  align-items: center;
   display: flex;
   justify-content: space-between;
   color: ${(props) => props.textColor};
@@ -13,11 +15,13 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     font-weight: normal;
   }
   .options {
-    display: flex;
-    align-items: center;
+    position: absolute;
+    right: 0;
+    z-index: 1;
     color: #8b8b8b;
     margin-top: 10px;
     padding: 2px;
+    background-color: white;
   }
   .iconCheckbox {
     cursor: pointer;
@@ -33,8 +37,8 @@ const CheckboxWrap = styled.div<{ textColor: string; textStyle: string }>`
     align-items: center;
   }
   .label {
-    background-color: white;
     word-wrap: break-word;
+    overflow-wrap: anywhere;
   }
   .arrowIcon {
     position: absolute;

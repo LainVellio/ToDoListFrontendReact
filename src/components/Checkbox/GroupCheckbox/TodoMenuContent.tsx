@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTodo } from '../../../Context';
 import {
   EColors,
   EditMenuItemType,
@@ -30,13 +31,19 @@ const numberingTypes: EditMenuItemType<ENumberingType>[] = [
 interface TodoMenuContentProps {
   todoEdit: ITodoEdit;
   setTodoEdit(properties: ITodoEditProperties): void;
+  todoId: number;
+  categoryId: number;
 }
 
 const TodoMenuContent: React.FC<TodoMenuContentProps> = ({
   todoEdit,
   setTodoEdit,
+  todoId,
+  categoryId,
 }) => {
   const { textColor, textStyle, numberingType } = todoEdit;
+  const { todo } = useTodo(categoryId, todoId);
+  const hasSubTodos = todo.subTodos.length === 0 ? false : true;
   const setTextColor = (textColor: EColors) => {
     setTodoEdit({ textColor });
   };
@@ -70,20 +77,22 @@ const TodoMenuContent: React.FC<TodoMenuContentProps> = ({
         currentItem={textStyle}
       />
       <div className="verticalLine" />
-      <EditMenuItems
-        items={numberingTypes}
-        renderItem={(item: EditMenuItemType<ENumberingType>) => (
-          <div
-            onClick={() => {
-              setTodoEdit({ numberingType: item.value });
-            }}
-            className="B"
-          >
-            {item.letter}
-          </div>
-        )}
-        currentItem={numberingType}
-      />
+      {hasSubTodos ? (
+        <EditMenuItems
+          items={numberingTypes}
+          renderItem={(item: EditMenuItemType<ENumberingType>) => (
+            <div
+              onClick={() => {
+                setTodoEdit({ numberingType: item.value });
+              }}
+              className="B"
+            >
+              {item.letter}
+            </div>
+          )}
+          currentItem={numberingType}
+        />
+      ) : null}
     </>
   );
 };

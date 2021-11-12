@@ -125,6 +125,8 @@ export const GroupCheckbox: React.FC<GroupCheckboxProps> = ({
                 <TodoMenuContent
                   todoEdit={todoEdit}
                   setTodoEdit={setTodoEdit}
+                  todoId={id}
+                  categoryId={categoryId}
                 />
               )}
               isCompleted={isCompleted}

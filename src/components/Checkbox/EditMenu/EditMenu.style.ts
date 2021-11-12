@@ -34,6 +34,10 @@ const CheckboxEditMenuWrap = styled.div<{
     margin-left: 10px;
     border-left: 1px solid rgb(197, 197, 197);
   }
+  .error {
+    border: 1px red solid;
+  }
+
   @media screen and (max-width: 400px) {
     .inputCheckbox {
       width: 200px;
